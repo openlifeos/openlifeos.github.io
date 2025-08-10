@@ -3,16 +3,24 @@
   "alias": ["openlifeos.ai", "www.openlifeos.ai"],
   "routes": [
     {
+      "src": "/docs/?$",
+      "dest": "/docs/index.html"
+    },
+    {
       "src": "/docs/(.*)",
       "dest": "/docs/$1"
     },
     {
-      "src": "/demo",
+      "src": "/demo/?$",
       "dest": "/demos/presentation-final.html"
     },
     {
-      "src": "/playground",
+      "src": "/playground/?$",
       "dest": "/demos/life-os-complete.html"
+    },
+    {
+      "src": "/api/?$",
+      "dest": "/docs/API-REFERENCE.md"
     },
     {
       "src": "/api/(.*)",

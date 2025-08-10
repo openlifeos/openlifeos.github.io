@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contributors - OpenLifeOS</title>
+    <meta name="description" content="Meet the contributors building the future of personal AI with OpenLifeOS">
+    <link rel="icon" type="image/svg+xml" href="/assets/logo/openlifeos-icon.svg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --dark: #0a0a0f;
+            --darker: #050508;
+            --light: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--dark);
+            color: var(--light);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: var(--darker);
+            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+            padding: 1rem 0;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            height: 40px;
+            width: auto;
+        }
+
+        .breadcrumb {
+            color: var(--text-secondary);
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .intro {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            max-width: 800px;
+        }
+
+        .contributors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .contributor-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .contributor-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            margin: 0 auto 1rem;
+        }
+
+        .contributor-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .contributor-role {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+
+        .contributor-bio {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .how-to-contribute {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .how-to-contribute h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .contribute-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .contribute-step {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .step-number {
+            background: var(--gradient-primary);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .back-to-site {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background: var(--gradient-primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
+
+        .back-to-site:hover {
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .contributors-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <img src="/assets/logo/openlifeos-logo-dark.svg" alt="OpenLifeOS" class="logo">
+            <nav class="breadcrumb">
+                <a href="/">Home</a> / Contributors
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>🏆 Contributors</h1>
+        <p class="intro">
+            Meet the amazing people building the future of personal AI with OpenLifeOS. 
+            Our community of developers, researchers, and visionaries are creating the world's 
+            first truly open AI companion platform.
+        </p>
+
+        <div class="contributors-grid">
+            <div class="contributor-card">
+                <div class="avatar">CL</div>
+                <div class="contributor-name">Claude Code</div>
+                <div class="contributor-role">AI Development Partner</div>
+                <div class="contributor-bio">
+                    AI assistant specialized in software development, helping build and architect 
+                    the core OpenLifeOS platform with advanced reasoning capabilities.
+                </div>
+            </div>
+
+            <div class="contributor-card">
+                <div class="avatar">OS</div>
+                <div class="contributor-name">OpenLifeOS Team</div>
+                <div class="contributor-role">Core Development Team</div>
+                <div class="contributor-bio">
+                    Dedicated team of AI researchers and engineers building the foundational 
+                    systems for Matrix-style knowledge downloading and symbiotic AI companions.
+                </div>
+            </div>
+
+            <div class="contributor-card">
+                <div class="avatar">🌟</div>
+                <div class="contributor-name">You?</div>
+                <div class="contributor-role">Future Contributor</div>
+                <div class="contributor-bio">
+                    Join our mission to democratize personal AI! We're looking for passionate 
+                    developers, designers, and AI enthusiasts to help shape the future.
+                </div>
+            </div>
+        </div>
+
+        <div class="how-to-contribute">
+            <h2>🚀 How to Contribute</h2>
+            <p>OpenLifeOS is an open-source project and we welcome contributions from everyone!</p>
+            
+            <div class="contribute-steps">
+                <div class="contribute-step">
+                    <div class="step-number">1</div>
+                    <h3>Fork & Clone</h3>
+                    <p>Fork the repository on GitHub and clone it to your local machine.</p>
+                </div>
+                
+                <div class="contribute-step">
+                    <div class="step-number">2</div>
+                    <h3>Pick an Issue</h3>
+                    <p>Browse our GitHub issues and pick one that interests you, or create a new one.</p>
+                </div>
+                
+                <div class="contribute-step">
+                    <div class="step-number">3</div>
+                    <h3>Make Changes</h3>
+                    <p>Create a new branch, make your changes, and test thoroughly.</p>
+                </div>
+                
+                <div class="contribute-step">
+                    <div class="step-number">4</div>
+                    <h3>Submit PR</h3>
+                    <p>Submit a pull request with a clear description of your changes.</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 3rem;">
+            <a href="https://github.com/openlifeos" class="back-to-site" style="margin-right: 1rem;">
+                🌟 Star on GitHub
+            </a>
+            <a href="/" class="back-to-site">
+                ← Back to OpenLifeOS
+            </a>
+        </div>
+    </div>
+</body>
+</html>
