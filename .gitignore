@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+
+# Build
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Temp
+*.tmp
+*.bak
+temp/
+tmp/
+
+# OS
+Thumbs.db
+desktop.ini
