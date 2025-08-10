@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIOMETRIC NEURAL DASHBOARD</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Orbitron', monospace;
+            background: #000;
+            color: #0ff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 0, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(255, 255, 0, 0.05) 0%, transparent 50%);
+            animation: bgPulse 10s ease-in-out infinite;
+            z-index: -2;
+        }
+        
+        @keyframes bgPulse {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.05) rotate(2deg); }
+        }
+        
+        .grid-overlay {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,255,0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            animation: gridMove 20s linear infinite;
+            z-index: -1;
+        }
+        
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(30px, 30px); }
+        }
+        
+        /* Header */
+        .header {
+            padding: 20px;
+            background: linear-gradient(180deg, rgba(0,255,255,0.1), transparent);
+            border-bottom: 2px solid #0ff;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #0ff, transparent);
+            animation: scan 3s linear infinite;
+        }
+        
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            font-weight: 900;
+            letter-spacing: 5px;
+            background: linear-gradient(45deg, #ff0000, #0ff, #0f0, #ff0);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 3s ease infinite;
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Dashboard Grid */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .panel {
+            background: rgba(0,20,40,0.9);
+            border: 1px solid #0ff;
+            border-radius: 10px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(0,255,255,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #0ff, transparent);
+            animation: panelScan 4s linear infinite;
+        }
+        
+        @keyframes panelScan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .panel-title {
+            color: #0ff;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0,255,255,0.3);
+        }
+        
+        /* Vital Signs Display */
+        .vital-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .vital-item {
+            background: rgba(0,255,255,0.05);
+            border: 1px solid rgba(0,255,255,0.2);
+            border-radius: 8px;
+            padding: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .vital-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--vital-color, #0ff), transparent);
+            animation: vitalPulse 2s linear infinite;
+        }
+        
+        @keyframes vitalPulse {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .vital-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            margin-bottom: 5px;
+        }
+        
+        .vital-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--vital-color, #0ff);
+            text-shadow: 0 0 10px currentColor;
+        }
+        
+        .vital-unit {
+            font-size: 12px;
+            color: #666;
+            margin-left: 5px;
+        }
+        
+        .vital-trend {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 16px;
+        }
+        
+        /* Heart Rate Animation */
+        .heart-rate-display {
+            height: 100px;
+            background: rgba(0,10,20,0.8);
+            border: 1px solid rgba(255,0,0,0.3);
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .heartbeat-line {
+            position: absolute;
+            height: 2px;
+            width: 100%;
+            top: 50%;
+            background: linear-gradient(90deg, transparent, #ff0000, transparent);
+            animation: heartbeat 1s linear infinite;
+        }
+        
+        @keyframes heartbeat {
+            0% { transform: translateX(-100%) scaleY(1); }
+            45% { transform: translateX(0%) scaleY(1); }
+            50% { transform: translateX(0%) scaleY(3); }
+            55% { transform: translateX(0%) scaleY(1); }
+            100% { transform: translateX(100%) scaleY(1); }
+        }
+        
+        /* Temperature Gauge */
+        .temp-gauge {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            position: relative;
+        }
+        
+        .temp-circle {
+            width: 100%;
+            height: 100%;
+            border: 10px solid rgba(0,255,255,0.1);
+            border-radius: 50%;
+            position: relative;
+        }
+        
+        .temp-fill {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: calc(100% + 20px);
+            height: calc(100% + 20px);
+            border: 10px solid transparent;
+            border-top-color: #ff6600;
+            border-right-color: #ff6600;
+            border-radius: 50%;
+            animation: tempRotate 4s linear infinite;
+        }
+        
+        @keyframes tempRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .temp-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        
+        .temp-value-large {
+            font-size: 36px;
+            font-weight: bold;
+            color: #ff6600;
+            text-shadow: 0 0 20px #ff6600;
+        }
+        
+        /* Brainwave Visualizer */
+        .brainwave-container {
+            margin: 20px 0;
+        }
+        
+        .wave-bar {
+            margin: 10px 0;
+        }
+        
+        .wave-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            margin-bottom: 5px;
+            color: #888;
+        }
+        
+        .wave-progress {
+            height: 20px;
+            background: rgba(0,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .wave-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--wave-color), transparent);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+        
+        .wave-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 10px;
+            height: 100%;
+            background: var(--wave-color);
+            box-shadow: 0 0 10px var(--wave-color);
+            animation: wavePulse 1s ease-in-out infinite;
+        }
+        
+        @keyframes wavePulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Health Score Circle */
+        .health-score {
+            width: 250px;
+            height: 250px;
+            margin: 20px auto;
+            position: relative;
+        }
+        
+        .score-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 15px solid rgba(0,255,255,0.1);
+            border-radius: 50%;
+        }
+        
+        .score-fill {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 15px solid transparent;
+            border-top-color: #0f0;
+            border-right-color: #0f0;
+            border-radius: 50%;
+            transform: rotate(-90deg);
+            animation: scoreRotate 2s ease-out;
+        }
+        
+        @keyframes scoreRotate {
+            from { transform: rotate(-90deg); }
+            to { transform: rotate(calc(var(--score) * 3.6deg - 90deg)); }
+        }
+        
+        .score-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        
+        .score-value {
+            font-size: 48px;
+            font-weight: bold;
+            color: #0f0;
+            text-shadow: 0 0 30px #0f0;
+        }
+        
+        .score-label {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        /* Alerts */
+        .alerts-container {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .alert-item {
+            background: rgba(255,0,0,0.1);
+            border: 1px solid rgba(255,0,0,0.3);
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            animation: alertBlink 2s ease-in-out infinite;
+        }
+        
+        @keyframes alertBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        .alert-icon {
+            font-size: 20px;
+            margin-right: 10px;
+        }
+        
+        .alert-text {
+            flex: 1;
+            font-size: 12px;
+        }
+        
+        /* Activity Indicator */
+        .activity-display {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0,255,255,0.05);
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .activity-state {
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #0ff;
+            text-shadow: 0 0 20px #0ff;
+            margin-bottom: 10px;
+        }
+        
+        .activity-intensity {
+            height: 30px;
+            background: rgba(0,255,255,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .intensity-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0f0, #ff0, #f00);
+            border-radius: 15px;
+            transition: width 0.5s ease;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="grid-overlay"></div>
+    
+    <div class="header">
+        <h1>BIOMETRIC NEURAL DASHBOARD</h1>
+        <p style="color: #888; font-size: 12px; margin-top: 10px; letter-spacing: 2px;">
+            REAL-TIME VITAL MONITORING • QUANTUM HEALTH ANALYSIS
+        </p>
+    </div>
+    
+    <div class="dashboard">
+        <!-- Core Vitals Panel -->
+        <div class="panel">
+            <div class="panel-title">Core Vital Signs</div>
+            
+            <div class="vital-grid">
+                <div class="vital-item" style="--vital-color: #ff4444;">
+                    <div class="vital-label">Heart Rate</div>
+                    <div class="vital-value" id="heartRate">72<span class="vital-unit">bpm</span></div>
+                    <div class="vital-trend" id="heartTrend">↔</div>
+                </div>
+                
+                <div class="vital-item" style="--vital-color: #ff00ff;">
+                    <div class="vital-label">Blood Pressure</div>
+                    <div class="vital-value" id="bloodPressure" style="font-size: 20px;">120/80</div>
+                    <div class="vital-trend" id="bpTrend">↔</div>
+                </div>
+                
+                <div class="vital-item" style="--vital-color: #00ffff;">
+                    <div class="vital-label">Oxygen Saturation</div>
+                    <div class="vital-value" id="oxygen">98<span class="vital-unit">%</span></div>
+                    <div class="vital-trend" id="oxygenTrend">↔</div>
+                </div>
+                
+                <div class="vital-item" style="--vital-color: #ffff00;">
+                    <div class="vital-label">Respiration</div>
+                    <div class="vital-value" id="respiration">16<span class="vital-unit">rpm</span></div>
+                    <div class="vital-trend" id="respTrend">↔</div>
+                </div>
+            </div>
+            
+            <div class="heart-rate-display">
+                <div class="heartbeat-line"></div>
+                <div class="heartbeat-line" style="animation-delay: 0.2s;"></div>
+                <div class="heartbeat-line" style="animation-delay: 0.4s;"></div>
+                <div class="heartbeat-line" style="animation-delay: 0.6s;"></div>
+                <div class="heartbeat-line" style="animation-delay: 0.8s;"></div>
+            </div>
+        </div>
+        
+        <!-- Temperature & Metabolic Panel -->
+        <div class="panel">
+            <div class="panel-title">Temperature & Metabolism</div>
+            
+            <div class="temp-gauge">
+                <div class="temp-circle">
+                    <div class="temp-fill"></div>
+                    <div class="temp-center">
+                        <div class="temp-value-large" id="temperature">98.6°</div>
+                        <div style="color: #888; font-size: 12px;">FAHRENHEIT</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="vital-grid">
+                <div class="vital-item" style="--vital-color: #ff9900;">
+                    <div class="vital-label">Blood Glucose</div>
+                    <div class="vital-value" id="glucose">95<span class="vital-unit">mg/dL</span></div>
+                </div>
+                
+                <div class="vital-item" style="--vital-color: #00ff00;">
+                    <div class="vital-label">Hydration</div>
+                    <div class="vital-value" id="hydration">75<span class="vital-unit">%</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Brain Activity Panel -->
+        <div class="panel">
+            <div class="panel-title">Neural Activity</div>
+            
+            <div class="brainwave-container">
+                <div class="wave-bar">
+                    <div class="wave-label">
+                        <span>DELTA (0.5-4 Hz)</span>
+                        <span id="deltaValue">20%</span>
+                    </div>
+                    <div class="wave-progress">
+                        <div class="wave-fill" id="deltaBar" style="width: 20%; --wave-color: #ff00ff;"></div>
+                    </div>
+                </div>
+                
+                <div class="wave-bar">
+                    <div class="wave-label">
+                        <span>THETA (4-8 Hz)</span>
+                        <span id="thetaValue">15%</span>
+                    </div>
+                    <div class="wave-progress">
+                        <div class="wave-fill" id="thetaBar" style="width: 15%; --wave-color: #0000ff;"></div>
+                    </div>
+                </div>
+                
+                <div class="wave-bar">
+                    <div class="wave-label">
+                        <span>ALPHA (8-13 Hz)</span>
+                        <span id="alphaValue">30%</span>
+                    </div>
+                    <div class="wave-progress">
+                        <div class="wave-fill" id="alphaBar" style="width: 30%; --wave-color: #00ffff;"></div>
+                    </div>
+                </div>
+                
+                <div class="wave-bar">
+                    <div class="wave-label">
+                        <span>BETA (13-30 Hz)</span>
+                        <span id="betaValue">25%</span>
+                    </div>
+                    <div class="wave-progress">
+                        <div class="wave-fill" id="betaBar" style="width: 25%; --wave-color: #00ff00;"></div>
+                    </div>
+                </div>
+                
+                <div class="wave-bar">
+                    <div class="wave-label">
+                        <span>GAMMA (30-100 Hz)</span>
+                        <span id="gammaValue">10%</span>
+                    </div>
+                    <div class="wave-progress">
+                        <div class="wave-fill" id="gammaBar" style="width: 10%; --wave-color: #ffff00;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Health Score Panel -->
+        <div class="panel">
+            <div class="panel-title">Overall Health Score</div>
+            
+            <div class="health-score">
+                <div class="score-ring"></div>
+                <div class="score-fill" style="--score: 85;"></div>
+                <div class="score-center">
+                    <div class="score-value" id="healthScore">85</div>
+                    <div class="score-label">Health Score</div>
+                </div>
+            </div>
+            
+            <div class="vital-grid">
+                <div class="vital-item" style="--vital-color: #ff6600;">
+                    <div class="vital-label">Stress Level</div>
+                    <div class="vital-value" id="stress">35<span class="vital-unit">%</span></div>
+                </div>
+                
+                <div class="vital-item" style="--vital-color: #9900ff;">
+                    <div class="vital-label">Fatigue</div>
+                    <div class="vital-value" id="fatigue">25<span class="vital-unit">%</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Activity Monitor Panel -->
+        <div class="panel">
+            <div class="panel-title">Activity Monitor</div>
+            
+            <div class="activity-display">
+                <div class="activity-state" id="activityState">RESTING</div>
+                <div class="activity-intensity">
+                    <div class="intensity-fill" id="intensityBar" style="width: 20%;"></div>
+                </div>
+                <div style="margin-top: 10px; color: #888; font-size: 12px;">
+                    INTENSITY: <span id="intensityValue" style="color: #0ff;">20%</span>
+                </div>
+            </div>
+            
+            <div class="vital-grid">
+                <div class="vital-item" style="--vital-color: #ff00ff;">
+                    <div class="vital-label">Cortisol</div>
+                    <div class="vital-value" id="cortisol">15<span class="vital-unit">μg/dL</span></div>
+                </div>
+                
+                <div class="vital-item" style="--vital-color: #00ff00;">
+                    <div class="vital-label">Recovery Rate</div>
+                    <div class="vital-value" id="recovery">75<span class="vital-unit">%</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Alerts Panel -->
+        <div class="panel">
+            <div class="panel-title">System Alerts</div>
+            
+            <div class="alerts-container" id="alertsContainer">
+                <div class="alert-item">
+                    <div class="alert-icon">ℹ️</div>
+                    <div class="alert-text">All systems normal - monitoring active</div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <div style="color: #888; font-size: 11px; text-transform: uppercase; margin-bottom: 10px;">
+                    Recommendations
+                </div>
+                <div id="recommendations" style="font-size: 12px; line-height: 1.6;">
+                    • Maintain current hydration levels<br>
+                    • Continue regular activity patterns
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module">
+        import BiometricSystem from './src/BiometricSystem.js';
+        
+        // Initialize biometric system
+        const biometrics = new BiometricSystem();
+        
+        // Update display functions
+        function updateDisplay() {
+            const vitals = biometrics.getVitalsSnapshot();
+            const brainwaves = biometrics.getBrainwaveData();
+            const health = biometrics.getHealthMetrics();
+            const alerts = biometrics.getAlerts();
+            const recommendations = biometrics.getRecommendations();
+            
+            // Update core vitals
+            document.getElementById('heartRate').innerHTML = `${vitals.heartRate}<span class="vital-unit">bpm</span>`;
+            document.getElementById('bloodPressure').textContent = vitals.bloodPressure;
+            document.getElementById('oxygen').innerHTML = `${vitals.oxygen}<span class="vital-unit">%</span>`;
+            document.getElementById('respiration').innerHTML = `${vitals.respiration}<span class="vital-unit">rpm</span>`;
+            
+            // Update temperature
+            document.getElementById('temperature').textContent = vitals.temperature + '°';
+            
+            // Update metabolic
+            document.getElementById('glucose').innerHTML = `${vitals.glucose}<span class="vital-unit">mg/dL</span>`;
+            document.getElementById('hydration').innerHTML = `${vitals.hydration}<span class="vital-unit">%</span>`;
+            
+            // Update brainwaves
+            const waves = ['delta', 'theta', 'alpha', 'beta', 'gamma'];
+            waves.forEach(wave => {
+                const amplitude = brainwaves[wave].amplitude;
+                document.getElementById(`${wave}Value`).textContent = Math.round(amplitude) + '%';
+                document.getElementById(`${wave}Bar`).style.width = amplitude + '%';
+            });
+            
+            // Update health metrics
+            document.getElementById('healthScore').textContent = vitals.healthScore;
+            document.getElementById('stress').innerHTML = `${vitals.stress}<span class="vital-unit">%</span>`;
+            document.getElementById('fatigue').innerHTML = `${health.fatigueLevel}<span class="vital-unit">%</span>`;
+            document.getElementById('cortisol').innerHTML = `${Math.round(biometrics.vitals.cortisol.value)}<span class="vital-unit">μg/dL</span>`;
+            document.getElementById('recovery').innerHTML = `${health.recoveryRate}<span class="vital-unit">%</span>`;
+            
+            // Update activity
+            document.getElementById('activityState').textContent = vitals.activity.toUpperCase();
+            document.getElementById('intensityBar').style.width = biometrics.activity.intensity + '%';
+            document.getElementById('intensityValue').textContent = Math.round(biometrics.activity.intensity) + '%';
+            
+            // Update activity state color
+            const activityColors = {
+                'resting': '#00ff00',
+                'active': '#00ffff',
+                'stressed': '#ff6600',
+                'exercising': '#ff00ff',
+                'sleeping': '#0066ff'
+            };
+            document.getElementById('activityState').style.color = activityColors[vitals.activity] || '#0ff';
+            
+            // Update trends
+            updateTrend('heartTrend', biometrics.vitals.heartRate.trend);
+            updateTrend('bpTrend', biometrics.vitals.bloodPressure.trend);
+            updateTrend('oxygenTrend', biometrics.vitals.oxygenSaturation.trend);
+            updateTrend('respTrend', biometrics.vitals.respirationRate.trend);
+            
+            // Update alerts
+            updateAlerts(alerts);
+            
+            // Update recommendations
+            updateRecommendations(recommendations);
+            
+            // Update health score ring
+            const scoreRing = document.querySelector('.score-fill');
+            scoreRing.style.setProperty('--score', vitals.healthScore);
+        }
+        
+        function updateTrend(elementId, trend) {
+            const element = document.getElementById(elementId);
+            if (trend === 'rising') {
+                element.textContent = '↑';
+                element.style.color = '#ff6600';
+            } else if (trend === 'falling') {
+                element.textContent = '↓';
+                element.style.color = '#00ff00';
+            } else {
+                element.textContent = '↔';
+                element.style.color = '#0ff';
+            }
+        }
+        
+        function updateAlerts(alerts) {
+            const container = document.getElementById('alertsContainer');
+            
+            if (alerts.length === 0) {
+                container.innerHTML = `
+                    <div class="alert-item" style="background: rgba(0,255,0,0.1); border-color: rgba(0,255,0,0.3);">
+                        <div class="alert-icon">✓</div>
+                        <div class="alert-text">All systems normal - monitoring active</div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = alerts.map(alert => `
+                    <div class="alert-item">
+                        <div class="alert-icon">${alert.type === 'warning' ? '⚠️' : 'ℹ️'}</div>
+                        <div class="alert-text">${alert.message} (${alert.value})</div>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        function updateRecommendations(recommendations) {
+            const container = document.getElementById('recommendations');
+            
+            if (recommendations.length === 0) {
+                container.innerHTML = '• All parameters within normal range<br>• Continue current health routine';
+            } else {
+                container.innerHTML = recommendations.map(rec => `• ${rec}`).join('<br>');
+            }
+        }
+        
+        // Update display every second
+        setInterval(updateDisplay, 1000);
+        
+        // Initial update
+        updateDisplay();
+        
+        // Add keyboard shortcuts for testing
+        document.addEventListener('keypress', (e) => {
+            switch(e.key) {
+                case 'e':
+                    biometrics.simulateExercise();
+                    console.log('Simulating exercise');
+                    break;
+                case 's':
+                    biometrics.simulateStress();
+                    console.log('Simulating stress');
+                    break;
+                case 'r':
+                    biometrics.simulateRest();
+                    console.log('Simulating rest');
+                    break;
+            }
+        });
+        
+        // Log system ready
+        console.log('Biometric Dashboard Active');
+        console.log('Press E for exercise, S for stress, R for rest');
+    </script>
+</body>
+</html>

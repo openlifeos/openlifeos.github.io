@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Browser Test Suite</title>
+</head>
+<body>
+    <h1>Testing Digital Human System...</h1>
+    <div id="results"></div>
+    
+    <script type="module">
+        const results = document.getElementById('results');
+        let passCount = 0;
+        let failCount = 0;
+        
+        function log(message, success = true) {
+            const div = document.createElement('div');
+            div.style.color = success ? 'green' : 'red';
+            div.textContent = (success ? '✅ ' : '❌ ') + message;
+            results.appendChild(div);
+            if (success) passCount++; else failCount++;
+        }
+        
+        async function runTests() {
+            try {
+                // Test 1: Import core modules
+                const { default: DigitalHuman } = await import('./src/core/DigitalHuman.js');
+                log('DigitalHuman module loaded');
+                
+                const { default: Memory } = await import('./src/core/Memory.js');
+                log('Memory module loaded');
+                
+                const { default: Personality } = await import('./src/core/Personality.js');
+                log('Personality module loaded');
+                
+                const { default: Emotions } = await import('./src/core/Emotions.js');
+                log('Emotions module loaded');
+                
+                const { default: ModuleRegistry } = await import('./src/core/ModuleRegistry.js');
+                log('ModuleRegistry loaded');
+                
+                // Test 2: Create instances
+                const registry = new ModuleRegistry();
+                log('Registry created');
+                
+                const human = new DigitalHuman({ name: 'Test' });
+                log('Digital Human created');
+                
+                // Test 3: Test interaction
+                const response = await human.interact("Hello");
+                if (response && response.length > 0) {
+                    log('Interaction successful');
+                } else {
+                    log('Interaction failed', false);
+                }
+                
+                // Test 4: Test memory
+                const memory = new Memory();
+                memory.store({ type: 'episodic', content: 'test' });
+                log('Memory system working');
+                
+                // Test 5: Test emotions
+                const emotions = new Emotions();
+                const state = emotions.getState();
+                if (state.dominant) {
+                    log('Emotion system working');
+                } else {
+                    log('Emotion system failed', false);
+                }
+                
+                // Summary
+                const total = passCount + failCount;
+                const successRate = (passCount / total * 100).toFixed(1);
+                
+                const summary = document.createElement('h2');
+                summary.innerHTML = `<br>Test Results: ${passCount}/${total} passed (${successRate}% success rate)`;
+                summary.style.color = failCount === 0 ? 'green' : 'orange';
+                results.appendChild(summary);
+                
+                // Cleanup
+                human.destroy();
+                emotions.destroy();
+                memory.destroy();
+                
+            } catch (error) {
+                log(`Fatal error: ${error.message}`, false);
+                console.error(error);
+            }
+        }
+        
+        // Run tests
+        runTests();
+    </script>
+</body>
+</html>

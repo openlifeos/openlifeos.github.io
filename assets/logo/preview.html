@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenLifeOS Logo Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 40px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #1a1a1a;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+        
+        .preview-section {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .preview-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 20px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+        
+        .logo-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .light-bg {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .dark-bg {
+            background: #1a1a1a;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .size-demo {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .size-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .specs {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            color: #444;
+        }
+        
+        .specs span {
+            color: #667eea;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>OpenLifeOS Logo System</h1>
+        <p class="subtitle">Complete logo preview and testing</p>
+        
+        <!-- Primary Logo -->
+        <div class="preview-section">
+            <h2>Primary Logo</h2>
+            <div class="logo-display light-bg">
+                <img src="openlifeos-logo.svg" alt="OpenLifeOS Logo" />
+            </div>
+            <div class="specs">
+                Dimensions: <span>320×80px</span> | 
+                Format: <span>SVG</span> | 
+                Usage: <span>Headers, Documentation, Marketing</span>
+            </div>
+        </div>
+        
+        <!-- Dark Mode -->
+        <div class="preview-section">
+            <h2>Dark Mode Variant</h2>
+            <div class="logo-display dark-bg">
+                <img src="openlifeos-logo-dark.svg" alt="OpenLifeOS Logo Dark" />
+            </div>
+        </div>
+        
+        <!-- Different Backgrounds -->
+        <div class="preview-section">
+            <h2>Background Tests</h2>
+            <div class="grid">
+                <div>
+                    <div class="logo-display light-bg">
+                        <img src="openlifeos-logo.svg" alt="Logo" height="60" />
+                    </div>
+                    <p class="size-label">White Background</p>
+                </div>
+                <div>
+                    <div class="logo-display" style="background: #f5f5f5;">
+                        <img src="openlifeos-logo.svg" alt="Logo" height="60" />
+                    </div>
+                    <p class="size-label">Light Gray</p>
+                </div>
+                <div>
+                    <div class="logo-display gradient-bg">
+                        <img src="openlifeos-logo-dark.svg" alt="Logo" height="60" />
+                    </div>
+                    <p class="size-label">Gradient Background</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Size Variations -->
+        <div class="preview-section">
+            <h2>Size Variations</h2>
+            <div class="size-demo">
+                <div>
+                    <img src="openlifeos-logo.svg" alt="Logo" height="40" />
+                    <p class="size-label">Small (40px)</p>
+                </div>
+                <div>
+                    <img src="openlifeos-logo.svg" alt="Logo" height="60" />
+                    <p class="size-label">Medium (60px)</p>
+                </div>
+                <div>
+                    <img src="openlifeos-logo.svg" alt="Logo" height="80" />
+                    <p class="size-label">Large (80px)</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Icon Only -->
+        <div class="preview-section">
+            <h2>Icon Variations</h2>
+            <div class="grid">
+                <div>
+                    <div class="logo-display light-bg">
+                        <img src="openlifeos-icon.svg" alt="Icon" width="80" />
+                    </div>
+                    <p class="size-label">Icon Only (80×80)</p>
+                </div>
+                <div>
+                    <div class="logo-display light-bg">
+                        <img src="openlifeos-logo-vertical.svg" alt="Vertical" height="150" />
+                    </div>
+                    <p class="size-label">Vertical Layout</p>
+                </div>
+                <div>
+                    <div class="logo-display light-bg">
+                        <img src="openlifeos-logo-horizontal.svg" alt="Horizontal" height="60" />
+                    </div>
+                    <p class="size-label">Extended Horizontal</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Readability Test -->
+        <div class="preview-section">
+            <h2>Text Readability Test</h2>
+            <div style="background: white; padding: 20px; border-radius: 8px;">
+                <p style="margin-bottom: 15px; color: #666;">
+                    Testing logo alongside text content to ensure readability:
+                </p>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <img src="openlifeos-logo.svg" alt="Logo" height="50" />
+                    <p style="color: #333; line-height: 1.6;">
+                        OpenLifeOS is the world's first open-source platform for building personal AI companions 
+                        that truly understand and grow with users. Our mission is to democratize personal AI through 
+                        an open, extensible, and user-controlled platform.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,2276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenLifeOS - Complete AI Life Companion | AugHacks MIT 2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        :root {
+            --primary-green: #00ff00;
+            --primary-cyan: #00ffff;
+            --primary-gold: #ffd700;
+            --primary-red: #ff4444;
+            --primary-blue: #0088ff;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #050505;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255,255,255,0.8);
+        }
+        
+        body {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+        }
+        
+        /* Matrix Background */
+        #matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.3;
+        }
+        
+        /* Quantum Grid Overlay */
+        .quantum-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0,255,0,0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,0,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 2;
+            opacity: 0.3;
+            animation: gridMove 20s linear infinite;
+        }
+        
+        @keyframes gridMove {
+            to { transform: translate(50px, 50px); }
+        }
+        
+        /* Main Container */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Top Bar */
+        .top-bar {
+            background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 100%);
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid var(--primary-green);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 100;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: logoGlow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes logoGlow {
+            from { filter: drop-shadow(0 0 10px rgba(0,255,0,0.5)); }
+            to { filter: drop-shadow(0 0 20px rgba(0,255,0,0.8)); }
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 15px;
+            background: rgba(0,255,0,0.1);
+            border: 1px solid var(--primary-green);
+            border-radius: 20px;
+            font-size: 12px;
+        }
+        
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--primary-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.5); }
+        }
+        
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 5px;
+            flex: 1;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .nav-tab {
+            padding: 8px 18px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        
+        .nav-tab:hover {
+            background: rgba(0,255,0,0.1);
+            border-color: var(--primary-green);
+            transform: translateY(-2px);
+        }
+        
+        .nav-tab.active {
+            background: linear-gradient(135deg, rgba(0,255,0,0.2), rgba(0,255,0,0.1));
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+            box-shadow: 0 0 15px rgba(0,255,0,0.3);
+        }
+        
+        /* Stats Display */
+        .stats-display {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary-green);
+            font-family: 'Courier New', monospace;
+        }
+        
+        .stat-label {
+            font-size: 9px;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            animation: pageIn 0.5s;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        @keyframes pageIn {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Scrollbar Styling */
+        .page::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .page::-webkit-scrollbar-track {
+            background: rgba(0,255,0,0.1);
+        }
+        
+        .page::-webkit-scrollbar-thumb {
+            background: var(--primary-green);
+            border-radius: 4px;
+        }
+        
+        /* Dashboard Page */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            height: 100%;
+        }
+        
+        .welcome-section {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(0,255,0,0.05), rgba(0,255,255,0.05));
+            border: 2px solid rgba(0,255,0,0.3);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .welcome-title {
+            font-size: 36px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .welcome-subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+            letter-spacing: 2px;
+        }
+        
+        .feature-card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0,255,0,0.3);
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,255,0,0.3);
+            border-color: var(--primary-green);
+        }
+        
+        .feature-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        .feature-title {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: var(--primary-green);
+        }
+        
+        .feature-description {
+            font-size: 12px;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+        
+        /* Biometrics Page */
+        .biometrics-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto 1fr 1fr;
+            gap: 20px;
+            height: 100%;
+        }
+        
+        .biometric-header {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, rgba(255,0,0,0.05), rgba(255,100,0,0.05));
+            border: 1px solid rgba(255,100,0,0.3);
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        .vital-stat {
+            text-align: center;
+        }
+        
+        .vital-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--primary-green);
+        }
+        
+        .vital-value.warning {
+            color: #ffaa00;
+        }
+        
+        .vital-value.danger {
+            color: var(--primary-red);
+        }
+        
+        .vital-label {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+        
+        .vital-unit {
+            font-size: 14px;
+            opacity: 0.6;
+        }
+        
+        .chart-container {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(0,255,0,0.3);
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .chart-title {
+            font-size: 14px;
+            margin-bottom: 15px;
+            color: var(--primary-green);
+        }
+        
+        .chart {
+            width: 100%;
+            height: 150px;
+            position: relative;
+        }
+        
+        .chart-line {
+            stroke: var(--primary-green);
+            stroke-width: 2;
+            fill: none;
+        }
+        
+        .events-panel {
+            grid-column: 1 / -1;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(0,255,0,0.3);
+            border-radius: 15px;
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .event-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.05);
+            border-left: 3px solid var(--primary-green);
+            border-radius: 5px;
+        }
+        
+        .event-item.warning {
+            border-color: #ffaa00;
+        }
+        
+        .event-item.danger {
+            border-color: var(--primary-red);
+        }
+        
+        .event-time {
+            font-size: 11px;
+            opacity: 0.6;
+        }
+        
+        .event-description {
+            font-size: 13px;
+            margin-top: 5px;
+        }
+        
+        /* Life Planning Page */
+        .planning-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            height: 100%;
+        }
+        
+        .planning-section {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(0,255,0,0.3);
+            border-radius: 15px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--primary-green);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .add-button {
+            padding: 5px 12px;
+            background: rgba(0,255,0,0.2);
+            border: 1px solid var(--primary-green);
+            border-radius: 15px;
+            color: var(--primary-green);
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        
+        .add-button:hover {
+            background: var(--primary-green);
+            color: var(--bg-dark);
+        }
+        
+        .todo-item {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        
+        .todo-item:hover {
+            background: rgba(255,255,255,0.08);
+        }
+        
+        .todo-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary-green);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .todo-checkbox.checked {
+            background: var(--primary-green);
+        }
+        
+        .todo-text {
+            flex: 1;
+            font-size: 14px;
+        }
+        
+        .todo-text.completed {
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+        
+        .todo-priority {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+        
+        .priority-high {
+            background: rgba(255,0,0,0.2);
+            color: #ff6666;
+        }
+        
+        .priority-medium {
+            background: rgba(255,200,0,0.2);
+            color: #ffcc00;
+        }
+        
+        .priority-low {
+            background: rgba(0,255,0,0.2);
+            color: var(--primary-green);
+        }
+        
+        .schedule-timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline-line {
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--primary-green);
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+        
+        .timeline-dot {
+            position: absolute;
+            left: -25px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            background: var(--primary-green);
+            border: 2px solid var(--bg-dark);
+            border-radius: 50%;
+        }
+        
+        .timeline-time {
+            font-size: 12px;
+            color: var(--primary-green);
+            margin-bottom: 5px;
+        }
+        
+        .timeline-content {
+            font-size: 14px;
+        }
+        
+        /* Knowledge Page */
+        .knowledge-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .knowledge-package {
+            background: linear-gradient(135deg, rgba(0,255,0,0.05), rgba(0,255,0,0.02));
+            border: 2px solid rgba(0,255,0,0.3);
+            border-radius: 20px;
+            padding: 25px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .knowledge-package:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,255,0,0.3);
+            border-color: var(--primary-green);
+        }
+        
+        .package-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .package-icon {
+            font-size: 48px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .package-info {
+            flex: 1;
+        }
+        
+        .package-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .package-version {
+            display: inline-block;
+            padding: 3px 8px;
+            background: rgba(0,255,0,0.2);
+            border-radius: 10px;
+            font-size: 11px;
+        }
+        
+        .download-button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, rgba(0,255,0,0.2), rgba(0,255,0,0.1));
+            border: 2px solid var(--primary-green);
+            border-radius: 10px;
+            color: var(--primary-green);
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .download-button:hover:not(:disabled) {
+            background: var(--primary-green);
+            color: var(--bg-dark);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0,255,0,0.5);
+        }
+        
+        .download-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .download-button.activated {
+            background: linear-gradient(135deg, var(--primary-gold), #ffed4e);
+            border-color: var(--primary-gold);
+            color: var(--bg-dark);
+        }
+        
+        /* Voice Page */
+        .voice-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 30px;
+        }
+        
+        .voice-visualizer {
+            width: 250px;
+            height: 250px;
+            position: relative;
+            margin-bottom: 30px;
+        }
+        
+        .voice-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,255,0,0.2) 0%, transparent 70%);
+            border: 3px solid var(--primary-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .voice-circle.listening {
+            animation: voicePulse 1.5s infinite;
+            border-color: var(--primary-cyan);
+        }
+        
+        .voice-circle.speaking {
+            animation: voiceSpeak 0.8s infinite;
+            border-color: var(--primary-gold);
+        }
+        
+        @keyframes voicePulse {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(0,255,0,0.3);
+            }
+            50% { 
+                transform: scale(1.1);
+                box-shadow: 0 0 40px rgba(0,255,0,0.5);
+            }
+        }
+        
+        @keyframes voiceSpeak {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.05); }
+            50% { transform: scale(1.1); }
+            75% { transform: scale(1.05); }
+        }
+        
+        .voice-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .voice-button {
+            padding: 12px 25px;
+            background: rgba(0,255,0,0.1);
+            border: 2px solid var(--primary-green);
+            border-radius: 30px;
+            color: var(--primary-green);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .voice-button:hover:not(:disabled) {
+            background: var(--primary-green);
+            color: var(--bg-dark);
+            transform: scale(1.05);
+        }
+        
+        .voice-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .voice-button.active {
+            background: var(--primary-green);
+            color: var(--bg-dark);
+        }
+        
+        .voice-transcript {
+            width: 100%;
+            max-width: 700px;
+            height: 250px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(0,255,0,0.3);
+            border-radius: 15px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .transcript-entry {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+        
+        .transcript-entry.user {
+            background: rgba(0,100,255,0.1);
+            border-left: 3px solid var(--primary-blue);
+        }
+        
+        .transcript-entry.ai {
+            background: rgba(0,255,0,0.1);
+            border-left: 3px solid var(--primary-green);
+        }
+        
+        /* Chat Page */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(0,255,0,0.3);
+            border-radius: 15px;
+            padding: 20px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        
+        .chat-message {
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            animation: messageIn 0.3s;
+        }
+        
+        @keyframes messageIn {
+            from { 
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .chat-message.user {
+            background: rgba(0,100,255,0.1);
+            border-left: 3px solid var(--primary-blue);
+            margin-left: 80px;
+        }
+        
+        .chat-message.ai {
+            background: rgba(0,255,0,0.1);
+            border-left: 3px solid var(--primary-green);
+            margin-right: 80px;
+        }
+        
+        .chat-message.expert {
+            background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.05));
+            border-left: 3px solid var(--primary-gold);
+            box-shadow: 0 0 15px rgba(255,215,0,0.2);
+        }
+        
+        .message-header {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+        
+        .message-content {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 12px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(0,255,0,0.3);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 15px rgba(0,255,0,0.3);
+        }
+        
+        .chat-send {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, rgba(0,255,0,0.2), rgba(0,255,0,0.1));
+            border: 2px solid var(--primary-green);
+            border-radius: 10px;
+            color: var(--primary-green);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .chat-send:hover {
+            background: var(--primary-green);
+            color: var(--bg-dark);
+        }
+        
+        /* Demo Page */
+        .demo-container {
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .demo-title {
+            font-size: 28px;
+            margin-bottom: 30px;
+            color: var(--primary-green);
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .demo-card {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(0,255,0,0.3);
+            border-radius: 15px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .demo-card:hover {
+            transform: scale(1.05);
+            border-color: var(--primary-green);
+            box-shadow: 0 10px 30px rgba(0,255,0,0.3);
+        }
+        
+        .demo-card.special {
+            background: linear-gradient(135deg, rgba(255,0,0,0.1), rgba(255,100,0,0.1));
+            border-color: #ff6600;
+        }
+        
+        .demo-card.running {
+            animation: demoRunning 1s infinite;
+        }
+        
+        @keyframes demoRunning {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        .demo-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        .demo-name {
+            font-size: 16px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        .demo-description {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        /* Download Overlay */
+        .download-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.98);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .download-overlay.active {
+            display: flex;
+        }
+        
+        #matrix-download {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.5;
+        }
+        
+        .download-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+        
+        .download-title {
+            font-size: 36px;
+            margin-bottom: 30px;
+            color: var(--primary-green);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            animation: glow 1s infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(0,255,0,0.5); }
+            to { text-shadow: 0 0 40px rgba(0,255,0,0.8); }
+        }
+        
+        .progress-bar-container {
+            width: 500px;
+            height: 30px;
+            background: rgba(0,255,0,0.1);
+            border: 2px solid var(--primary-green);
+            border-radius: 15px;
+            padding: 3px;
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-green), var(--primary-cyan));
+            border-radius: 12px;
+            width: 0;
+            transition: width 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+        
+        .knowledge-stream {
+            height: 150px;
+            width: 600px;
+            position: relative;
+            overflow: hidden;
+            margin: 20px auto;
+        }
+        
+        .knowledge-line {
+            position: absolute;
+            width: 100%;
+            color: var(--primary-green);
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            opacity: 0.8;
+            animation: flowUp 3s linear forwards;
+        }
+        
+        @keyframes flowUp {
+            from { 
+                transform: translateY(150px);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(-30px);
+                opacity: 1;
+            }
+        }
+        
+        /* Bottom Status Bar */
+        .bottom-bar {
+            background: linear-gradient(0deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 100%);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0,255,0,0.3);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .active-packages {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+        }
+        
+        .package-badge {
+            padding: 4px 12px;
+            background: rgba(0,255,0,0.1);
+            border: 1px solid var(--primary-green);
+            border-radius: 15px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .package-badge.expert {
+            background: rgba(255,215,0,0.1);
+            border-color: var(--primary-gold);
+            color: var(--primary-gold);
+        }
+        
+        .system-info {
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, rgba(0,255,0,0.2), rgba(0,255,0,0.1));
+            border: 2px solid var(--primary-green);
+            border-radius: 10px;
+            color: var(--primary-green);
+            font-size: 14px;
+            z-index: 200;
+            animation: slideIn 0.5s;
+            display: none;
+        }
+        
+        .notification.show {
+            display: block;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(400px); }
+            to { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Matrix Background -->
+    <canvas id="matrix-bg"></canvas>
+    
+    <!-- Quantum Grid -->
+    <div class="quantum-grid"></div>
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="logo-section">
+                <div class="logo">LIFE OS</div>
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span id="system-status">ONLINE</span>
+                </div>
+            </div>
+            
+            <div class="nav-tabs">
+                <div class="nav-tab active" onclick="switchPage('dashboard')">
+                    <span>🏠 Dashboard</span>
+                </div>
+                <div class="nav-tab" onclick="switchPage('biometrics')">
+                    <span>💓 Biometrics</span>
+                </div>
+                <div class="nav-tab" onclick="switchPage('planning')">
+                    <span>📋 Life Plan</span>
+                </div>
+                <div class="nav-tab" onclick="switchPage('knowledge')">
+                    <span>📦 Knowledge</span>
+                </div>
+                <div class="nav-tab" onclick="switchPage('voice')">
+                    <span>🎤 Voice</span>
+                </div>
+                <div class="nav-tab" onclick="switchPage('chat')">
+                    <span>💬 Chat</span>
+                </div>
+                <div class="nav-tab" onclick="switchPage('demo')">
+                    <span>🎮 Demos</span>
+                </div>
+            </div>
+            
+            <div class="stats-display">
+                <div class="stat-item">
+                    <div class="stat-value" id="knowledge-nodes">0</div>
+                    <div class="stat-label">Nodes</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="response-time">0ms</div>
+                    <div class="stat-label">Latency</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Dashboard Page -->
+            <div class="page active" id="dashboard-page">
+                <div class="dashboard">
+                    <div class="welcome-section">
+                        <h1 class="welcome-title">Welcome to OpenLifeOS</h1>
+                        <p class="welcome-subtitle">Not an assistant. Another you.</p>
+                    </div>
+                    
+                    <div class="feature-card" onclick="switchPage('knowledge')">
+                        <div class="feature-icon">🧠</div>
+                        <div class="feature-title">Matrix Knowledge</div>
+                        <div class="feature-description">Download expertise in 3 seconds</div>
+                    </div>
+                    
+                    <div class="feature-card" onclick="switchPage('biometrics')">
+                        <div class="feature-icon">💓</div>
+                        <div class="feature-title">Health Monitor</div>
+                        <div class="feature-description">Real-time vital signs tracking</div>
+                    </div>
+                    
+                    <div class="feature-card" onclick="switchPage('planning')">
+                        <div class="feature-icon">📋</div>
+                        <div class="feature-title">Life Planning</div>
+                        <div class="feature-description">Smart todo and scheduling</div>
+                    </div>
+                    
+                    <div class="feature-card" onclick="switchPage('voice')">
+                        <div class="feature-icon">🎙️</div>
+                        <div class="feature-title">Voice AI</div>
+                        <div class="feature-description">Natural conversation</div>
+                    </div>
+                    
+                    <div class="feature-card" onclick="switchPage('chat')">
+                        <div class="feature-icon">💭</div>
+                        <div class="feature-title">Expert Chat</div>
+                        <div class="feature-description">Professional consultation</div>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🧬</div>
+                        <div class="feature-title">Memory System</div>
+                        <div class="feature-description">9-layer human memory</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Biometrics Page -->
+            <div class="page" id="biometrics-page">
+                <div class="biometrics-container">
+                    <div class="biometric-header">
+                        <div class="vital-stat">
+                            <div class="vital-value" id="heart-rate">72</div>
+                            <div class="vital-label">Heart Rate <span class="vital-unit">bpm</span></div>
+                        </div>
+                        <div class="vital-stat">
+                            <div class="vital-value" id="blood-oxygen">98</div>
+                            <div class="vital-label">SpO2 <span class="vital-unit">%</span></div>
+                        </div>
+                        <div class="vital-stat">
+                            <div class="vital-value warning" id="stress-level">65</div>
+                            <div class="vital-label">Stress <span class="vital-unit">%</span></div>
+                        </div>
+                        <div class="vital-stat">
+                            <div class="vital-value" id="temp">98.6</div>
+                            <div class="vital-label">Temp <span class="vital-unit">°F</span></div>
+                        </div>
+                        <div class="vital-stat">
+                            <div class="vital-value" id="hrv">45</div>
+                            <div class="vital-label">HRV <span class="vital-unit">ms</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-title">Heart Rate Trend (24h)</div>
+                        <svg class="chart" id="heart-chart">
+                            <polyline class="chart-line" points="10,100 50,80 100,90 150,70 200,75 250,85 300,72" />
+                        </svg>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-title">Stress Pattern</div>
+                        <svg class="chart" id="stress-chart">
+                            <polyline class="chart-line" points="10,120 50,100 100,110 150,130 200,90 250,95 300,85" />
+                        </svg>
+                    </div>
+                    
+                    <div class="events-panel">
+                        <div class="section-title">Health Events</div>
+                        <div class="event-item warning">
+                            <div class="event-time">10:32 AM</div>
+                            <div class="event-description">Elevated stress detected - Recommended 5-min breathing exercise</div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-time">9:15 AM</div>
+                            <div class="event-description">Morning workout completed - 320 calories burned</div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-time">7:30 AM</div>
+                            <div class="event-description">Sleep quality: Good - 7.5 hours, 85% efficiency</div>
+                        </div>
+                        <div class="event-item danger">
+                            <div class="event-time">Yesterday 3:00 PM</div>
+                            <div class="event-description">Irregular heart rhythm detected - Monitor recommended</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Life Planning Page -->
+            <div class="page" id="planning-page">
+                <div class="planning-container">
+                    <div class="planning-section">
+                        <div class="section-title">
+                            Today's Tasks
+                            <button class="add-button" onclick="addTodo()">+ Add</button>
+                        </div>
+                        <div id="todo-list">
+                            <div class="todo-item">
+                                <div class="todo-checkbox" onclick="toggleTodo(this)"></div>
+                                <div class="todo-text">Prepare AugHacks MIT presentation</div>
+                                <div class="todo-priority priority-high">High</div>
+                            </div>
+                            <div class="todo-item">
+                                <div class="todo-checkbox" onclick="toggleTodo(this)"></div>
+                                <div class="todo-text">Test voice integration with API keys</div>
+                                <div class="todo-priority priority-high">High</div>
+                            </div>
+                            <div class="todo-item">
+                                <div class="todo-checkbox checked" onclick="toggleTodo(this)"></div>
+                                <div class="todo-text completed">Complete knowledge package demos</div>
+                                <div class="todo-priority priority-medium">Medium</div>
+                            </div>
+                            <div class="todo-item">
+                                <div class="todo-checkbox" onclick="toggleTodo(this)"></div>
+                                <div class="todo-text">Team sync meeting at 2 PM</div>
+                                <div class="todo-priority priority-medium">Medium</div>
+                            </div>
+                            <div class="todo-item">
+                                <div class="todo-checkbox" onclick="toggleTodo(this)"></div>
+                                <div class="todo-text">Review competition rules</div>
+                                <div class="todo-priority priority-low">Low</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="planning-section">
+                        <div class="section-title">Schedule</div>
+                        <div class="schedule-timeline">
+                            <div class="timeline-line"></div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-time">9:00 AM</div>
+                                <div class="timeline-content">Morning standup - Team sync</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-time">10:30 AM</div>
+                                <div class="timeline-content">Demo practice session</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-time">2:00 PM</div>
+                                <div class="timeline-content">AugHacks strategy meeting</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-time">4:00 PM</div>
+                                <div class="timeline-content">Code review and optimization</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-time">6:00 PM</div>
+                                <div class="timeline-content">Final presentation rehearsal</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Knowledge Page -->
+            <div class="page" id="knowledge-page">
+                <div class="knowledge-container">
+                    <div class="knowledge-package">
+                        <div class="package-header">
+                            <div class="package-icon">⚖️</div>
+                            <div class="package-info">
+                                <div class="package-name">Legal Expert</div>
+                                <span class="package-version">v2.1.0</span>
+                            </div>
+                        </div>
+                        <button class="download-button" id="legal-btn" onclick="downloadPackage('legal')">
+                            DOWNLOAD EXPERTISE
+                        </button>
+                    </div>
+                    
+                    <div class="knowledge-package">
+                        <div class="package-header">
+                            <div class="package-icon">🏥</div>
+                            <div class="package-info">
+                                <div class="package-name">Medical Advisor</div>
+                                <span class="package-version">v3.0.1</span>
+                            </div>
+                        </div>
+                        <button class="download-button" id="medical-btn" onclick="downloadPackage('medical')">
+                            DOWNLOAD EXPERTISE
+                        </button>
+                    </div>
+                    
+                    <div class="knowledge-package">
+                        <div class="package-header">
+                            <div class="package-icon">💻</div>
+                            <div class="package-info">
+                                <div class="package-name">Software Architect</div>
+                                <span class="package-version">v1.8.2</span>
+                            </div>
+                        </div>
+                        <button class="download-button" id="technical-btn" onclick="downloadPackage('technical')">
+                            DOWNLOAD EXPERTISE
+                        </button>
+                    </div>
+                    
+                    <div class="knowledge-package">
+                        <div class="package-header">
+                            <div class="package-icon">📈</div>
+                            <div class="package-info">
+                                <div class="package-name">Financial Advisor</div>
+                                <span class="package-version">v2.0.0</span>
+                            </div>
+                        </div>
+                        <button class="download-button" id="financial-btn" onclick="downloadPackage('financial')">
+                            DOWNLOAD EXPERTISE
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Voice Page -->
+            <div class="page" id="voice-page">
+                <div class="voice-container">
+                    <div class="voice-visualizer">
+                        <div class="voice-circle" id="voice-circle">
+                            🎤
+                        </div>
+                    </div>
+                    
+                    <div class="voice-controls">
+                        <button class="voice-button" id="start-voice" onclick="startVoice()">
+                            <span>▶️</span>
+                            <span>Start Voice</span>
+                        </button>
+                        <button class="voice-button" id="stop-voice" onclick="stopVoice()" disabled>
+                            <span>⏹️</span>
+                            <span>Stop</span>
+                        </button>
+                        <button class="voice-button" onclick="testVoice()">
+                            <span>🔊</span>
+                            <span>Test</span>
+                        </button>
+                    </div>
+                    
+                    <div class="voice-transcript" id="voice-transcript">
+                        <div class="transcript-entry ai">
+                            <strong>OpenLifeOS:</strong> Voice interface ready. Click Start Voice to begin natural conversation.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chat Page -->
+            <div class="page" id="chat-page">
+                <div class="chat-container">
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="chat-message ai">
+                            <div class="message-header">OpenLifeOS - General Mode</div>
+                            <div class="message-content">Hello! I'm OpenLifeOS. Download knowledge packages to unlock expert capabilities, or chat with me about anything.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" id="chat-input" placeholder="Type your message..." onkeypress="handleChatEnter(event)">
+                        <button class="chat-send" onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Demo Page -->
+            <div class="page" id="demo-page">
+                <div class="demo-container">
+                    <h2 class="demo-title">Interactive Demonstrations</h2>
+                    
+                    <div class="demo-grid">
+                        <div class="demo-card" id="demo-legal" onclick="runDemo('legal')">
+                            <div class="demo-icon">⚖️</div>
+                            <div class="demo-name">Legal Contract</div>
+                            <div class="demo-description">Employment contract analysis</div>
+                        </div>
+                        
+                        <div class="demo-card" id="demo-medical" onclick="runDemo('medical')">
+                            <div class="demo-icon">🏥</div>
+                            <div class="demo-name">Medical Analysis</div>
+                            <div class="demo-description">Symptom assessment demo</div>
+                        </div>
+                        
+                        <div class="demo-card" id="demo-technical" onclick="runDemo('technical')">
+                            <div class="demo-icon">💻</div>
+                            <div class="demo-name">Architecture</div>
+                            <div class="demo-description">System design consultation</div>
+                        </div>
+                        
+                        <div class="demo-card special" id="demo-comparison" onclick="runDemo('comparison')">
+                            <div class="demo-icon">⚡</div>
+                            <div class="demo-name">vs ChatGPT</div>
+                            <div class="demo-description">See the difference</div>
+                        </div>
+                        
+                        <div class="demo-card" id="demo-multi" onclick="runDemo('multi')">
+                            <div class="demo-icon">🎯</div>
+                            <div class="demo-name">Multi-Expert</div>
+                            <div class="demo-description">Combined expertise</div>
+                        </div>
+                        
+                        <div class="demo-card" id="demo-wellness" onclick="runDemo('wellness')">
+                            <div class="demo-icon">🧘</div>
+                            <div class="demo-name">Wellness AI</div>
+                            <div class="demo-description">Predictive health</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Bar -->
+        <div class="bottom-bar">
+            <div class="active-packages" id="active-packages">
+                <span style="opacity: 0.6; font-size: 12px;">No active packages</span>
+            </div>
+            
+            <div class="system-info">
+                <span>OpenLifeOS v1.0</span>
+                <span>|</span>
+                <span>AugHacks MIT 2025</span>
+                <span>|</span>
+                <span id="time">00:00:00</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Download Overlay -->
+    <div class="download-overlay" id="download-overlay">
+        <canvas id="matrix-download"></canvas>
+        <div class="download-content">
+            <div class="download-title" id="download-title">DOWNLOADING EXPERTISE</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar"></div>
+                <div class="progress-text" id="progress-text">0%</div>
+            </div>
+            <div class="knowledge-stream" id="knowledge-stream"></div>
+        </div>
+    </div>
+    
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+    
+    <script>
+        // Global State
+        const state = {
+            activePackages: new Set(),
+            isVoiceActive: false,
+            currentPage: 'dashboard',
+            todos: [],
+            biometrics: {
+                heartRate: 72,
+                bloodOxygen: 98,
+                stressLevel: 65,
+                temperature: 98.6,
+                hrv: 45
+            }
+        };
+        
+        // Matrix Background Effect
+        class MatrixRain {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+                
+                this.fontSize = 14;
+                this.columns = Math.floor(this.canvas.width / this.fontSize);
+                this.drops = [];
+                this.chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*()_+-=[]{}|;:,.<>?';
+                
+                for (let i = 0; i < this.columns; i++) {
+                    this.drops[i] = Math.random() * -100;
+                }
+                
+                this.draw();
+            }
+            
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+                this.columns = Math.floor(this.canvas.width / this.fontSize);
+            }
+            
+            draw() {
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.ctx.fillStyle = '#00ff00';
+                this.ctx.font = this.fontSize + 'px monospace';
+                
+                for (let i = 0; i < this.drops.length; i++) {
+                    const char = this.chars[Math.floor(Math.random() * this.chars.length)];
+                    this.ctx.fillText(char, i * this.fontSize, this.drops[i] * this.fontSize);
+                    
+                    if (this.drops[i] * this.fontSize > this.canvas.height && Math.random() > 0.975) {
+                        this.drops[i] = 0;
+                    }
+                    
+                    this.drops[i]++;
+                }
+                
+                requestAnimationFrame(() => this.draw());
+            }
+        }
+        
+        // Initialize Matrix
+        const matrixCanvas = document.getElementById('matrix-bg');
+        new MatrixRain(matrixCanvas);
+        
+        // Page Navigation
+        function switchPage(pageName) {
+            // Update state
+            state.currentPage = pageName;
+            
+            // Update tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.textContent.toLowerCase().includes(pageName.substring(0, 4))) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Update pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(`${pageName}-page`).classList.add('active');
+            
+            // Page-specific initialization
+            if (pageName === 'biometrics') {
+                startBiometricsSimulation();
+            } else if (pageName === 'voice') {
+                initializeVoice();
+            }
+        }
+        
+        // Knowledge Package Download
+        async function downloadPackage(packageType) {
+            const button = document.getElementById(`${packageType}-btn`);
+            if (button.disabled) return;
+            
+            const overlay = document.getElementById('download-overlay');
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const knowledgeStream = document.getElementById('knowledge-stream');
+            const downloadTitle = document.getElementById('download-title');
+            
+            const packages = {
+                legal: {
+                    name: 'Legal Expert',
+                    icon: '⚖️',
+                    messages: [
+                        'Connecting to Harvard Law database...',
+                        'Downloading contract law frameworks...',
+                        'Loading 50,000 case precedents...',
+                        'Importing statutory regulations...',
+                        'Building legal reasoning engine...',
+                        '✓ DOWNLOAD COMPLETE: Legal Expert v2.1.0'
+                    ]
+                },
+                medical: {
+                    name: 'Medical Advisor',
+                    icon: '🏥',
+                    messages: [
+                        'Accessing Johns Hopkins medical database...',
+                        'Downloading diagnostic algorithms...',
+                        'Loading clinical guidelines...',
+                        'Importing treatment protocols...',
+                        'Calibrating symptom analyzer...',
+                        '✓ DOWNLOAD COMPLETE: Medical Advisor v3.0.1'
+                    ]
+                },
+                technical: {
+                    name: 'Software Architect',
+                    icon: '💻',
+                    messages: [
+                        'Fetching architecture patterns...',
+                        'Downloading SOLID principles...',
+                        'Loading microservices patterns...',
+                        'Importing best practices...',
+                        'Building optimization models...',
+                        '✓ DOWNLOAD COMPLETE: Software Architect v1.8.2'
+                    ]
+                },
+                financial: {
+                    name: 'Financial Advisor',
+                    icon: '📈',
+                    messages: [
+                        'Connecting to market databases...',
+                        'Downloading investment strategies...',
+                        'Loading risk assessment models...',
+                        'Importing regulatory frameworks...',
+                        'Calibrating portfolio optimizer...',
+                        '✓ DOWNLOAD COMPLETE: Financial Advisor v2.0.0'
+                    ]
+                }
+            };
+            
+            const packageData = packages[packageType];
+            
+            // Initialize download canvas
+            const downloadCanvas = document.getElementById('matrix-download');
+            const downloadMatrix = new MatrixRain(downloadCanvas);
+            
+            // Show overlay
+            overlay.classList.add('active');
+            downloadTitle.textContent = `DOWNLOADING ${packageData.name.toUpperCase()}`;
+            progressBar.style.width = '0%';
+            progressText.textContent = '0%';
+            knowledgeStream.innerHTML = '';
+            
+            // Disable button
+            button.disabled = true;
+            button.textContent = 'DOWNLOADING...';
+            
+            // Animate download
+            for (let i = 0; i <= 100; i++) {
+                await sleep(30);
+                progressBar.style.width = i + '%';
+                progressText.textContent = i + '%';
+                
+                // Add knowledge messages
+                if (i % 20 === 0) {
+                    const messageIndex = Math.floor(i / 20);
+                    if (packageData.messages[messageIndex]) {
+                        const line = document.createElement('div');
+                        line.className = 'knowledge-line';
+                        line.style.top = Math.random() * 100 + 'px';
+                        line.textContent = packageData.messages[messageIndex];
+                        knowledgeStream.appendChild(line);
+                    }
+                }
+            }
+            
+            await sleep(500);
+            overlay.classList.remove('active');
+            
+            // Mark as active
+            state.activePackages.add(packageType);
+            updateActivePackages();
+            
+            // Update button
+            button.textContent = '✓ ACTIVATED';
+            button.classList.add('activated');
+            button.disabled = false;
+            
+            // Show notification
+            showNotification(`${packageData.icon} ${packageData.name} successfully activated!`);
+            
+            // Add chat message
+            addChatMessage('ai', `${packageData.name} successfully activated! I now have expert-level ${packageType} knowledge. Ask me anything!`, true);
+        }
+        
+        // Update Active Packages Display
+        function updateActivePackages() {
+            const container = document.getElementById('active-packages');
+            if (state.activePackages.size === 0) {
+                container.innerHTML = '<span style="opacity: 0.6; font-size: 12px;">No active packages</span>';
+            } else {
+                const icons = {
+                    legal: '⚖️',
+                    medical: '🏥',
+                    technical: '💻',
+                    financial: '📈'
+                };
+                
+                container.innerHTML = Array.from(state.activePackages).map(pkg => 
+                    `<div class="package-badge expert">${icons[pkg]} ${pkg.charAt(0).toUpperCase() + pkg.slice(1)}</div>`
+                ).join('');
+            }
+        }
+        
+        // Voice Functions
+        function initializeVoice() {
+            // Check for Web Speech API support
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                document.getElementById('voice-transcript').innerHTML += 
+                    '<div class="transcript-entry ai"><strong>System:</strong> Voice not supported in this browser. Please use Chrome.</div>';
+            }
+        }
+        
+        function startVoice() {
+            const circle = document.getElementById('voice-circle');
+            const startBtn = document.getElementById('start-voice');
+            const stopBtn = document.getElementById('stop-voice');
+            
+            state.isVoiceActive = true;
+            circle.classList.add('listening');
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+            
+            // Start speech recognition
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const recognition = new SpeechRecognition();
+                
+                recognition.continuous = true;
+                recognition.interimResults = true;
+                
+                recognition.onresult = (event) => {
+                    const transcript = Array.from(event.results)
+                        .map(result => result[0].transcript)
+                        .join('');
+                    
+                    if (event.results[event.results.length - 1].isFinal) {
+                        addVoiceTranscript('user', transcript);
+                        processVoiceCommand(transcript);
+                    }
+                };
+                
+                recognition.start();
+                window.currentRecognition = recognition;
+            }
+            
+            addVoiceTranscript('ai', 'Listening... Say "download legal expertise" or ask me anything!');
+        }
+        
+        function stopVoice() {
+            const circle = document.getElementById('voice-circle');
+            const startBtn = document.getElementById('start-voice');
+            const stopBtn = document.getElementById('stop-voice');
+            
+            state.isVoiceActive = false;
+            circle.classList.remove('listening', 'speaking');
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+            
+            if (window.currentRecognition) {
+                window.currentRecognition.stop();
+                window.currentRecognition = null;
+            }
+            
+            addVoiceTranscript('ai', 'Voice interaction stopped.');
+        }
+        
+        function testVoice() {
+            const circle = document.getElementById('voice-circle');
+            circle.classList.add('speaking');
+            
+            const utterance = new SpeechSynthesisUtterance('Hello! I am OpenLifeOS, your AI companion. I can download expertise and help you with anything.');
+            utterance.onend = () => {
+                circle.classList.remove('speaking');
+            };
+            
+            speechSynthesis.speak(utterance);
+            addVoiceTranscript('ai', 'Testing voice synthesis...');
+        }
+        
+        function processVoiceCommand(command) {
+            const lower = command.toLowerCase();
+            
+            if (lower.includes('download') && lower.includes('legal')) {
+                downloadPackage('legal');
+                speakResponse('Downloading legal expertise. This will take just 3 seconds.');
+            } else if (lower.includes('download') && lower.includes('medical')) {
+                downloadPackage('medical');
+                speakResponse('Downloading medical expertise. Please wait.');
+            } else {
+                speakResponse('I understood: ' + command);
+            }
+        }
+        
+        function speakResponse(text) {
+            const circle = document.getElementById('voice-circle');
+            circle.classList.add('speaking');
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.onend = () => {
+                circle.classList.remove('speaking');
+                if (state.isVoiceActive) {
+                    circle.classList.add('listening');
+                }
+            };
+            
+            speechSynthesis.speak(utterance);
+        }
+        
+        function addVoiceTranscript(type, text) {
+            const transcript = document.getElementById('voice-transcript');
+            const entry = document.createElement('div');
+            entry.className = `transcript-entry ${type}`;
+            entry.innerHTML = `<strong>${type === 'user' ? 'You' : 'OpenLifeOS'}:</strong> ${text}`;
+            transcript.appendChild(entry);
+            transcript.scrollTop = transcript.scrollHeight;
+        }
+        
+        // Chat Functions
+        function addChatMessage(type, content, isExpert = false) {
+            const messagesContainer = document.getElementById('chat-messages');
+            const message = document.createElement('div');
+            message.className = `chat-message ${type}${isExpert ? ' expert' : ''}`;
+            
+            const header = document.createElement('div');
+            header.className = 'message-header';
+            header.textContent = type === 'user' ? 'You' : `OpenLifeOS - ${isExpert ? 'Expert Mode' : 'General Mode'}`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = content;
+            
+            message.appendChild(header);
+            message.appendChild(contentDiv);
+            messagesContainer.appendChild(message);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            addChatMessage('user', message);
+            input.value = '';
+            
+            // Generate response
+            setTimeout(() => {
+                const response = generateResponse(message);
+                addChatMessage('ai', response.content, response.isExpert);
+            }, 500);
+        }
+        
+        function handleChatEnter(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        function generateResponse(message) {
+            const lower = message.toLowerCase();
+            
+            // Check for legal questions
+            if (lower.includes('legal') || lower.includes('contract') || lower.includes('law')) {
+                if (state.activePackages.has('legal')) {
+                    return {
+                        content: "As your legal expert, I can analyze contracts, assess risks, ensure compliance, and provide comprehensive legal guidance. What specific legal matter would you like me to examine?",
+                        isExpert: true
+                    };
+                } else {
+                    return {
+                        content: "I notice you're asking about legal matters. Download the Legal Expert package to unlock professional legal analysis capabilities.",
+                        isExpert: false
+                    };
+                }
+            }
+            
+            // Check for medical questions
+            if (lower.includes('health') || lower.includes('medical') || lower.includes('symptom')) {
+                if (state.activePackages.has('medical')) {
+                    return {
+                        content: "As your medical advisor, I can analyze symptoms, suggest treatment options, assess health risks, and provide evidence-based medical guidance. What health concern can I help you with?",
+                        isExpert: true
+                    };
+                } else {
+                    return {
+                        content: "For medical expertise, please download the Medical Advisor package first.",
+                        isExpert: false
+                    };
+                }
+            }
+            
+            // Default response
+            return {
+                content: "I'm here to help! Try downloading a knowledge package to unlock expert capabilities, or ask me anything in general mode.",
+                isExpert: false
+            };
+        }
+        
+        // Demo Functions
+        async function runDemo(demoType) {
+            const demoCard = document.getElementById(`demo-${demoType}`);
+            demoCard.classList.add('running');
+            
+            // Switch to chat page
+            switchPage('chat');
+            
+            // Clear chat
+            document.getElementById('chat-messages').innerHTML = '';
+            
+            const demos = {
+                legal: async () => {
+                    addChatMessage('user', "I need help reviewing my employment contract. There's a 5-year non-compete clause.");
+                    
+                    await sleep(1000);
+                    
+                    if (!state.activePackages.has('legal')) {
+                        addChatMessage('ai', "Let me download legal expertise to properly analyze your contract...");
+                        await downloadPackage('legal');
+                    }
+                    
+                    await sleep(500);
+                    
+                    addChatMessage('ai', `CONTRACT ANALYSIS COMPLETE ✅
+                    
+I've identified 7 critical issues in your employment agreement:
+
+1. NON-COMPETE CLAUSE (5 years) - EXCESSIVE
+   • Industry standard: 12 months
+   • Likely unenforceable in court
+   
+2. GEOGRAPHIC SCOPE (Worldwide) - UNREASONABLE
+   • Must be limited to business areas
+   
+3. IP ASSIGNMENT - OVERREACHING
+   • Includes personal time work
+   
+4. NO SEVERANCE PROVISIONS
+5. UNLIMITED LIABILITY
+6. ONE-SIDED TERMINATION
+
+RECOMMENDATION: Request amendments before signing.
+Would you like me to draft revision language?`, true);
+                },
+                
+                medical: async () => {
+                    addChatMessage('user', "I've been having recurring headaches every afternoon around 3pm.");
+                    
+                    await sleep(1000);
+                    
+                    if (!state.activePackages.has('medical')) {
+                        addChatMessage('ai', "Let me activate medical expertise to analyze your symptoms...");
+                        await downloadPackage('medical');
+                    }
+                    
+                    await sleep(500);
+                    
+                    addChatMessage('ai', `SYMPTOM ANALYSIS COMPLETE 🏥
+                    
+Based on your pattern (daily 3pm headaches):
+
+DIFFERENTIAL DIAGNOSIS:
+1. Tension Headaches (65% probability)
+   • Cause: Poor posture, eye strain
+   • Solution: Ergonomic adjustment, breaks
+   
+2. Caffeine Withdrawal (20% probability)
+   • Morning coffee wearing off
+   • Solution: Adjust caffeine timing
+   
+3. Blood Sugar Drop (10% probability)
+   • Post-lunch hypoglycemia
+   • Solution: Balanced meals
+
+IMMEDIATE RECOMMENDATIONS:
+• Start headache diary
+• 20-20-20 rule for screens
+• Stay hydrated
+• Check workstation ergonomics
+
+⚠️ Seek care if: Sudden severe pain, vision changes, fever`, true);
+                },
+                
+                comparison: async () => {
+                    addChatMessage('user', "Can you review this contract and identify issues?");
+                    
+                    await sleep(1000);
+                    
+                    addChatMessage('ai', `ChatGPT: "I cannot provide legal advice. Please consult with a qualified attorney for contract review."`, false);
+                    
+                    await sleep(1500);
+                    
+                    addChatMessage('ai', "Now let me show you OpenLifeOS with Legal Expert...", false);
+                    
+                    if (!state.activePackages.has('legal')) {
+                        await downloadPackage('legal');
+                    }
+                    
+                    await sleep(500);
+                    
+                    addChatMessage('ai', `OpenLifeOS Legal Expert: CONTRACT REVIEW COMPLETE ✅
+
+7 ISSUES FOUND:
+✓ Non-compete too broad (5 years → 1 year)
+✓ IP overreach (excludes personal work)
+✓ No severance (add 2 weeks/year)
+✓ Liability uncapped (limit to 12 months fees)
+
+I can draft amendments now. This is the difference between generic AI and expert AI.`, true);
+                },
+                
+                multi: async () => {
+                    addChatMessage('user', "I'm starting a health tech startup. Need legal, technical, and medical guidance.");
+                    
+                    await sleep(1000);
+                    addChatMessage('ai', "This requires multiple expert domains. Let me activate all necessary expertise...");
+                    
+                    for (const pkg of ['legal', 'technical', 'medical']) {
+                        if (!state.activePackages.has(pkg)) {
+                            await downloadPackage(pkg);
+                        }
+                    }
+                    
+                    await sleep(500);
+                    
+                    addChatMessage('ai', `COMPREHENSIVE STARTUP ANALYSIS 🚀
+
+⚖️ LEGAL (Legal Expert):
+• Structure: Delaware C-Corp for investment
+• HIPAA compliance required
+• FDA consideration for medical devices
+
+💻 TECHNICAL (Software Architect):
+• Architecture: HIPAA-compliant cloud (AWS/GCP)
+• Encryption: PHI at rest & transit
+• Audit logging for all access
+
+🏥 MEDICAL (Medical Advisor):
+• Clinical validation required
+• IRB approval for studies
+• Medical advisory board essential
+
+INTEGRATED ACTION PLAN:
+Week 1-2: Legal entity + HIPAA framework
+Week 3-4: Technical infrastructure
+Week 5-6: Clinical protocol design
+Week 7-8: MVP with compliance built-in`, true);
+                },
+                
+                wellness: async () => {
+                    addChatMessage('user', "My stress levels have been high lately. What should I do?");
+                    
+                    await sleep(1000);
+                    
+                    // Simulate biometric data
+                    state.biometrics.stressLevel = 78;
+                    
+                    addChatMessage('ai', `WELLNESS ANALYSIS 🧘
+
+Current Biometrics:
+• Stress Level: 78% (High)
+• Heart Rate Variability: 35ms (Low)
+• Pattern: Afternoon stress spikes
+
+PERSONALIZED RECOMMENDATIONS:
+1. Immediate: 4-7-8 breathing exercise
+2. Daily: 10-min morning meditation
+3. Weekly: 150 min moderate exercise
+4. Lifestyle: Reduce caffeine after 2pm
+
+Based on your patterns, stress peaks correlate with:
+• Back-to-back meetings
+• Skipped lunch breaks
+• Late night coding sessions
+
+Would you like me to create a personalized wellness plan?`, false);
+                }
+            };
+            
+            if (demos[demoType]) {
+                await demos[demoType]();
+            }
+            
+            demoCard.classList.remove('running');
+        }
+        
+        // Biometrics Simulation
+        function startBiometricsSimulation() {
+            // Simulate real-time biometric updates
+            setInterval(() => {
+                // Heart rate variation
+                state.biometrics.heartRate = 72 + Math.floor(Math.random() * 10 - 5);
+                document.getElementById('heart-rate').textContent = state.biometrics.heartRate;
+                
+                // Blood oxygen
+                state.biometrics.bloodOxygen = 98 + Math.floor(Math.random() * 3 - 1);
+                document.getElementById('blood-oxygen').textContent = state.biometrics.bloodOxygen;
+                
+                // Stress level
+                state.biometrics.stressLevel = Math.min(100, Math.max(20, state.biometrics.stressLevel + Math.floor(Math.random() * 10 - 5)));
+                const stressElement = document.getElementById('stress-level');
+                stressElement.textContent = state.biometrics.stressLevel;
+                stressElement.className = state.biometrics.stressLevel > 70 ? 'vital-value danger' : state.biometrics.stressLevel > 50 ? 'vital-value warning' : 'vital-value';
+                
+                // HRV
+                state.biometrics.hrv = 45 + Math.floor(Math.random() * 10 - 5);
+                document.getElementById('hrv').textContent = state.biometrics.hrv;
+            }, 2000);
+        }
+        
+        // Todo Functions
+        function toggleTodo(checkbox) {
+            checkbox.classList.toggle('checked');
+            const todoText = checkbox.nextElementSibling;
+            todoText.classList.toggle('completed');
+            
+            // Update completed count
+            const completed = document.querySelectorAll('.todo-checkbox.checked').length;
+            const total = document.querySelectorAll('.todo-checkbox').length;
+            showNotification(`Tasks: ${completed}/${total} completed`);
+        }
+        
+        function addTodo() {
+            const todoText = prompt('Enter new task:');
+            if (!todoText) return;
+            
+            const todoList = document.getElementById('todo-list');
+            const todoItem = document.createElement('div');
+            todoItem.className = 'todo-item';
+            todoItem.innerHTML = `
+                <div class="todo-checkbox" onclick="toggleTodo(this)"></div>
+                <div class="todo-text">${todoText}</div>
+                <div class="todo-priority priority-medium">Medium</div>
+            `;
+            todoList.appendChild(todoItem);
+            
+            showNotification('Task added successfully!');
+        }
+        
+        // Notification System
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Live Stats Update
+        function updateStats() {
+            // Knowledge nodes counter
+            let nodes = 0;
+            const nodeInterval = setInterval(() => {
+                nodes += Math.floor(Math.random() * 1000);
+                if (nodes > 50000) {
+                    nodes = 50000;
+                    clearInterval(nodeInterval);
+                }
+                document.getElementById('knowledge-nodes').textContent = nodes.toLocaleString();
+            }, 50);
+            
+            // Response time
+            setInterval(() => {
+                const time = 20 + Math.floor(Math.random() * 30);
+                document.getElementById('response-time').textContent = time + 'ms';
+            }, 2000);
+            
+            // Clock
+            setInterval(() => {
+                const now = new Date();
+                document.getElementById('time').textContent = now.toLocaleTimeString();
+            }, 1000);
+        }
+        
+        // Helper
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        // Initialize
+        updateStats();
+        
+        // Save state to localStorage
+        window.addEventListener('beforeunload', () => {
+            localStorage.setItem('lifeOS_state', JSON.stringify({
+                activePackages: Array.from(state.activePackages),
+                todos: Array.from(document.querySelectorAll('.todo-item')).map(item => ({
+                    text: item.querySelector('.todo-text').textContent,
+                    completed: item.querySelector('.todo-checkbox').classList.contains('checked')
+                }))
+            }));
+        });
+        
+        // Load state from localStorage
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('lifeOS_state');
+            if (saved) {
+                const data = JSON.parse(saved);
+                data.activePackages?.forEach(pkg => {
+                    state.activePackages.add(pkg);
+                    const btn = document.getElementById(`${pkg}-btn`);
+                    if (btn) {
+                        btn.textContent = '✓ ACTIVATED';
+                        btn.classList.add('activated');
+                    }
+                });
+                updateActivePackages();
+            }
+        });
+    </script>
+</body>
+</html>

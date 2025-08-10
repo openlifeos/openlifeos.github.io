@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenLifeOS Demo - AugHacks MIT 2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Header */
+        .header {
+            padding: 20px 40px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #00d4ff, #7b2ff7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .tagline {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 5px;
+        }
+        
+        .demo-badge {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        /* Demo Controls */
+        .demo-controls {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-width: 200px;
+        }
+        
+        .demo-title {
+            font-size: 14px;
+            margin-bottom: 15px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .scene-indicator {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .scene-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .scene-progress {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .scene-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .scene-dot.active {
+            background: #00d4ff;
+            transform: scale(1.5);
+        }
+        
+        .scene-dot.completed {
+            background: #00ff88;
+        }
+        
+        .demo-button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .demo-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 212, 255, 0.3);
+        }
+        
+        .demo-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Main Dashboard */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        /* Life Stream Panel */
+        .life-stream {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .panel-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pulse {
+            width: 10px;
+            height: 10px;
+            background: #00ff88;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Biometric Display */
+        .biometric-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .biometric-card.alert {
+            animation: alertPulse 1s infinite;
+        }
+        
+        @keyframes alertPulse {
+            0% { border-color: rgba(255, 107, 107, 0.5); }
+            50% { border-color: rgba(255, 107, 107, 1); box-shadow: 0 0 20px rgba(255, 107, 107, 0.5); }
+            100% { border-color: rgba(255, 107, 107, 0.5); }
+        }
+        
+        .biometric-card.optimal {
+            border-color: rgba(0, 255, 136, 0.5);
+        }
+        
+        .metric-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .metric-value {
+            font-size: 32px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #00d4ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: all 0.5s ease;
+        }
+        
+        .metric-unit {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-left: 5px;
+        }
+        
+        .metric-trend {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 12px;
+        }
+        
+        .trend-up {
+            color: #00ff88;
+        }
+        
+        .trend-down {
+            color: #ff6b6b;
+        }
+        
+        /* Central AI Companion */
+        .ai-companion {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+        }
+        
+        /* AI Avatar */
+        .ai-avatar {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .avatar-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid;
+            animation: rotate 10s linear infinite;
+        }
+        
+        .avatar-ring:nth-child(1) {
+            width: 100%;
+            height: 100%;
+            border-color: rgba(0, 212, 255, 0.5);
+        }
+        
+        .avatar-ring:nth-child(2) {
+            width: 120%;
+            height: 120%;
+            top: -10%;
+            left: -10%;
+            border-color: rgba(123, 47, 247, 0.3);
+            animation-direction: reverse;
+            animation-duration: 15s;
+        }
+        
+        .avatar-ring:nth-child(3) {
+            width: 140%;
+            height: 140%;
+            top: -20%;
+            left: -20%;
+            border-color: rgba(0, 255, 136, 0.2);
+            animation-duration: 20s;
+        }
+        
+        .avatar-core {
+            position: absolute;
+            width: 60%;
+            height: 60%;
+            top: 20%;
+            left: 20%;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.8), rgba(123, 47, 247, 0.4));
+            border-radius: 50%;
+            filter: blur(20px);
+            animation: breathe 4s ease-in-out infinite;
+        }
+        
+        .ai-avatar.stressed .avatar-core {
+            background: radial-gradient(circle, rgba(255, 107, 107, 0.8), rgba(255, 142, 83, 0.4));
+            animation-duration: 2s;
+        }
+        
+        .ai-avatar.flow .avatar-core {
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.9), rgba(0, 212, 255, 0.5));
+            animation-duration: 6s;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 1; }
+        }
+        
+        /* Notification Banner */
+        .notification-banner {
+            position: absolute;
+            top: -50px;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.5s ease;
+            opacity: 0;
+        }
+        
+        .notification-banner.show {
+            top: 10px;
+            opacity: 1;
+        }
+        
+        /* Chat Interface */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            min-height: 350px;
+            max-height: 450px;
+        }
+        
+        .message {
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message.user {
+            text-align: right;
+        }
+        
+        .message-content {
+            display: inline-block;
+            padding: 12px 18px;
+            border-radius: 18px;
+            max-width: 85%;
+            line-height: 1.5;
+        }
+        
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .message.ai .message-content {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        .message.ai.alert .message-content {
+            background: rgba(255, 107, 107, 0.1);
+            border-color: rgba(255, 107, 107, 0.3);
+        }
+        
+        .message.ai.flow .message-content {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: rgba(0, 255, 136, 0.3);
+        }
+        
+        .message.ai.empathy .message-content {
+            background: rgba(123, 47, 247, 0.1);
+            border-color: rgba(123, 47, 247, 0.3);
+        }
+        
+        /* Breathing Guide */
+        .breathing-guide {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            display: none;
+            z-index: 2000;
+        }
+        
+        .breathing-guide.active {
+            display: block;
+        }
+        
+        .breathing-circle {
+            width: 100%;
+            height: 100%;
+            border: 3px solid rgba(0, 212, 255, 0.5);
+            border-radius: 50%;
+            animation: breathingAnimation 12s infinite;
+        }
+        
+        .breathing-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        @keyframes breathingAnimation {
+            0%, 100% { transform: scale(0.8); }
+            33% { transform: scale(1.2); }
+            66% { transform: scale(1.2); }
+        }
+        
+        /* Emotional State Panel */
+        .emotional-state {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .emotion-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .emotion-item {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .emotion-item.active {
+            background: rgba(0, 212, 255, 0.15);
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            transform: scale(1.05);
+        }
+        
+        .emotion-icon {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        
+        .emotion-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* Predictions Panel */
+        .predictions-panel {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .predictions-panel.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .prediction-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #ff6b6b;
+        }
+        
+        .prediction-text {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* Life Journey Timeline */
+        .life-journey {
+            grid-column: 1 / -1;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .timeline {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding: 20px 0;
+        }
+        
+        .timeline-event {
+            min-width: 180px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border-left: 3px solid;
+            transition: all 0.3s ease;
+            animation: slideInTimeline 0.5s ease;
+        }
+        
+        @keyframes slideInTimeline {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .timeline-event:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.06);
+        }
+        
+        .timeline-event.energy {
+            border-color: #00ff88;
+        }
+        
+        .timeline-event.stress {
+            border-color: #ff6b6b;
+        }
+        
+        .timeline-event.flow {
+            border-color: #00d4ff;
+        }
+        
+        .timeline-event.insight {
+            border-color: #7b2ff7;
+        }
+        
+        .timeline-time {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 5px;
+        }
+        
+        .timeline-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .timeline-desc {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.4;
+        }
+        
+        /* Memory Display */
+        .memory-bubble {
+            position: fixed;
+            background: rgba(123, 47, 247, 0.1);
+            border: 1px solid rgba(123, 47, 247, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            max-width: 300px;
+            z-index: 1500;
+            display: none;
+        }
+        
+        .memory-bubble.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        /* Flow Protection Indicator */
+        .flow-protection {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            display: none;
+            z-index: 1500;
+        }
+        
+        .flow-protection.active {
+            display: block;
+            animation: flowPulse 2s infinite;
+        }
+        
+        @keyframes flowPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
+        }
+        
+        /* Loading State */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10, 14, 39, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 3000;
+        }
+        
+        .loading-spinner {
+            width: 100px;
+            height: 100px;
+            border: 3px solid rgba(0, 212, 255, 0.2);
+            border-top-color: #00d4ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .life-journey {
+                grid-column: 1;
+            }
+            
+            .demo-controls {
+                position: static;
+                margin: 20px;
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Initializing OpenLifeOS Demo...</div>
+    </div>
+    
+    <!-- Header -->
+    <header class="header">
+        <div>
+            <div class="logo">OpenLifeOS</div>
+            <div class="tagline">Not an assistant. Another you. 不是助手，是另一个你</div>
+        </div>
+        <div class="demo-badge">AugHacks MIT 2025 Demo</div>
+    </header>
+    
+    <!-- Demo Controls -->
+    <div class="demo-controls">
+        <div class="demo-title">DEMO SCENARIOS</div>
+        
+        <div class="scene-indicator">
+            <div class="scene-name" id="scene-name">Ready to Start</div>
+            <div class="scene-progress">
+                <div class="scene-dot" data-scene="1"></div>
+                <div class="scene-dot" data-scene="2"></div>
+                <div class="scene-dot" data-scene="3"></div>
+                <div class="scene-dot" data-scene="4"></div>
+                <div class="scene-dot" data-scene="5"></div>
+                <div class="scene-dot" data-scene="6"></div>
+                <div class="scene-dot" data-scene="7"></div>
+            </div>
+        </div>
+        
+        <button class="demo-button" id="btn-next-scene">Next Scene →</button>
+        <button class="demo-button" id="btn-auto-play">▶ Auto Play All</button>
+        <button class="demo-button" id="btn-reset">↺ Reset Demo</button>
+    </div>
+    
+    <!-- Main Dashboard -->
+    <main class="dashboard">
+        <!-- Life Stream Panel -->
+        <section class="life-stream">
+            <h2 class="panel-title">
+                <span class="pulse"></span>
+                Life Stream
+            </h2>
+            
+            <div class="biometric-card" id="card-heart-rate">
+                <div class="metric-label">Heart Rate</div>
+                <div>
+                    <span class="metric-value" id="heart-rate">72</span>
+                    <span class="metric-unit">BPM</span>
+                </div>
+                <div class="metric-trend" id="trend-heart-rate"></div>
+            </div>
+            
+            <div class="biometric-card" id="card-stress">
+                <div class="metric-label">Stress Level</div>
+                <div>
+                    <span class="metric-value" id="stress-level">30</span>
+                    <span class="metric-unit">%</span>
+                </div>
+                <div class="metric-trend" id="trend-stress"></div>
+            </div>
+            
+            <div class="biometric-card" id="card-energy">
+                <div class="metric-label">Energy</div>
+                <div>
+                    <span class="metric-value" id="energy-level">70</span>
+                    <span class="metric-unit">%</span>
+                </div>
+                <div class="metric-trend" id="trend-energy"></div>
+            </div>
+            
+            <div class="biometric-card" id="card-focus">
+                <div class="metric-label">Focus</div>
+                <div>
+                    <span class="metric-value" id="focus-level">60</span>
+                    <span class="metric-unit">%</span>
+                </div>
+                <div class="metric-trend" id="trend-focus"></div>
+            </div>
+            
+            <div class="predictions-panel" id="predictions-panel">
+                <div class="prediction-title">⚠️ Prediction Alert</div>
+                <div class="prediction-text" id="prediction-text"></div>
+            </div>
+        </section>
+        
+        <!-- Central AI Companion -->
+        <section class="ai-companion">
+            <div class="notification-banner" id="notification-banner"></div>
+            
+            <div class="ai-avatar" id="ai-avatar">
+                <div class="avatar-ring"></div>
+                <div class="avatar-ring"></div>
+                <div class="avatar-ring"></div>
+                <div class="avatar-core"></div>
+            </div>
+            
+            <div class="chat-container">
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message ai">
+                        <div class="message-content">
+                            Welcome to OpenLifeOS Demo. I'm your AI life companion. 
+                            Click "Next Scene" to begin our journey together, or "Auto Play All" to see the complete demonstration.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-input-container" style="display: flex; gap: 10px;">
+                    <input 
+                        type="text" 
+                        class="chat-input" 
+                        id="chat-input" 
+                        placeholder="Share your thoughts..."
+                        style="flex: 1; padding: 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white;"
+                    >
+                    <button class="demo-button" id="chat-send" style="width: auto; margin: 0;">Send</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Emotional State Panel -->
+        <section class="emotional-state">
+            <h2 class="panel-title">Emotional Landscape</h2>
+            
+            <div class="emotion-grid">
+                <div class="emotion-item" id="emotion-joy">
+                    <div class="emotion-icon">😊</div>
+                    <div class="emotion-label">Joy</div>
+                </div>
+                <div class="emotion-item active" id="emotion-calm">
+                    <div class="emotion-icon">😌</div>
+                    <div class="emotion-label">Calm</div>
+                </div>
+                <div class="emotion-item" id="emotion-focus">
+                    <div class="emotion-icon">🎯</div>
+                    <div class="emotion-label">Focused</div>
+                </div>
+                <div class="emotion-item" id="emotion-stress">
+                    <div class="emotion-icon">😰</div>
+                    <div class="emotion-label">Stressed</div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <div class="metric-label">Emotional Journey</div>
+                <canvas id="mood-chart" width="250" height="120"></canvas>
+            </div>
+        </section>
+        
+        <!-- Life Journey Timeline -->
+        <section class="life-journey">
+            <h2 class="panel-title">Life Journey</h2>
+            
+            <div class="timeline" id="timeline">
+                <div class="timeline-event energy">
+                    <div class="timeline-time">Now</div>
+                    <div class="timeline-title">Demo Ready</div>
+                    <div class="timeline-desc">OpenLifeOS initialized and ready for demonstration</div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Breathing Guide Overlay -->
+    <div class="breathing-guide" id="breathing-guide">
+        <div class="breathing-circle"></div>
+        <div class="breathing-text">
+            <div>Breathe In... 4</div>
+            <div>Hold... 4</div>
+            <div>Breathe Out... 4</div>
+        </div>
+    </div>
+    
+    <!-- Flow Protection Overlay -->
+    <div class="flow-protection" id="flow-protection">
+        <h2 style="margin-bottom: 10px;">🛡️ Flow State Protected</h2>
+        <p>All notifications muted. Calendar blocked. You're in the zone.</p>
+    </div>
+    
+    <!-- Memory Bubble -->
+    <div class="memory-bubble" id="memory-bubble">
+        <div style="font-size: 12px; color: #7b2ff7; margin-bottom: 5px;">💭 Memory Recalled</div>
+        <div id="memory-content"></div>
+    </div>
+    
+    <!-- Scripts -->
+    <script type="module">
+        // Import modules
+        import LifeOS from './src/core/LifeOS.js';
+        import { DemoScenarios } from './demo-scenarios.js';
+        
+        // Global state
+        let lifeOS = null;
+        let demo = null;
+        let isPlaying = false;
+        
+        // Scene names
+        const sceneNames = [
+            '1. First Encounter',
+            '2. Morning Routine',
+            '3. Work Integration',
+            '4. Creative Flow',
+            '5. Emotional Support',
+            '6. Evening Reflection',
+            '7. Future Vision'
+        ];
+        
+        // Initialize OpenLifeOS
+        async function initializeLifeOS() {
+            try {
+                console.log('🧬 Initializing OpenLifeOS Demo...');
+                
+                // Create OpenLifeOS instance
+                lifeOS = new LifeOS({
+                    userId: 'demo-user',
+                    name: 'OpenLifeOS',
+                    personality: {
+                        openness: 0.8,
+                        conscientiousness: 0.7,
+                        extraversion: 0.6,
+                        agreeableness: 0.9,
+                        neuroticism: 0.3,
+                        warmth: 0.95,
+                        humor: 0.6,
+                        depth: 0.85,
+                        empathy: 0.95,
+                        curiosity: 0.8
+                    },
+                    simulationMode: true
+                });
+                
+                // Initialize
+                await lifeOS.initialize();
+                
+                // Create demo scenarios
+                demo = new DemoScenarios(lifeOS);
+                
+                // Set up event listeners
+                setupEventListeners();
+                
+                // Hide loading screen
+                setTimeout(() => {
+                    document.getElementById('loading').style.display = 'none';
+                }, 1500);
+                
+                // Start dashboard updates
+                startDashboardUpdates();
+                
+                console.log('✨ OpenLifeOS Demo Ready!');
+                
+            } catch (error) {
+                console.error('Failed to initialize:', error);
+                document.getElementById('loading').innerHTML = 
+                    '<div style="color: #ff6b6b;">Initialization failed. Please refresh.</div>';
+            }
+        }
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            // Demo controls
+            document.getElementById('btn-next-scene').addEventListener('click', playNextScene);
+            document.getElementById('btn-auto-play').addEventListener('click', autoPlayAll);
+            document.getElementById('btn-reset').addEventListener('click', resetDemo);
+            
+            // Chat
+            document.getElementById('chat-send').addEventListener('click', sendMessage);
+            document.getElementById('chat-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage();
+            });
+            
+            // Demo events
+            window.addEventListener('demoMessage', (e) => {
+                addMessage(e.detail.text, e.detail.sender, e.detail.type);
+            });
+            
+            window.addEventListener('showBreathingGuide', showBreathingGuide);
+            window.addEventListener('showPrediction', (e) => showPrediction(e.detail));
+            window.addEventListener('patternDetected', (e) => addTimelineEvent('insight', e.detail.description));
+            window.addEventListener('activateFlowProtection', activateFlowProtection);
+            window.addEventListener('showMemory', (e) => showMemory(e.detail.memory));
+            window.addEventListener('updateMetric', (e) => updateMetric(e.detail.metric, e.detail.value));
+            
+            // OpenLifeOS events
+            lifeOS.on('tick', updateDashboard);
+            lifeOS.on('stateChange', updateEmotionalState);
+            lifeOS.on('proactiveSupport', handleProactiveSupport);
+        }
+        
+        // Play next scene
+        async function playNextScene() {
+            if (isPlaying) return;
+            
+            const hasNext = await demo.runNextScenario();
+            updateSceneIndicator(demo.currentScenario);
+            
+            if (!hasNext) {
+                document.getElementById('scene-name').textContent = 'Demo Complete! 🎉';
+                showNotification('Demo Complete! OpenLifeOS - Your AI Life Companion');
+            }
+        }
+        
+        // Auto play all scenes
+        async function autoPlayAll() {
+            if (isPlaying) return;
+            
+            isPlaying = true;
+            document.getElementById('btn-auto-play').disabled = true;
+            document.getElementById('btn-auto-play').textContent = '⏸ Playing...';
+            
+            await demo.runFullDemo();
+            
+            isPlaying = false;
+            document.getElementById('btn-auto-play').disabled = false;
+            document.getElementById('btn-auto-play').textContent = '▶ Auto Play All';
+            document.getElementById('scene-name').textContent = 'Demo Complete! 🎉';
+        }
+        
+        // Reset demo
+        function resetDemo() {
+            location.reload();
+        }
+        
+        // Update scene indicator
+        function updateSceneIndicator(sceneNum) {
+            // Update scene name
+            if (sceneNum > 0 && sceneNum <= sceneNames.length) {
+                document.getElementById('scene-name').textContent = sceneNames[sceneNum - 1];
+            }
+            
+            // Update dots
+            document.querySelectorAll('.scene-dot').forEach((dot, index) => {
+                dot.classList.remove('active', 'completed');
+                if (index < sceneNum - 1) {
+                    dot.classList.add('completed');
+                } else if (index === sceneNum - 1) {
+                    dot.classList.add('active');
+                }
+            });
+        }
+        
+        // Add message to chat
+        function addMessage(text, sender = 'ai', type = 'normal') {
+            const messagesContainer = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender} ${type}`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = text;
+            
+            messageDiv.appendChild(contentDiv);
+            messagesContainer.appendChild(messageDiv);
+            
+            // Auto scroll
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // Update avatar state based on message type
+            const avatar = document.getElementById('ai-avatar');
+            avatar.className = `ai-avatar ${type}`;
+        }
+        
+        // Send message
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            input.value = '';
+            addMessage(message, 'user');
+            
+            // Get AI response
+            const response = await lifeOS.interact(message);
+            setTimeout(() => {
+                addMessage(response.text, 'ai');
+            }, 800);
+        }
+        
+        // Show breathing guide
+        function showBreathingGuide() {
+            const guide = document.getElementById('breathing-guide');
+            guide.classList.add('active');
+            
+            setTimeout(() => {
+                guide.classList.remove('active');
+            }, 12000);
+        }
+        
+        // Show prediction
+        function showPrediction(prediction) {
+            const panel = document.getElementById('predictions-panel');
+            const text = document.getElementById('prediction-text');
+            
+            text.textContent = prediction.message;
+            panel.classList.add('show');
+            
+            setTimeout(() => {
+                panel.classList.remove('show');
+            }, 5000);
+        }
+        
+        // Show notification
+        function showNotification(message) {
+            const banner = document.getElementById('notification-banner');
+            banner.textContent = message;
+            banner.classList.add('show');
+            
+            setTimeout(() => {
+                banner.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Activate flow protection
+        function activateFlowProtection() {
+            const protection = document.getElementById('flow-protection');
+            protection.classList.add('active');
+            
+            setTimeout(() => {
+                protection.classList.remove('active');
+            }, 5000);
+        }
+        
+        // Show memory
+        function showMemory(memory) {
+            const bubble = document.getElementById('memory-bubble');
+            const content = document.getElementById('memory-content');
+            
+            content.textContent = memory;
+            bubble.style.top = '200px';
+            bubble.style.right = '20px';
+            bubble.classList.add('show');
+            
+            setTimeout(() => {
+                bubble.classList.remove('show');
+            }, 4000);
+        }
+        
+        // Add timeline event
+        function addTimelineEvent(type, description) {
+            const timeline = document.getElementById('timeline');
+            const event = document.createElement('div');
+            event.className = `timeline-event ${type}`;
+            
+            const time = new Date().toLocaleTimeString();
+            
+            event.innerHTML = `
+                <div class="timeline-time">${time}</div>
+                <div class="timeline-title">${type.toUpperCase()}</div>
+                <div class="timeline-desc">${description}</div>
+            `;
+            
+            timeline.appendChild(event);
+            
+            // Keep timeline manageable
+            if (timeline.children.length > 8) {
+                timeline.removeChild(timeline.children[0]);
+            }
+            
+            // Scroll to latest
+            timeline.scrollLeft = timeline.scrollWidth;
+        }
+        
+        // Update metric with animation
+        function updateMetric(metric, value) {
+            let elementId = '';
+            switch(metric) {
+                case 'heart-rate': elementId = 'heart-rate'; break;
+                case 'stress': elementId = 'stress-level'; break;
+                case 'energy': elementId = 'energy-level'; break;
+                case 'focus': elementId = 'focus-level'; break;
+                case 'creativity_index': elementId = 'focus-level'; break;
+                case 'productivity_score': elementId = 'energy-level'; break;
+            }
+            
+            if (!elementId) return;
+            
+            const element = document.getElementById(elementId);
+            const card = document.getElementById(`card-${elementId.replace('-level', '')}`);
+            const current = parseInt(element.textContent);
+            
+            // Update value with animation
+            animateValue(element, current, value, 500);
+            
+            // Update card style based on value
+            if (metric === 'stress' && value > 70) {
+                card.classList.add('alert');
+            } else {
+                card.classList.remove('alert');
+            }
+            
+            if ((metric === 'energy' || metric === 'focus') && value > 85) {
+                card.classList.add('optimal');
+            } else {
+                card.classList.remove('optimal');
+            }
+            
+            // Show trend
+            const trendElement = document.getElementById(`trend-${elementId.replace('-level', '')}`);
+            if (trendElement) {
+                if (value > current) {
+                    trendElement.textContent = '↑';
+                    trendElement.className = 'metric-trend trend-up';
+                } else if (value < current) {
+                    trendElement.textContent = '↓';
+                    trendElement.className = 'metric-trend trend-down';
+                }
+            }
+        }
+        
+        // Animate value change
+        function animateValue(element, start, end, duration) {
+            const range = end - start;
+            const increment = range / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                    element.textContent = Math.round(end);
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.round(current);
+                }
+            }, 16);
+        }
+        
+        // Update dashboard
+        function updateDashboard(data) {
+            if (!data || !data.state) return;
+            
+            const state = data.state;
+            const lifeData = state.lifeData;
+            
+            // Update biometrics smoothly
+            if (lifeData.biometric) {
+                if (lifeData.biometric.heartRate) {
+                    updateMetric('heart-rate', lifeData.biometric.heartRate);
+                }
+                if (lifeData.biometric.stress !== undefined) {
+                    updateMetric('stress', Math.round(lifeData.biometric.stress * 100));
+                }
+                if (lifeData.biometric.energy !== undefined) {
+                    updateMetric('energy', Math.round(lifeData.biometric.energy * 100));
+                }
+            }
+            
+            if (lifeData.digital && lifeData.digital.focusScore !== undefined) {
+                updateMetric('focus', Math.round(lifeData.digital.focusScore * 100));
+            }
+        }
+        
+        // Update emotional state
+        function updateEmotionalState(state) {
+            // Clear active emotions
+            document.querySelectorAll('.emotion-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Map mood to emotion item
+            const moodMap = {
+                'neutral': 'calm',
+                'joyful': 'joy',
+                'joy': 'joy',
+                'anxious': 'stress',
+                'stressed': 'stress',
+                'focused': 'focus',
+                'content': 'calm'
+            };
+            
+            const emotion = moodMap[state.currentMood] || 'calm';
+            document.getElementById(`emotion-${emotion}`).classList.add('active');
+            
+            // Update mood chart
+            updateMoodChart(state.currentMood);
+        }
+        
+        // Update mood chart
+        function updateMoodChart(mood) {
+            const canvas = document.getElementById('mood-chart');
+            const ctx = canvas.getContext('2d');
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const colors = {
+                'joy': '#00ff88',
+                'calm': '#00d4ff',
+                'focused': '#7b2ff7',
+                'stressed': '#ff6b6b',
+                'neutral': 'rgba(255,255,255,0.3)'
+            };
+            
+            const color = colors[mood] || colors.neutral;
+            
+            // Draw mood wave
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            
+            for (let x = 0; x < canvas.width; x += 3) {
+                const y = canvas.height / 2 + 
+                         Math.sin(x * 0.02 + Date.now() * 0.001) * 30 +
+                         Math.sin(x * 0.05 + Date.now() * 0.002) * 10;
+                
+                if (x === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            
+            ctx.stroke();
+        }
+        
+        // Handle proactive support
+        function handleProactiveSupport(data) {
+            setTimeout(() => {
+                addMessage(data.message, 'ai', 'alert');
+            }, 1000);
+        }
+        
+        // Start dashboard updates
+        function startDashboardUpdates() {
+            setInterval(() => {
+                if (lifeOS) {
+                    const dashboard = lifeOS.getDashboard();
+                    updateMoodChart(lifeOS.state.currentMood);
+                }
+            }, 1000);
+        }
+        
+        // Initialize on load
+        window.addEventListener('load', () => {
+            setTimeout(initializeLifeOS, 500);
+        });
+    </script>
+</body>
+</html>

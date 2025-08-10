@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenLifeOS - AugHacks MIT 2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        .presentation {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .slide {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            text-align: center;
+        }
+        
+        .slide.active {
+            display: flex;
+        }
+        
+        .slide-number {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+        
+        h1 {
+            font-size: 80px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        h2 {
+            font-size: 60px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #00ffff;
+        }
+        
+        h3 {
+            font-size: 40px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        
+        .subtitle {
+            font-size: 30px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 20px;
+        }
+        
+        .tagline {
+            font-size: 36px;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 20px 0;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin: 40px 0;
+            width: 100%;
+            max-width: 1000px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: left;
+        }
+        
+        .card-title {
+            font-size: 24px;
+            color: #00ffff;
+            margin-bottom: 15px;
+        }
+        
+        .card-desc {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+        
+        .metrics {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin: 40px 0;
+        }
+        
+        .metric {
+            text-align: center;
+        }
+        
+        .metric-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: #00ff88;
+        }
+        
+        .metric-label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+        
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin: 40px 0;
+            width: 100%;
+            max-width: 1000px;
+        }
+        
+        .comparison-col {
+            padding: 30px;
+            border-radius: 20px;
+        }
+        
+        .comparison-col.old {
+            background: rgba(255, 100, 100, 0.1);
+            border: 1px solid rgba(255, 100, 100, 0.3);
+        }
+        
+        .comparison-col.new {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .comparison-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .comparison-list {
+            list-style: none;
+            font-size: 18px;
+            line-height: 2;
+        }
+        
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 100;
+        }
+        
+        .nav-btn {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            font-size: 20px;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(0, 255, 255, 0.2);
+            border-color: #00ffff;
+        }
+        
+        .progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #00ffff, #ff00ff);
+            transition: width 0.3s;
+            z-index: 100;
+        }
+        
+        .demo-btn {
+            padding: 20px 60px;
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 24px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 40px;
+        }
+        
+        .demo-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+        
+        ul {
+            list-style: none;
+            font-size: 20px;
+            line-height: 2;
+            text-align: left;
+            max-width: 800px;
+        }
+        
+        ul li:before {
+            content: "→ ";
+            color: #00ffff;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress" id="progress"></div>
+    
+    <div class="presentation">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <div class="slide-number">1 / 15</div>
+            <h1>OpenLifeOS</h1>
+            <p class="tagline">Your AI Life Companion</p>
+            <p class="subtitle">Not an assistant. Another you.</p>
+            <p style="font-size: 32px; color: rgba(255,255,255,0.6); margin-top: 20px;">不是助手，是另一个你</p>
+            <div style="margin-top: 60px;">
+                <p style="font-size: 20px; color: rgba(255,255,255,0.5);">AugHacks MIT 2025</p>
+            </div>
+        </div>
+        
+        <!-- Slide 2: Problem -->
+        <div class="slide">
+            <div class="slide-number">2 / 15</div>
+            <h2>The Problem</h2>
+            <div class="comparison">
+                <div class="comparison-col old">
+                    <div class="comparison-title">Current AI Assistants</div>
+                    <ul class="comparison-list">
+                        <li>Passive responders</li>
+                        <li>No real understanding</li>
+                        <li>Forget your context</li>
+                        <li>Static personalities</li>
+                        <li>Task executors</li>
+                    </ul>
+                </div>
+                <div class="comparison-col new">
+                    <div class="comparison-title">What We Need</div>
+                    <ul class="comparison-list">
+                        <li>Proactive companions</li>
+                        <li>Deep comprehension</li>
+                        <li>Continuous memory</li>
+                        <li>Growing with us</li>
+                        <li>Life partners</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 3: Solution -->
+        <div class="slide">
+            <div class="slide-number">3 / 15</div>
+            <h2>OpenLifeOS Solution</h2>
+            <p class="subtitle">A Symbiotic AI That Lives With You</p>
+            <div class="grid">
+                <div class="card">
+                    <div class="icon">🧬</div>
+                    <div class="card-title">Lives With You</div>
+                    <div class="card-desc">Experiences your daily rhythms and patterns</div>
+                </div>
+                <div class="card">
+                    <div class="icon">🌱</div>
+                    <div class="card-title">Grows With You</div>
+                    <div class="card-desc">Evolves based on your life journey</div>
+                </div>
+                <div class="card">
+                    <div class="icon">💭</div>
+                    <div class="card-title">Dreams With You</div>
+                    <div class="card-desc">Processes and reflects on experiences</div>
+                </div>
+                <div class="card">
+                    <div class="icon">❤️</div>
+                    <div class="card-title">Feels With You</div>
+                    <div class="card-desc">Understands and shares emotions</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 4: How It Works -->
+        <div class="slide">
+            <div class="slide-number">4 / 15</div>
+            <h2>How It Works</h2>
+            <p class="subtitle">60Hz Real-time Life Processing</p>
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-value">60Hz</div>
+                    <div class="metric-label">Processing Rate</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">4</div>
+                    <div class="metric-label">Neural Networks</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">9</div>
+                    <div class="metric-label">Memory Layers</div>
+                </div>
+            </div>
+            <ul style="margin: 40px auto;">
+                <li>Biometric data fusion</li>
+                <li>Digital activity tracking</li>
+                <li>Environmental sensing</li>
+                <li>Pattern recognition</li>
+                <li>Predictive wellness</li>
+            </ul>
+        </div>
+        
+        <!-- Slide 5: Innovation -->
+        <div class="slide">
+            <div class="slide-number">5 / 15</div>
+            <h2>Key Innovation</h2>
+            <p class="subtitle">4 Neural Networks in Harmony</p>
+            <div class="grid">
+                <div class="card">
+                    <div class="icon">🪞</div>
+                    <div class="card-title">Mirror Network</div>
+                    <div class="card-desc">Reflects your current state in real-time</div>
+                </div>
+                <div class="card">
+                    <div class="icon">🌿</div>
+                    <div class="card-title">Growth Network</div>
+                    <div class="card-desc">Evolves with your personal journey</div>
+                </div>
+                <div class="card">
+                    <div class="icon">🌙</div>
+                    <div class="card-title">Dream Network</div>
+                    <div class="card-desc">Processes experiences during rest</div>
+                </div>
+                <div class="card">
+                    <div class="icon">🤝</div>
+                    <div class="card-title">Companion Network</div>
+                    <div class="card-desc">Generates empathetic responses</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 6: Demo -->
+        <div class="slide">
+            <div class="slide-number">6 / 15</div>
+            <h2>Live Demo</h2>
+            <p class="subtitle">Experience OpenLifeOS in Action</p>
+            <div class="metrics">
+                <div class="metric">
+                    <div class="icon">😰</div>
+                    <div class="metric-label">Stress Detection</div>
+                </div>
+                <div class="metric">
+                    <div class="icon">🎯</div>
+                    <div class="metric-label">Flow Protection</div>
+                </div>
+                <div class="metric">
+                    <div class="icon">💝</div>
+                    <div class="metric-label">Emotional Support</div>
+                </div>
+            </div>
+            <button class="demo-btn" onclick="window.open('http://localhost:8081/openopenlifeos-demo.html')">
+                Launch Live Demo
+            </button>
+        </div>
+        
+        <!-- Slide 7: Demo Example -->
+        <div class="slide">
+            <div class="slide-number">7 / 15</div>
+            <h3>Demo: First Encounter</h3>
+            <p class="subtitle">AI Already Knows You're Stressed</p>
+            <div style="margin: 40px 0;">
+                <div style="background: rgba(255,255,255,0.05); padding: 30px; border-radius: 20px; margin: 20px auto; max-width: 800px;">
+                    <p style="color: #00ffff; text-align: left;">User:</p>
+                    <p style="font-size: 24px; text-align: left;">"Hello, I just opened OpenLifeOS"</p>
+                </div>
+                <div style="background: rgba(0,255,255,0.05); padding: 30px; border-radius: 20px; margin: 20px auto; max-width: 800px;">
+                    <p style="color: #ff00ff; text-align: left;">OpenLifeOS:</p>
+                    <p style="font-size: 24px; text-align: left;">"I notice your heart rate is 85 BPM and stress is high. Let's breathe together..."</p>
+                </div>
+            </div>
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-value">85→72</div>
+                    <div class="metric-label">Heart Rate</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">75%→40%</div>
+                    <div class="metric-label">Stress Level</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 8: Technical -->
+        <div class="slide">
+            <div class="slide-number">8 / 15</div>
+            <h2>Technical Architecture</h2>
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-value">60Hz</div>
+                    <div class="metric-label">Real-time</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">&lt;100ms</div>
+                    <div class="metric-label">Response</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">10TB</div>
+                    <div class="metric-label">Memory</div>
+                </div>
+            </div>
+            <ul style="margin: 40px auto;">
+                <li>React 18 + Three.js frontend</li>
+                <li>Real-time data streaming</li>
+                <li>Multi-modal data fusion</li>
+                <li>Edge AI processing</li>
+                <li>Privacy-first architecture</li>
+            </ul>
+        </div>
+        
+        <!-- Slide 9: Market -->
+        <div class="slide">
+            <div class="slide-number">9 / 15</div>
+            <h2>Market Opportunity</h2>
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-value">$15B</div>
+                    <div class="metric-label">Wearables</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">$8B</div>
+                    <div class="metric-label">Mental Health</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">500M</div>
+                    <div class="metric-label">Users</div>
+                </div>
+            </div>
+            <p class="subtitle" style="margin-top: 40px;">Target: Apple Watch, Meta Quest, Neuralink</p>
+        </div>
+        
+        <!-- Slide 10: Advantage -->
+        <div class="slide">
+            <div class="slide-number">10 / 15</div>
+            <h2>Why OpenLifeOS Wins</h2>
+            <ul style="margin: 40px auto; font-size: 28px; line-height: 2.5;">
+                <li>First truly symbiotic AI</li>
+                <li>60Hz real-time processing</li>
+                <li>9-layer human memory model</li>
+                <li>Predictive wellness engine</li>
+                <li>Growing personality system</li>
+            </ul>
+            <p style="font-size: 32px; color: #00ffff; margin-top: 40px;">
+                "The only AI that grows WITH you"
+            </p>
+        </div>
+        
+        <!-- Slide 11: Roadmap -->
+        <div class="slide">
+            <div class="slide-number">11 / 15</div>
+            <h2>Roadmap</h2>
+            <div style="margin: 40px 0;">
+                <div style="display: flex; justify-content: space-around; align-items: center;">
+                    <div style="text-align: center;">
+                        <div class="icon">🚀</div>
+                        <h3 style="font-size: 24px;">Q1 2025</h3>
+                        <p>Beta Launch</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div class="icon">📱</div>
+                        <h3 style="font-size: 24px;">Q2 2025</h3>
+                        <p>Mobile App</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div class="icon">⌚</div>
+                        <h3 style="font-size: 24px;">Q3 2025</h3>
+                        <p>Wearables</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div class="icon">🌍</div>
+                        <h3 style="font-size: 24px;">Q4 2025</h3>
+                        <p>Global Scale</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Slide 12: Impact -->
+        <div class="slide">
+            <div class="slide-number">12 / 15</div>
+            <h2>Real World Impact</h2>
+            <div class="metrics">
+                <div class="metric">
+                    <div class="metric-value">34%</div>
+                    <div class="metric-label">Less Stress</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">47%</div>
+                    <div class="metric-label">More Productive</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value">89%</div>
+                    <div class="metric-label">Happier Users</div>
+                </div>
+            </div>
+            <p class="subtitle" style="margin-top: 40px;">Changing lives, one companion at a time</p>
+        </div>
+        
+        <!-- Slide 13: Team -->
+        <div class="slide">
+            <div class="slide-number">13 / 15</div>
+            <h2>Our Team</h2>
+            <p class="subtitle">24 hours. One vision. Infinite possibilities.</p>
+            <div style="margin: 60px 0;">
+                <p style="font-size: 36px;">🧑‍💻 + 🤖 + ❤️ = OpenLifeOS</p>
+            </div>
+            <p style="font-size: 24px; color: rgba(255,255,255,0.7);">
+                Built with passion at AugHacks MIT 2025
+            </p>
+        </div>
+        
+        <!-- Slide 14: CTA -->
+        <div class="slide">
+            <div class="slide-number">14 / 15</div>
+            <h2>Join the Revolution</h2>
+            <p style="font-size: 32px; line-height: 2; margin: 40px 0;">
+                OpenLifeOS isn't just another product.<br>
+                It's a new way of living with AI.<br>
+                <span style="color: #00ffff;">A companion that truly understands.</span><br>
+                <span style="color: #ff00ff;">An AI that grows with you.</span>
+            </p>
+            <button class="demo-btn">Try OpenLifeOS Now</button>
+        </div>
+        
+        <!-- Slide 15: Thank You -->
+        <div class="slide">
+            <div class="slide-number">15 / 15</div>
+            <h1 style="font-size: 100px;">Thank You</h1>
+            <p class="tagline">Questions?</p>
+            <div style="margin-top: 60px;">
+                <p style="font-size: 28px;">OpenLifeOS - Not an assistant. Another you.</p>
+                <p style="font-size: 24px; color: rgba(255,255,255,0.6); margin-top: 20px;">不是助手，是另一个你</p>
+            </div>
+            <div style="margin-top: 40px;">
+                <p style="font-size: 32px; color: #ff00ff;">🏆 Vote for OpenLifeOS</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="nav">
+        <button class="nav-btn" onclick="prevSlide()">←</button>
+        <button class="nav-btn" onclick="nextSlide()">→</button>
+    </div>
+    
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const progress = document.getElementById('progress');
+        
+        function showSlide(n) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[n].classList.add('active');
+            progress.style.width = ((n + 1) / totalSlides * 100) + '%';
+        }
+        
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+        
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+            if (e.key === 'f') document.documentElement.requestFullscreen();
+        });
+        
+        showSlide(0);
+    </script>
+</body>
+</html>

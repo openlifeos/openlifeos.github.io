@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module System Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5em;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .test-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .test-card h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: inline-block;
+            margin: 5px 0;
+        }
+        
+        .status.success {
+            background: rgba(52, 211, 153, 0.2);
+            color: #34d399;
+            border: 1px solid #34d399;
+        }
+        
+        .status.error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+        }
+        
+        .status.pending {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+            border: 1px solid #fbbf24;
+        }
+        
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .output {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .module-list {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .module-item {
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .module-item:last-child {
+            border-bottom: none;
+        }
+        
+        .console {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .console h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .log-entry {
+            padding: 5px;
+            margin: 2px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .log-entry.info {
+            color: #60a5fa;
+        }
+        
+        .log-entry.success {
+            color: #34d399;
+        }
+        
+        .log-entry.error {
+            color: #ef4444;
+        }
+        
+        .log-entry.warning {
+            color: #fbbf24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Digital Human Module System Test</h1>
+        
+        <div class="test-grid">
+            <!-- Module Registry Test -->
+            <div class="test-card">
+                <h2>Module Registry</h2>
+                <div id="registry-status" class="status pending">Not Initialized</div>
+                <div class="button-group">
+                    <button class="button" onclick="initializeRegistry()">Initialize Registry</button>
+                    <button class="button" onclick="listModules()">List Modules</button>
+                </div>
+                <div id="module-list" class="module-list" style="display: none;"></div>
+            </div>
+            
+            <!-- Core Modules Test -->
+            <div class="test-card">
+                <h2>Core Modules</h2>
+                <div id="core-status" class="status pending">Not Loaded</div>
+                <div class="button-group">
+                    <button class="button" onclick="loadCoreModules()">Load Core Modules</button>
+                    <button class="button" onclick="testDigitalHuman()">Test Digital Human</button>
+                </div>
+                <div id="core-output" class="output" style="display: none;"></div>
+            </div>
+            
+            <!-- Plugin System Test -->
+            <div class="test-card">
+                <h2>Plugin System</h2>
+                <div id="plugin-status" class="status pending">No Plugins</div>
+                <div class="button-group">
+                    <button class="button" onclick="loadExamplePlugin()">Load Example Plugin</button>
+                    <button class="button" onclick="testPlugin()">Test Plugin</button>
+                </div>
+                <div id="plugin-output" class="output" style="display: none;"></div>
+            </div>
+            
+            <!-- Hook System Test -->
+            <div class="test-card">
+                <h2>Hook System</h2>
+                <div id="hook-status" class="status pending">Not Tested</div>
+                <div class="button-group">
+                    <button class="button" onclick="testHooks()">Test Hooks</button>
+                    <button class="button" onclick="executeHook()">Execute Hook</button>
+                </div>
+                <div id="hook-output" class="output" style="display: none;"></div>
+            </div>
+            
+            <!-- Interaction Test -->
+            <div class="test-card">
+                <h2>Digital Human Interaction</h2>
+                <div id="interaction-status" class="status pending">Ready</div>
+                <input type="text" id="user-input" placeholder="Say something..." style="width: 100%; padding: 10px; margin: 10px 0; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 5px;">
+                <button class="button" onclick="sendMessage()">Send Message</button>
+                <div id="interaction-output" class="output" style="display: none;"></div>
+            </div>
+            
+            <!-- Module Communication Test -->
+            <div class="test-card">
+                <h2>Module Communication</h2>
+                <div id="comm-status" class="status pending">Not Tested</div>
+                <div class="button-group">
+                    <button class="button" onclick="testCommunication()">Test Communication</button>
+                    <button class="button" onclick="testMiddleware()">Test Middleware</button>
+                </div>
+                <div id="comm-output" class="output" style="display: none;"></div>
+            </div>
+        </div>
+        
+        <!-- Console Output -->
+        <div class="console">
+            <h3>Console Output</h3>
+            <div id="console-output"></div>
+        </div>
+    </div>
+    
+    <script type="module">
+        // Import modules
+        import ModuleRegistry from './src/core/ModuleRegistry.js';
+        import DigitalHuman from './src/core/DigitalHuman.js';
+        import ExamplePlugin from './src/plugins/ExamplePlugin.js';
+        
+        // Make available globally for button onclick handlers
+        window.ModuleRegistry = ModuleRegistry;
+        window.DigitalHuman = DigitalHuman;
+        window.ExamplePlugin = ExamplePlugin;
+        
+        // Global registry instance
+        window.registry = null;
+        window.digitalHuman = null;
+        
+        // Console logging
+        window.log = function(message, type = 'info') {
+            const console = document.getElementById('console-output');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            console.appendChild(entry);
+            console.scrollTop = console.scrollHeight;
+        };
+        
+        window.initializeRegistry = function() {
+            try {
+                window.registry = new ModuleRegistry();
+                document.getElementById('registry-status').className = 'status success';
+                document.getElementById('registry-status').textContent = 'Initialized';
+                log('Module Registry initialized successfully', 'success');
+            } catch (error) {
+                document.getElementById('registry-status').className = 'status error';
+                document.getElementById('registry-status').textContent = 'Failed';
+                log(`Failed to initialize registry: ${error.message}`, 'error');
+            }
+        };
+        
+        window.loadCoreModules = function() {
+            try {
+                if (!window.registry) {
+                    throw new Error('Registry not initialized');
+                }
+                
+                // Create Digital Human instance
+                window.digitalHuman = new DigitalHuman({
+                    name: 'Test Human',
+                    personalityConfig: {
+                        openness: 0.8,
+                        conscientiousness: 0.7
+                    }
+                });
+                
+                // Register with the registry
+                window.registry.register('DigitalHuman', window.digitalHuman, {
+                    version: '1.0.0',
+                    metadata: { type: 'core' }
+                });
+                
+                document.getElementById('core-status').className = 'status success';
+                document.getElementById('core-status').textContent = 'Loaded';
+                log('Core modules loaded successfully', 'success');
+                
+                // Show output
+                const output = document.getElementById('core-output');
+                output.style.display = 'block';
+                output.innerHTML = `<strong>Digital Human Created:</strong><br>
+                    Name: ${window.digitalHuman.name}<br>
+                    ID: ${window.digitalHuman.id}<br>
+                    State: ${window.digitalHuman.state}`;
+                
+            } catch (error) {
+                document.getElementById('core-status').className = 'status error';
+                document.getElementById('core-status').textContent = 'Failed';
+                log(`Failed to load core modules: ${error.message}`, 'error');
+            }
+        };
+        
+        window.testDigitalHuman = async function() {
+            try {
+                if (!window.digitalHuman) {
+                    throw new Error('Digital Human not loaded');
+                }
+                
+                const response = await window.digitalHuman.interact("Hello, how are you?");
+                
+                const output = document.getElementById('core-output');
+                output.style.display = 'block';
+                output.innerHTML += `<br><br><strong>Interaction Test:</strong><br>
+                    Input: "Hello, how are you?"<br>
+                    Response: ${response}`;
+                
+                log('Digital Human interaction test successful', 'success');
+                
+            } catch (error) {
+                log(`Digital Human test failed: ${error.message}`, 'error');
+            }
+        };
+        
+        window.loadExamplePlugin = function() {
+            try {
+                if (!window.registry) {
+                    throw new Error('Registry not initialized');
+                }
+                
+                const plugin = new ExamplePlugin({
+                    verbose: true,
+                    backgroundProcessing: true,
+                    processingInterval: 5000
+                });
+                
+                window.registry.register('ExamplePlugin', plugin, {
+                    version: '1.0.0',
+                    dependencies: []
+                });
+                
+                document.getElementById('plugin-status').className = 'status success';
+                document.getElementById('plugin-status').textContent = 'Plugin Loaded';
+                log('Example plugin loaded successfully', 'success');
+                
+                const output = document.getElementById('plugin-output');
+                output.style.display = 'block';
+                output.innerHTML = `<strong>Plugin Loaded:</strong><br>
+                    Name: ${plugin.name}<br>
+                    Enabled: ${plugin.enabled}<br>
+                    Config: ${JSON.stringify(plugin.config, null, 2)}`;
+                
+            } catch (error) {
+                document.getElementById('plugin-status').className = 'status error';
+                document.getElementById('plugin-status').textContent = 'Failed';
+                log(`Failed to load plugin: ${error.message}`, 'error');
+            }
+        };
+        
+        window.testPlugin = function() {
+            try {
+                const plugin = window.registry.get('ExamplePlugin');
+                const stats = plugin.getStatistics();
+                
+                const output = document.getElementById('plugin-output');
+                output.innerHTML += `<br><br><strong>Plugin Statistics:</strong><br>
+                    Processed Count: ${stats.processedCount}<br>
+                    Cache Size: ${stats.cacheSize}<br>
+                    Enabled: ${stats.enabled}`;
+                
+                log('Plugin test successful', 'success');
+                
+            } catch (error) {
+                log(`Plugin test failed: ${error.message}`, 'error');
+            }
+        };
+        
+        window.listModules = function() {
+            try {
+                if (!window.registry) {
+                    throw new Error('Registry not initialized');
+                }
+                
+                const modules = window.registry.list();
+                const listDiv = document.getElementById('module-list');
+                listDiv.style.display = 'block';
+                listDiv.innerHTML = '<strong>Registered Modules:</strong>';
+                
+                if (modules.length === 0) {
+                    listDiv.innerHTML += '<div class="module-item">No modules registered</div>';
+                } else {
+                    modules.forEach(module => {
+                        listDiv.innerHTML += `
+                            <div class="module-item">
+                                <span>${module.name} v${module.version}</span>
+                                <span class="status ${module.enabled ? 'success' : 'error'}">
+                                    ${module.enabled ? 'Enabled' : 'Disabled'}
+                                </span>
+                            </div>`;
+                    });
+                }
+                
+                log(`Listed ${modules.length} modules`, 'info');
+                
+            } catch (error) {
+                log(`Failed to list modules: ${error.message}`, 'error');
+            }
+        };
+        
+        window.testHooks = async function() {
+            try {
+                if (!window.registry) {
+                    throw new Error('Registry not initialized');
+                }
+                
+                // Test hook execution
+                const results = await window.registry.executeHook('beforeInteraction', 'Test input');
+                
+                document.getElementById('hook-status').className = 'status success';
+                document.getElementById('hook-status').textContent = 'Hooks Working';
+                
+                const output = document.getElementById('hook-output');
+                output.style.display = 'block';
+                output.innerHTML = `<strong>Hook Test Results:</strong><br>
+                    Hook: beforeInteraction<br>
+                    Input: "Test input"<br>
+                    Results: ${JSON.stringify(results, null, 2)}`;
+                
+                log('Hook system test successful', 'success');
+                
+            } catch (error) {
+                document.getElementById('hook-status').className = 'status error';
+                document.getElementById('hook-status').textContent = 'Failed';
+                log(`Hook test failed: ${error.message}`, 'error');
+            }
+        };
+        
+        window.executeHook = async function() {
+            try {
+                const results = await window.registry.executeHook('afterInteraction', 'Input', 'Response');
+                
+                const output = document.getElementById('hook-output');
+                output.innerHTML += `<br><br><strong>Hook Execution:</strong><br>
+                    ${JSON.stringify(results, null, 2)}`;
+                
+                log('Hook executed successfully', 'success');
+                
+            } catch (error) {
+                log(`Hook execution failed: ${error.message}`, 'error');
+            }
+        };
+        
+        window.sendMessage = async function() {
+            try {
+                const input = document.getElementById('user-input').value;
+                if (!input) return;
+                
+                if (!window.digitalHuman) {
+                    throw new Error('Digital Human not loaded');
+                }
+                
+                document.getElementById('interaction-status').className = 'status pending';
+                document.getElementById('interaction-status').textContent = 'Processing...';
+                
+                const response = await window.digitalHuman.interact(input);
+                
+                document.getElementById('interaction-status').className = 'status success';
+                document.getElementById('interaction-status').textContent = 'Complete';
+                
+                const output = document.getElementById('interaction-output');
+                output.style.display = 'block';
+                output.innerHTML = `<strong>Conversation:</strong><br>
+                    <div style="margin: 10px 0;">
+                        <strong>You:</strong> ${input}<br>
+                        <strong>AI:</strong> ${response}
+                    </div>` + (output.innerHTML || '');
+                
+                document.getElementById('user-input').value = '';
+                log(`Interaction processed: "${input}"`, 'success');
+                
+            } catch (error) {
+                document.getElementById('interaction-status').className = 'status error';
+                document.getElementById('interaction-status').textContent = 'Error';
+                log(`Interaction failed: ${error.message}`, 'error');
+            }
+        };
+        
+        window.testCommunication = async function() {
+            try {
+                if (!window.registry || !window.digitalHuman) {
+                    throw new Error('Modules not loaded');
+                }
+                
+                // Test module communication
+                const state = window.digitalHuman.getState();
+                
+                document.getElementById('comm-status').className = 'status success';
+                document.getElementById('comm-status').textContent = 'Working';
+                
+                const output = document.getElementById('comm-output');
+                output.style.display = 'block';
+                output.innerHTML = `<strong>Module State:</strong><br>
+                    ${JSON.stringify(state, null, 2)}`;
+                
+                log('Module communication test successful', 'success');
+                
+            } catch (error) {
+                document.getElementById('comm-status').className = 'status error';
+                document.getElementById('comm-status').textContent = 'Failed';
+                log(`Communication test failed: ${error.message}`, 'error');
+            }
+        };
+        
+        window.testMiddleware = async function() {
+            try {
+                if (!window.registry) {
+                    throw new Error('Registry not initialized');
+                }
+                
+                const context = { test: true, data: 'test data' };
+                const result = await window.registry.processMiddleware(context, async () => {
+                    return { ...context, processed: true };
+                });
+                
+                const output = document.getElementById('comm-output');
+                output.innerHTML += `<br><br><strong>Middleware Test:</strong><br>
+                    Input: ${JSON.stringify(context)}<br>
+                    Output: ${JSON.stringify(result)}`;
+                
+                log('Middleware test successful', 'success');
+                
+            } catch (error) {
+                log(`Middleware test failed: ${error.message}`, 'error');
+            }
+        };
+        
+        // Auto-initialize on load
+        window.addEventListener('load', () => {
+            log('Module System Test Interface Loaded', 'info');
+            log('Click "Initialize Registry" to begin testing', 'warning');
+        });
+    </script>
+</body>
+</html>

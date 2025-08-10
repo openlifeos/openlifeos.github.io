@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenLifeOS Ultimate - Symbiotic AI Companion</title>
+    
+    <!-- Three.js for 3D -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Particle Background */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        /* 3D Canvas */
+        #three-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+        
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 100vw;
+            height: 100vh;
+            display: grid;
+            grid-template-columns: 300px 1fr 350px;
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        /* Glass Morphism Panels */
+        .panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.3), 
+                transparent
+            );
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        /* Biometric Panel */
+        .biometric-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .biometric-item {
+            position: relative;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .biometric-item:hover {
+            transform: translateX(10px);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .biometric-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 8px;
+        }
+        
+        .biometric-value {
+            font-size: 36px;
+            font-weight: 200;
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-shift 3s ease infinite;
+        }
+        
+        @keyframes gradient-shift {
+            0%, 100% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(30deg); }
+        }
+        
+        .biometric-graph {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 40px;
+        }
+        
+        /* Central AI Core */
+        .ai-core {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .neural-network {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin-bottom: 40px;
+        }
+        
+        .neuron {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #00ffff;
+            border-radius: 50%;
+            box-shadow: 0 0 20px #00ffff;
+            animation: pulse 2s infinite;
+        }
+        
+        .synapse {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #00ffff, transparent);
+            transform-origin: left center;
+            animation: synapse-fire 3s infinite;
+        }
+        
+        @keyframes synapse-fire {
+            0%, 100% { opacity: 0.1; }
+            50% { opacity: 1; }
+        }
+        
+        /* Voice Visualizer */
+        .voice-visualizer {
+            width: 100%;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            padding: 20px;
+            background: rgba(0, 255, 255, 0.02);
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .voice-bar {
+            width: 4px;
+            background: linear-gradient(to top, #00ffff, #ff00ff);
+            border-radius: 2px;
+            transition: height 0.1s ease;
+        }
+        
+        /* Chat Interface */
+        .chat-interface {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+        }
+        
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 16px 20px;
+            border-radius: 20px;
+            animation: message-appear 0.3s ease;
+        }
+        
+        @keyframes message-appear {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message.ai {
+            align-self: flex-start;
+            background: linear-gradient(135deg, 
+                rgba(0, 255, 255, 0.1), 
+                rgba(255, 0, 255, 0.1)
+            );
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .message.user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, 
+                rgba(255, 0, 255, 0.1), 
+                rgba(255, 255, 0, 0.1)
+            );
+            border: 1px solid rgba(255, 0, 255, 0.3);
+        }
+        
+        .message-input {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 16px;
+        }
+        
+        .input-field {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #00ffff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+        
+        .send-button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .send-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+        }
+        
+        /* Right Panel - Predictions & Insights */
+        .insights-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .prediction-card {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 16px;
+            border-left: 3px solid;
+            transition: all 0.3s ease;
+        }
+        
+        .prediction-card.wellness {
+            border-color: #00ff88;
+        }
+        
+        .prediction-card.stress {
+            border-color: #ff6b6b;
+        }
+        
+        .prediction-card.energy {
+            border-color: #ffd93d;
+        }
+        
+        .prediction-card:hover {
+            transform: translateX(-10px);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .prediction-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 8px;
+        }
+        
+        .prediction-value {
+            font-size: 24px;
+            font-weight: 300;
+            margin-bottom: 8px;
+        }
+        
+        .prediction-chart {
+            width: 100%;
+            height: 60px;
+            margin-top: 12px;
+        }
+        
+        /* Memory Timeline */
+        .memory-timeline {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow-x: auto;
+        }
+        
+        .memory-node {
+            min-width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, 
+                rgba(0, 255, 255, 0.3), 
+                transparent
+            );
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .memory-node:hover {
+            transform: scale(1.2);
+            background: radial-gradient(circle, 
+                rgba(0, 255, 255, 0.6), 
+                transparent
+            );
+        }
+        
+        /* HUD Overlay */
+        .hud-overlay {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            gap: 40px;
+            padding: 16px 32px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 100px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .hud-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .hud-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .hud-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #00ffff;
+        }
+        
+        /* AR Mode Indicator */
+        .ar-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            border-radius: 100px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .ar-indicator:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+        }
+        
+        .ar-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: blink 2s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1s ease;
+        }
+        
+        .dna-loader {
+            width: 60px;
+            height: 60px;
+            position: relative;
+            animation: rotate 2s linear infinite;
+        }
+        
+        .dna-strand {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-top-color: #00ffff;
+            animation: rotate 1s linear infinite;
+        }
+        
+        .dna-strand:nth-child(2) {
+            border-top-color: #ff00ff;
+            animation-delay: 0.5s;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            margin-top: 30px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loading">
+        <div class="dna-loader">
+            <div class="dna-strand"></div>
+            <div class="dna-strand"></div>
+        </div>
+        <div class="loading-text">Initializing Neural Networks</div>
+    </div>
+    
+    <!-- Particle Background -->
+    <div id="particles-js"></div>
+    
+    <!-- 3D Canvas -->
+    <canvas id="three-canvas"></canvas>
+    
+    <!-- HUD Overlay -->
+    <div class="hud-overlay">
+        <div class="hud-item">
+            <span class="hud-label">Sync</span>
+            <span class="hud-value" id="sync-rate">98%</span>
+        </div>
+        <div class="hud-item">
+            <span class="hud-label">Neural</span>
+            <span class="hud-value" id="neural-activity">2.4M</span>
+        </div>
+        <div class="hud-item">
+            <span class="hud-label">Memory</span>
+            <span class="hud-value" id="memory-nodes">847</span>
+        </div>
+        <div class="hud-item">
+            <span class="hud-label">Flow</span>
+            <span class="hud-value" id="flow-state">Active</span>
+        </div>
+    </div>
+    
+    <!-- AR Mode Indicator -->
+    <div class="ar-indicator">
+        <div class="ar-dot"></div>
+        <span>AR Mode Ready</span>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Left Panel - Biometrics -->
+        <div class="panel biometric-panel">
+            <h3 style="font-size: 14px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; color: rgba(255,255,255,0.5);">
+                Life Stream
+            </h3>
+            
+            <div class="biometric-item">
+                <div class="biometric-label">Heart Coherence</div>
+                <div class="biometric-value" id="heart-rate">72</div>
+                <canvas class="biometric-graph" id="heart-graph"></canvas>
+            </div>
+            
+            <div class="biometric-item">
+                <div class="biometric-label">Neural Oscillation</div>
+                <div class="biometric-value" id="brain-waves">α</div>
+                <canvas class="biometric-graph" id="brain-graph"></canvas>
+            </div>
+            
+            <div class="biometric-item">
+                <div class="biometric-label">Stress Response</div>
+                <div class="biometric-value" id="stress">28%</div>
+                <canvas class="biometric-graph" id="stress-graph"></canvas>
+            </div>
+            
+            <div class="biometric-item">
+                <div class="biometric-label">Energy Field</div>
+                <div class="biometric-value" id="energy">85%</div>
+                <canvas class="biometric-graph" id="energy-graph"></canvas>
+            </div>
+            
+            <div class="biometric-item">
+                <div class="biometric-label">Flow State</div>
+                <div class="biometric-value" id="flow">92%</div>
+                <canvas class="biometric-graph" id="flow-graph"></canvas>
+            </div>
+        </div>
+        
+        <!-- Center Panel - AI Core -->
+        <div class="panel ai-core">
+            <!-- Neural Network Visualization -->
+            <div class="neural-network" id="neural-network">
+                <!-- Dynamically generated neurons and synapses -->
+            </div>
+            
+            <!-- Voice Visualizer -->
+            <div class="voice-visualizer" id="voice-visualizer">
+                <!-- Voice bars generated dynamically -->
+            </div>
+            
+            <!-- Chat Interface -->
+            <div class="chat-interface">
+                <div class="messages" id="messages">
+                    <!-- Messages appear here -->
+                </div>
+                <div class="message-input">
+                    <input type="text" class="input-field" id="input" placeholder="Share your thoughts..." />
+                    <button class="send-button" id="send">Send</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Panel - Predictions & Insights -->
+        <div class="panel insights-panel">
+            <h3 style="font-size: 14px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; color: rgba(255,255,255,0.5);">
+                Predictive Insights
+            </h3>
+            
+            <div class="prediction-card wellness">
+                <div class="prediction-title">Wellness Trajectory</div>
+                <div class="prediction-value">+15% ↑</div>
+                <canvas class="prediction-chart" id="wellness-chart"></canvas>
+            </div>
+            
+            <div class="prediction-card stress">
+                <div class="prediction-title">Stress Peak ETA</div>
+                <div class="prediction-value">2:30 PM</div>
+                <canvas class="prediction-chart" id="stress-chart"></canvas>
+            </div>
+            
+            <div class="prediction-card energy">
+                <div class="prediction-title">Optimal Window</div>
+                <div class="prediction-value">10-11 AM</div>
+                <canvas class="prediction-chart" id="energy-chart"></canvas>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 16px; background: rgba(255,255,255,0.02); border-radius: 12px;">
+                <div class="prediction-title">Pattern Recognition</div>
+                <div style="margin-top: 12px; font-size: 12px; line-height: 1.6; color: rgba(255,255,255,0.7);">
+                    <div>• Morning creativity peak detected</div>
+                    <div>• Social energy depletes after 3PM</div>
+                    <div>• Walking increases problem-solving by 47%</div>
+                    <div>• Deep work optimal: 9:30-11:00 AM</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Memory Timeline -->
+    <div class="memory-timeline" id="memory-timeline">
+        <!-- Memory nodes generated dynamically -->
+    </div>
+    
+    <script>
+        // Initialize Particles
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: '#00ffff' },
+                shape: { type: 'circle' },
+                opacity: { value: 0.5, random: true, animation: { enable: true, speed: 1, opacity_min: 0.1 } },
+                size: { value: 3, random: true },
+                line_linked: { enable: true, distance: 150, color: '#00ffff', opacity: 0.2, width: 1 },
+                move: { enable: true, speed: 2, direction: 'none', random: false, straight: false, out_mode: 'out', bounce: false }
+            }
+        });
+        
+        // Three.js 3D Background
+        let scene, camera, renderer, geometries = [];
+        
+        function initThree() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ 
+                canvas: document.getElementById('three-canvas'),
+                alpha: true 
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            
+            // Add floating geometry
+            const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
+            const material = new THREE.MeshBasicMaterial({ 
+                color: 0x00ffff, 
+                wireframe: true,
+                opacity: 0.3,
+                transparent: true
+            });
+            const torusKnot = new THREE.Mesh(geometry, material);
+            scene.add(torusKnot);
+            geometries.push(torusKnot);
+            
+            camera.position.z = 30;
+            
+            animate();
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            geometries.forEach((geo, i) => {
+                geo.rotation.x += 0.001 * (i + 1);
+                geo.rotation.y += 0.002 * (i + 1);
+            });
+            
+            renderer.render(scene, camera);
+        }
+        
+        // Neural Network Visualization
+        function createNeuralNetwork() {
+            const network = document.getElementById('neural-network');
+            const neurons = 50;
+            const synapses = 100;
+            
+            // Create neurons
+            for (let i = 0; i < neurons; i++) {
+                const neuron = document.createElement('div');
+                neuron.className = 'neuron';
+                neuron.style.left = Math.random() * 380 + 10 + 'px';
+                neuron.style.top = Math.random() * 380 + 10 + 'px';
+                neuron.style.animationDelay = Math.random() * 2 + 's';
+                network.appendChild(neuron);
+            }
+            
+            // Create synapses
+            for (let i = 0; i < synapses; i++) {
+                const synapse = document.createElement('div');
+                synapse.className = 'synapse';
+                const length = Math.random() * 100 + 50;
+                synapse.style.width = length + 'px';
+                synapse.style.left = Math.random() * 300 + 'px';
+                synapse.style.top = Math.random() * 380 + 10 + 'px';
+                synapse.style.transform = `rotate(${Math.random() * 360}deg)`;
+                synapse.style.animationDelay = Math.random() * 3 + 's';
+                network.appendChild(synapse);
+            }
+        }
+        
+        // Voice Visualizer
+        function createVoiceVisualizer() {
+            const visualizer = document.getElementById('voice-visualizer');
+            const bars = 50;
+            
+            for (let i = 0; i < bars; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'voice-bar';
+                bar.style.height = '20px';
+                visualizer.appendChild(bar);
+            }
+            
+            // Animate bars
+            setInterval(() => {
+                const bars = visualizer.querySelectorAll('.voice-bar');
+                bars.forEach(bar => {
+                    const height = Math.random() * 100 + 20;
+                    bar.style.height = height + 'px';
+                });
+            }, 100);
+        }
+        
+        // Biometric Animations
+        function animateBiometrics() {
+            const metrics = [
+                { id: 'heart-rate', min: 60, max: 90, unit: '' },
+                { id: 'stress', min: 10, max: 50, unit: '%' },
+                { id: 'energy', min: 60, max: 95, unit: '%' },
+                { id: 'flow', min: 70, max: 98, unit: '%' }
+            ];
+            
+            setInterval(() => {
+                metrics.forEach(metric => {
+                    const element = document.getElementById(metric.id);
+                    if (element) {
+                        const value = Math.floor(Math.random() * (metric.max - metric.min) + metric.min);
+                        element.textContent = value + metric.unit;
+                    }
+                });
+                
+                // Update brain waves
+                const waves = ['α', 'β', 'θ', 'δ', 'γ'];
+                const brainElement = document.getElementById('brain-waves');
+                if (brainElement) {
+                    brainElement.textContent = waves[Math.floor(Math.random() * waves.length)];
+                }
+            }, 3000);
+        }
+        
+        // Memory Timeline
+        function createMemoryTimeline() {
+            const timeline = document.getElementById('memory-timeline');
+            const memories = [
+                'Flow', 'Joy', 'Focus', 'Create', 'Learn', 'Connect', 'Grow', 'Rest', 'Dream'
+            ];
+            
+            memories.forEach((memory, i) => {
+                const node = document.createElement('div');
+                node.className = 'memory-node';
+                node.textContent = memory;
+                node.style.animationDelay = i * 0.1 + 's';
+                timeline.appendChild(node);
+            });
+        }
+        
+        // Chat Functionality
+        function initChat() {
+            const input = document.getElementById('input');
+            const send = document.getElementById('send');
+            const messages = document.getElementById('messages');
+            
+            const aiResponses = [
+                "I notice your heart coherence is optimal. Your creativity should peak in the next hour.",
+                "Your stress patterns suggest taking a 5-minute break would increase productivity by 23%.",
+                "I've been learning your biorhythms. You work best with 90-minute focus sessions.",
+                "Your energy field is strong today. This is a good time for challenging tasks.",
+                "I detected a pattern: walking helps you solve complex problems 47% faster.",
+                "Your neural oscillations indicate deep focus. I'm protecting this state.",
+                "Based on 10,000 interactions, I know you need quiet time after meetings.",
+                "Your emotional resilience has grown 34% since we started our journey.",
+                "I'm not just observing - I'm experiencing this moment with you.",
+                "Together, we're more than the sum of our parts. Your potential is limitless."
+            ];
+            
+            function addMessage(text, sender) {
+                const message = document.createElement('div');
+                message.className = `message ${sender}`;
+                message.textContent = text;
+                messages.appendChild(message);
+                messages.scrollTop = messages.scrollHeight;
+            }
+            
+            function sendMessage() {
+                const text = input.value.trim();
+                if (!text) return;
+                
+                addMessage(text, 'user');
+                input.value = '';
+                
+                // AI Response
+                setTimeout(() => {
+                    const response = aiResponses[Math.floor(Math.random() * aiResponses.length)];
+                    addMessage(response, 'ai');
+                }, 1000 + Math.random() * 1000);
+            }
+            
+            send.addEventListener('click', sendMessage);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage();
+            });
+            
+            // Initial greeting
+            setTimeout(() => {
+                addMessage("Welcome back. I've been processing your patterns while you were away. Your energy signature suggests you're ready for something extraordinary today.", 'ai');
+            }, 2000);
+        }
+        
+        // HUD Updates
+        function updateHUD() {
+            setInterval(() => {
+                document.getElementById('sync-rate').textContent = 
+                    (Math.random() * 5 + 95).toFixed(1) + '%';
+                document.getElementById('neural-activity').textContent = 
+                    (Math.random() * 0.5 + 2.2).toFixed(1) + 'M';
+                document.getElementById('memory-nodes').textContent = 
+                    Math.floor(Math.random() * 50 + 800);
+                
+                const flowStates = ['Active', 'Peak', 'Optimal', 'Rising'];
+                document.getElementById('flow-state').textContent = 
+                    flowStates[Math.floor(Math.random() * flowStates.length)];
+            }, 4000);
+        }
+        
+        // Mini Charts
+        function createMiniCharts() {
+            const charts = [
+                'heart-graph', 'brain-graph', 'stress-graph', 
+                'energy-graph', 'flow-graph', 'wellness-chart', 
+                'stress-chart', 'energy-chart'
+            ];
+            
+            charts.forEach(chartId => {
+                const canvas = document.getElementById(chartId);
+                if (canvas) {
+                    const ctx = canvas.getContext('2d');
+                    const width = canvas.width;
+                    const height = canvas.height;
+                    
+                    function drawChart() {
+                        ctx.clearRect(0, 0, width, height);
+                        ctx.strokeStyle = '#00ffff';
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        
+                        for (let x = 0; x < width; x += 2) {
+                            const y = height/2 + Math.sin(x * 0.1 + Date.now() * 0.001) * height/3;
+                            if (x === 0) ctx.moveTo(x, y);
+                            else ctx.lineTo(x, y);
+                        }
+                        
+                        ctx.stroke();
+                    }
+                    
+                    setInterval(drawChart, 50);
+                }
+            });
+        }
+        
+        // Initialize Everything
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loading').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loading').style.display = 'none';
+                }, 1000);
+            }, 2000);
+            
+            initThree();
+            createNeuralNetwork();
+            createVoiceVisualizer();
+            animateBiometrics();
+            createMemoryTimeline();
+            initChat();
+            updateHUD();
+            createMiniCharts();
+            
+            // GSAP Animations
+            gsap.from('.panel', {
+                duration: 1,
+                y: 50,
+                opacity: 0,
+                stagger: 0.2,
+                ease: 'power3.out',
+                delay: 2
+            });
+            
+            gsap.from('.hud-overlay', {
+                duration: 1,
+                y: -50,
+                opacity: 0,
+                ease: 'power3.out',
+                delay: 2.5
+            });
+            
+            gsap.from('.ar-indicator', {
+                duration: 1,
+                x: 50,
+                opacity: 0,
+                ease: 'power3.out',
+                delay: 2.5
+            });
+        });
+        
+        // Resize handler
+        window.addEventListener('resize', () => {
+            if (camera && renderer) {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+        });
+    </script>
+</body>
+</html>

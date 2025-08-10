@@ -1,0 +1,2967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenLifeOS Pro - Advanced AI Life Companion | AugHacks MIT 2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        :root {
+            --primary-green: #00ff00;
+            --primary-cyan: #00ffff;
+            --primary-gold: #ffd700;
+            --primary-red: #ff4444;
+            --primary-blue: #0088ff;
+            --primary-purple: #ff00ff;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #050505;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255,255,255,0.8);
+            --glass: rgba(255,255,255,0.05);
+            --glass-border: rgba(255,255,255,0.1);
+        }
+        
+        body {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+        }
+        
+        /* Advanced Matrix Background */
+        #matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.4;
+        }
+        
+        /* Quantum Grid Overlay */
+        .quantum-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0,255,0,0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,0,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 2;
+            opacity: 0.3;
+            animation: gridMove 20s linear infinite;
+        }
+        
+        @keyframes gridMove {
+            to { transform: translate(50px, 50px); }
+        }
+        
+        /* Neural Network Background */
+        .neural-network {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+        
+        .neural-node {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--primary-cyan);
+            border-radius: 50%;
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(2); opacity: 1; }
+        }
+        
+        /* Main Container */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Enhanced Top Bar */
+        .top-bar {
+            background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 100%);
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid var(--primary-green);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 100;
+        }
+        
+        .top-bar::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                var(--primary-green), 
+                var(--primary-cyan), 
+                var(--primary-green), 
+                transparent);
+            animation: scanline 3s linear infinite;
+        }
+        
+        @keyframes scanline {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-cyan), var(--primary-purple));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes logoGlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .ai-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            background: var(--primary-green);
+            border-radius: 50%;
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes statusPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0,255,0,0.7); }
+            50% { transform: scale(1.2); box-shadow: 0 0 0 10px rgba(0,255,0,0); }
+        }
+        
+        .status-text {
+            font-size: 12px;
+            color: var(--primary-green);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Live Stats Enhanced */
+        .stats-container {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary-cyan);
+            text-shadow: 0 0 10px rgba(0,255,255,0.5);
+        }
+        
+        .stat-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Navigation Tabs Enhanced */
+        .nav-tabs {
+            display: flex;
+            gap: 2px;
+            background: rgba(0,0,0,0.5);
+            padding: 10px 20px;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .nav-tab {
+            padding: 10px 24px;
+            background: var(--glass);
+            border: 1px solid transparent;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .nav-tab:hover::before {
+            left: 100%;
+        }
+        
+        .nav-tab:hover {
+            background: rgba(0,255,255,0.1);
+            border-color: var(--primary-cyan);
+        }
+        
+        .nav-tab.active {
+            background: linear-gradient(135deg, rgba(0,255,0,0.2), rgba(0,255,255,0.2));
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+        }
+        
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Pages Enhanced */
+        .page {
+            display: none;
+            width: 100%;
+            padding: 20px;
+            animation: pageIn 0.5s ease;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        @keyframes pageIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Dashboard Enhanced */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .feature-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0,255,255,0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0,255,255,0.2);
+            border-color: var(--primary-cyan);
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            filter: drop-shadow(0 0 10px currentColor);
+        }
+        
+        .feature-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .feature-description {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        /* Enhanced Biometrics */
+        .biometrics-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            padding: 20px;
+            height: 100%;
+        }
+        
+        .vitals-panel {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+        }
+        
+        .vital-card {
+            background: rgba(0,255,255,0.05);
+            border: 1px solid rgba(0,255,255,0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .vital-card:hover {
+            background: rgba(0,255,255,0.1);
+            transform: translateX(5px);
+        }
+        
+        .vital-info {
+            flex: 1;
+        }
+        
+        .vital-name {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        
+        .vital-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--primary-cyan);
+            text-shadow: 0 0 20px rgba(0,255,255,0.5);
+        }
+        
+        .vital-value.warning {
+            color: var(--primary-gold);
+            text-shadow: 0 0 20px rgba(255,215,0,0.5);
+        }
+        
+        .vital-value.danger {
+            color: var(--primary-red);
+            text-shadow: 0 0 20px rgba(255,68,68,0.5);
+            animation: dangerPulse 1s ease-in-out infinite;
+        }
+        
+        @keyframes dangerPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .vital-unit {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-left: 4px;
+        }
+        
+        .vital-chart {
+            width: 100px;
+            height: 40px;
+        }
+        
+        .chart-line {
+            stroke: var(--primary-cyan);
+            stroke-width: 2;
+            fill: none;
+            filter: drop-shadow(0 0 5px rgba(0,255,255,0.5));
+        }
+        
+        /* Analytics Panel */
+        .analytics-panel {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .chart-container {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 16px;
+            flex: 1;
+        }
+        
+        .chart-title {
+            font-size: 14px;
+            color: var(--primary-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+        
+        .live-chart {
+            width: 100%;
+            height: 150px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chart-grid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0,255,255,0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.3;
+        }
+        
+        /* Health Insights */
+        .insights-panel {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .insight-card {
+            background: linear-gradient(135deg, rgba(0,255,0,0.1), rgba(0,255,255,0.1));
+            border: 1px solid rgba(0,255,255,0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .insight-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-cyan), transparent);
+            animation: insightScan 3s linear infinite;
+        }
+        
+        @keyframes insightScan {
+            to { left: 100%; }
+        }
+        
+        .insight-type {
+            font-size: 10px;
+            color: var(--primary-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .insight-content {
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .insight-action {
+            margin-top: 12px;
+            padding: 8px 16px;
+            background: rgba(0,255,255,0.2);
+            border: 1px solid var(--primary-cyan);
+            border-radius: 20px;
+            color: var(--primary-cyan);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .insight-action:hover {
+            background: var(--primary-cyan);
+            color: var(--bg-dark);
+            transform: translateX(5px);
+        }
+        
+        /* Enhanced Planning */
+        .planning-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            height: 100%;
+        }
+        
+        .planning-section {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .add-button {
+            padding: 6px 12px;
+            background: linear-gradient(135deg, rgba(0,255,0,0.2), rgba(0,255,255,0.2));
+            border: 1px solid var(--primary-cyan);
+            border-radius: 20px;
+            color: var(--primary-cyan);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .add-button:hover {
+            background: var(--primary-cyan);
+            color: var(--bg-dark);
+            transform: scale(1.05);
+        }
+        
+        /* Advanced Todo List */
+        .todo-list {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .todo-item {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .todo-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--primary-cyan);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .todo-item:hover::before {
+            opacity: 1;
+        }
+        
+        .todo-item:hover {
+            background: rgba(0,255,255,0.05);
+            transform: translateX(5px);
+        }
+        
+        .todo-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary-cyan);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .todo-checkbox.checked {
+            background: var(--primary-cyan);
+        }
+        
+        .todo-checkbox.checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--bg-dark);
+            font-weight: bold;
+        }
+        
+        .todo-text {
+            flex: 1;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .todo-text.completed {
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+        
+        .todo-meta {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .todo-time {
+            font-size: 11px;
+            color: var(--text-secondary);
+            padding: 4px 8px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+        }
+        
+        .todo-priority {
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .priority-high {
+            background: rgba(255,68,68,0.2);
+            color: var(--primary-red);
+            border: 1px solid rgba(255,68,68,0.5);
+        }
+        
+        .priority-medium {
+            background: rgba(255,215,0,0.2);
+            color: var(--primary-gold);
+            border: 1px solid rgba(255,215,0,0.5);
+        }
+        
+        .priority-low {
+            background: rgba(0,255,255,0.2);
+            color: var(--primary-cyan);
+            border: 1px solid rgba(0,255,255,0.5);
+        }
+        
+        /* AI Suggestions */
+        .ai-suggestions {
+            background: linear-gradient(135deg, rgba(255,0,255,0.1), rgba(0,255,255,0.1));
+            border: 1px solid rgba(255,0,255,0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
+        }
+        
+        .suggestion-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .suggestion-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-cyan));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            animation: aiPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes aiPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,0,255,0.7); }
+            50% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(255,0,255,0); }
+        }
+        
+        .suggestion-title {
+            font-size: 12px;
+            color: var(--primary-purple);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .suggestion-content {
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        /* Knowledge Packages Enhanced */
+        .knowledge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .package-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .package-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--primary-green), var(--primary-cyan), var(--primary-purple));
+            border-radius: 16px;
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.3s ease;
+        }
+        
+        .package-card:hover::before {
+            opacity: 1;
+        }
+        
+        .package-card:hover {
+            transform: translateY(-5px);
+            border-color: transparent;
+        }
+        
+        .package-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .package-icon {
+            font-size: 48px;
+            filter: drop-shadow(0 0 20px currentColor);
+        }
+        
+        .package-info {
+            flex: 1;
+        }
+        
+        .package-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .package-version {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .package-stats {
+            display: flex;
+            gap: 16px;
+            margin: 16px 0;
+            padding: 12px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+        }
+        
+        .stat {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary-cyan);
+        }
+        
+        .stat-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .download-button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, rgba(0,255,0,0.2), rgba(0,255,255,0.2));
+            border: 2px solid var(--primary-cyan);
+            border-radius: 12px;
+            color: var(--primary-cyan);
+            font-weight: bold;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .download-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(0,255,255,0.8), transparent);
+            transition: all 0.5s ease;
+        }
+        
+        .download-button:hover::before {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -150px;
+        }
+        
+        .download-button:hover {
+            color: var(--bg-dark);
+            background: var(--primary-cyan);
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0,255,255,0.5);
+        }
+        
+        .download-button.activated {
+            background: linear-gradient(135deg, rgba(0,255,0,0.3), rgba(0,255,0,0.2));
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+            cursor: default;
+        }
+        
+        .download-button.activated:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Voice Interface Enhanced */
+        .voice-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            padding: 40px;
+        }
+        
+        .voice-interface {
+            text-align: center;
+            max-width: 600px;
+        }
+        
+        .voice-circle-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 40px;
+        }
+        
+        .voice-ring {
+            position: absolute;
+            border: 2px solid rgba(0,255,255,0.3);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .voice-ring:nth-child(1) {
+            width: 100%;
+            height: 100%;
+            animation: ringPulse 3s ease-in-out infinite;
+        }
+        
+        .voice-ring:nth-child(2) {
+            width: 80%;
+            height: 80%;
+            animation: ringPulse 3s ease-in-out infinite 0.5s;
+        }
+        
+        .voice-ring:nth-child(3) {
+            width: 60%;
+            height: 60%;
+            animation: ringPulse 3s ease-in-out infinite 1s;
+        }
+        
+        @keyframes ringPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+        }
+        
+        .voice-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, rgba(0,255,255,0.2), rgba(0,255,0,0.2));
+            border: 3px solid var(--primary-cyan);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .voice-circle.listening {
+            animation: listening 1.5s ease-in-out infinite;
+            background: linear-gradient(135deg, rgba(0,255,0,0.3), rgba(0,255,255,0.3));
+            border-color: var(--primary-green);
+        }
+        
+        @keyframes listening {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+        }
+        
+        .voice-circle.speaking {
+            animation: speaking 0.5s ease-in-out infinite;
+            background: linear-gradient(135deg, rgba(255,0,255,0.3), rgba(0,255,255,0.3));
+            border-color: var(--primary-purple);
+        }
+        
+        @keyframes speaking {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(0.95); }
+        }
+        
+        /* Chat Interface Enhanced */
+        .chat-container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+            padding: 20px;
+            height: 100%;
+        }
+        
+        .chat-main {
+            display: flex;
+            flex-direction: column;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .chat-message {
+            max-width: 70%;
+            animation: messageIn 0.3s ease;
+        }
+        
+        @keyframes messageIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .chat-message.user {
+            align-self: flex-end;
+        }
+        
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: 16px;
+            position: relative;
+        }
+        
+        .chat-message.user .message-bubble {
+            background: linear-gradient(135deg, rgba(0,255,0,0.2), rgba(0,255,255,0.2));
+            border: 1px solid var(--primary-green);
+            color: var(--text-primary);
+        }
+        
+        .chat-message.ai .message-bubble {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+        
+        .chat-message.ai.expert .message-bubble {
+            background: linear-gradient(135deg, rgba(255,0,255,0.1), rgba(0,255,255,0.1));
+            border: 1px solid rgba(255,0,255,0.5);
+        }
+        
+        .message-header {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .message-content {
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+        
+        .chat-input-container {
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            gap: 12px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .chat-input:focus {
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 20px rgba(0,255,255,0.2);
+        }
+        
+        .chat-send {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, rgba(0,255,0,0.2), rgba(0,255,255,0.2));
+            border: 1px solid var(--primary-cyan);
+            border-radius: 24px;
+            color: var(--primary-cyan);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .chat-send:hover {
+            background: var(--primary-cyan);
+            color: var(--bg-dark);
+            transform: scale(1.05);
+        }
+        
+        /* Chat Sidebar */
+        .chat-sidebar {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .active-packages {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 12px;
+        }
+        
+        .packages-title {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+        
+        .package-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            margin: 4px;
+            background: linear-gradient(135deg, rgba(0,255,0,0.2), rgba(0,255,255,0.2));
+            border: 1px solid var(--primary-cyan);
+            border-radius: 16px;
+            font-size: 12px;
+            color: var(--primary-cyan);
+        }
+        
+        .package-badge.expert {
+            background: linear-gradient(135deg, rgba(255,0,255,0.2), rgba(0,255,255,0.2));
+            border-color: var(--primary-purple);
+            color: var(--primary-purple);
+        }
+        
+        /* Notification System */
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, rgba(0,255,0,0.9), rgba(0,255,255,0.9));
+            color: var(--bg-dark);
+            border-radius: 12px;
+            font-weight: bold;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,255,255,0.5);
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        /* Download Overlay Enhanced */
+        .download-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .download-overlay.active {
+            display: flex;
+        }
+        
+        .download-modal {
+            background: var(--bg-dark);
+            border: 2px solid var(--primary-cyan);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .download-title {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .progress-container {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            height: 40px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-green), var(--primary-cyan));
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: progressShine 1s linear infinite;
+        }
+        
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .progress-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            color: var(--text-primary);
+            font-weight: bold;
+            z-index: 1;
+        }
+        
+        .knowledge-stream {
+            height: 200px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 16px;
+            overflow: hidden;
+            position: relative;
+            font-family: monospace;
+            font-size: 12px;
+            color: var(--primary-green);
+        }
+        
+        .knowledge-line {
+            position: absolute;
+            white-space: nowrap;
+            animation: streamLine 3s linear;
+            opacity: 0.8;
+        }
+        
+        @keyframes streamLine {
+            from { 
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            to { 
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .biometrics-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .planning-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .chat-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .chat-sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Neural Network Background -->
+    <div class="neural-network" id="neural-network"></div>
+    
+    <!-- Matrix Background -->
+    <canvas id="matrix-bg"></canvas>
+    
+    <!-- Quantum Grid -->
+    <div class="quantum-grid"></div>
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Enhanced Top Bar -->
+        <div class="top-bar">
+            <div class="logo-section">
+                <div class="logo">LIFE OS</div>
+                <div class="ai-status">
+                    <div class="status-indicator"></div>
+                    <span class="status-text" id="ai-status">QUANTUM READY</span>
+                </div>
+            </div>
+            
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-value" id="knowledge-nodes">0</div>
+                    <div class="stat-label">Knowledge Nodes</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="response-time">12ms</div>
+                    <div class="stat-label">Response Time</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="sync-status">100%</div>
+                    <div class="stat-label">Sync Status</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="time">00:00:00</div>
+                    <div class="stat-label">System Time</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="switchPage('dashboard')">Dashboard</div>
+            <div class="nav-tab" onclick="switchPage('biometrics')">Biometrics</div>
+            <div class="nav-tab" onclick="switchPage('planning')">Life Planning</div>
+            <div class="nav-tab" onclick="switchPage('knowledge')">Knowledge</div>
+            <div class="nav-tab" onclick="switchPage('voice')">Voice</div>
+            <div class="nav-tab" onclick="switchPage('chat')">Chat</div>
+        </div>
+        
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Dashboard Page -->
+            <div class="page active" id="dashboard-page">
+                <div class="dashboard-grid">
+                    <div class="feature-card" onclick="switchPage('biometrics')">
+                        <div class="feature-icon">💓</div>
+                        <div class="feature-title">Real-Time Biometrics</div>
+                        <div class="feature-description">
+                            Monitor vital signs, stress levels, and health patterns with AI-powered insights
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card" onclick="switchPage('planning')">
+                        <div class="feature-icon">📋</div>
+                        <div class="feature-title">Intelligent Planning</div>
+                        <div class="feature-description">
+                            AI-optimized schedules, smart todos, and personalized productivity insights
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card" onclick="switchPage('knowledge')">
+                        <div class="feature-icon">🧠</div>
+                        <div class="feature-title">Knowledge Packages</div>
+                        <div class="feature-description">
+                            Download expert-level knowledge in 3 seconds - Matrix style
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card" onclick="switchPage('voice')">
+                        <div class="feature-icon">🎙️</div>
+                        <div class="feature-title">Voice Interface</div>
+                        <div class="feature-description">
+                            Natural conversations with emotional intelligence and context awareness
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card" onclick="runDemo('wellness')">
+                        <div class="feature-icon">🧘</div>
+                        <div class="feature-title">Wellness Coach</div>
+                        <div class="feature-description">
+                            Personalized health recommendations based on your biometric patterns
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card" onclick="runDemo('productivity')">
+                        <div class="feature-icon">🚀</div>
+                        <div class="feature-title">Productivity Optimizer</div>
+                        <div class="feature-description">
+                            AI-powered workflow optimization and cognitive load management
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Biometrics Page -->
+            <div class="page" id="biometrics-page">
+                <div class="biometrics-container">
+                    <div class="vitals-panel">
+                        <div class="vital-card">
+                            <div class="vital-info">
+                                <div class="vital-name">Heart Rate</div>
+                                <div class="vital-value" id="heart-rate">72</div>
+                            </div>
+                            <svg class="vital-chart" viewBox="0 0 100 40">
+                                <polyline class="chart-line" id="heart-chart-line" points="0,20" />
+                            </svg>
+                        </div>
+                        
+                        <div class="vital-card">
+                            <div class="vital-info">
+                                <div class="vital-name">Blood Oxygen</div>
+                                <div class="vital-value" id="blood-oxygen">98</div>
+                            </div>
+                            <span class="vital-unit">%</span>
+                        </div>
+                        
+                        <div class="vital-card">
+                            <div class="vital-info">
+                                <div class="vital-name">Stress Level</div>
+                                <div class="vital-value warning" id="stress-level">65</div>
+                            </div>
+                            <span class="vital-unit">%</span>
+                        </div>
+                        
+                        <div class="vital-card">
+                            <div class="vital-info">
+                                <div class="vital-name">Temperature</div>
+                                <div class="vital-value" id="temperature">98.6</div>
+                            </div>
+                            <span class="vital-unit">°F</span>
+                        </div>
+                        
+                        <div class="vital-card">
+                            <div class="vital-info">
+                                <div class="vital-name">HRV</div>
+                                <div class="vital-value" id="hrv">45</div>
+                            </div>
+                            <span class="vital-unit">ms</span>
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-panel">
+                        <div class="chart-container">
+                            <div class="chart-title">Heart Rate Variability (24h)</div>
+                            <div class="live-chart">
+                                <div class="chart-grid"></div>
+                                <canvas id="hrv-chart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <div class="chart-title">Stress Pattern Analysis</div>
+                            <div class="live-chart">
+                                <div class="chart-grid"></div>
+                                <canvas id="stress-chart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="insights-panel">
+                            <div class="insight-card">
+                                <div class="insight-type">AI Insight</div>
+                                <div class="insight-content">
+                                    Your stress levels peak between 2-4 PM. Consider scheduling breaks or lighter tasks during this period.
+                                </div>
+                                <div class="insight-action" onclick="applyInsight('stress')">Apply Suggestion</div>
+                            </div>
+                            
+                            <div class="insight-card">
+                                <div class="insight-type">Health Alert</div>
+                                <div class="insight-content">
+                                    Irregular heart rhythm detected 3 times today. Recommend consulting with medical professional.
+                                </div>
+                                <div class="insight-action" onclick="scheduleCheckup()">Schedule Checkup</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Planning Page -->
+            <div class="page" id="planning-page">
+                <div class="planning-container">
+                    <div class="planning-section">
+                        <div class="section-header">
+                            <div class="section-title">Smart Tasks</div>
+                            <button class="add-button" onclick="addSmartTodo()">+ Add Task</button>
+                        </div>
+                        <div class="todo-list" id="todo-list">
+                            <!-- Todos will be added here -->
+                        </div>
+                        <div class="ai-suggestions">
+                            <div class="suggestion-header">
+                                <div class="suggestion-icon">🤖</div>
+                                <div class="suggestion-title">AI Recommendations</div>
+                            </div>
+                            <div class="suggestion-content" id="ai-suggestion">
+                                Based on your energy patterns, tackle high-priority tasks before 11 AM for optimal productivity.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="planning-section">
+                        <div class="section-header">
+                            <div class="section-title">Optimized Schedule</div>
+                            <button class="add-button" onclick="optimizeSchedule()">Optimize</button>
+                        </div>
+                        <div class="schedule-container" id="schedule">
+                            <!-- Schedule items will be added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Knowledge Page -->
+            <div class="page" id="knowledge-page">
+                <div class="knowledge-grid">
+                    <div class="package-card">
+                        <div class="package-header">
+                            <div class="package-icon">⚖️</div>
+                            <div class="package-info">
+                                <div class="package-name">Legal Expert</div>
+                                <div class="package-version">v2.1.0</div>
+                            </div>
+                        </div>
+                        <div class="package-stats">
+                            <div class="stat">
+                                <div class="stat-number">50K</div>
+                                <div class="stat-label">Cases</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">12</div>
+                                <div class="stat-label">Domains</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">99%</div>
+                                <div class="stat-label">Accuracy</div>
+                            </div>
+                        </div>
+                        <button class="download-button" id="legal-btn" onclick="downloadPackage('legal')">
+                            DOWNLOAD EXPERTISE
+                        </button>
+                    </div>
+                    
+                    <div class="package-card">
+                        <div class="package-header">
+                            <div class="package-icon">🏥</div>
+                            <div class="package-info">
+                                <div class="package-name">Medical Advisor</div>
+                                <div class="package-version">v3.0.1</div>
+                            </div>
+                        </div>
+                        <div class="package-stats">
+                            <div class="stat">
+                                <div class="stat-number">100K</div>
+                                <div class="stat-label">Studies</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">25</div>
+                                <div class="stat-label">Specialties</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">97%</div>
+                                <div class="stat-label">Accuracy</div>
+                            </div>
+                        </div>
+                        <button class="download-button" id="medical-btn" onclick="downloadPackage('medical')">
+                            DOWNLOAD EXPERTISE
+                        </button>
+                    </div>
+                    
+                    <div class="package-card">
+                        <div class="package-header">
+                            <div class="package-icon">💻</div>
+                            <div class="package-info">
+                                <div class="package-name">Tech Architect</div>
+                                <div class="package-version">v1.8.2</div>
+                            </div>
+                        </div>
+                        <div class="package-stats">
+                            <div class="stat">
+                                <div class="stat-number">500</div>
+                                <div class="stat-label">Patterns</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">50</div>
+                                <div class="stat-label">Languages</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">95%</div>
+                                <div class="stat-label">Optimization</div>
+                            </div>
+                        </div>
+                        <button class="download-button" id="technical-btn" onclick="downloadPackage('technical')">
+                            DOWNLOAD EXPERTISE
+                        </button>
+                    </div>
+                    
+                    <div class="package-card">
+                        <div class="package-header">
+                            <div class="package-icon">📈</div>
+                            <div class="package-info">
+                                <div class="package-name">Financial Advisor</div>
+                                <div class="package-version">v2.0.0</div>
+                            </div>
+                        </div>
+                        <div class="package-stats">
+                            <div class="stat">
+                                <div class="stat-number">10K</div>
+                                <div class="stat-label">Strategies</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">200</div>
+                                <div class="stat-label">Markets</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">92%</div>
+                                <div class="stat-label">Returns</div>
+                            </div>
+                        </div>
+                        <button class="download-button" id="financial-btn" onclick="downloadPackage('financial')">
+                            DOWNLOAD EXPERTISE
+                        </button>
+                    </div>
+                    
+                    <div class="package-card">
+                        <div class="package-header">
+                            <div class="package-icon">🧘</div>
+                            <div class="package-info">
+                                <div class="package-name">Wellness Coach</div>
+                                <div class="package-version">v1.5.0</div>
+                            </div>
+                        </div>
+                        <div class="package-stats">
+                            <div class="stat">
+                                <div class="stat-number">1K</div>
+                                <div class="stat-label">Programs</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">30</div>
+                                <div class="stat-label">Modalities</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">98%</div>
+                                <div class="stat-label">Satisfaction</div>
+                            </div>
+                        </div>
+                        <button class="download-button" id="wellness-btn" onclick="downloadPackage('wellness')">
+                            DOWNLOAD EXPERTISE
+                        </button>
+                    </div>
+                    
+                    <div class="package-card">
+                        <div class="package-header">
+                            <div class="package-icon">🎨</div>
+                            <div class="package-info">
+                                <div class="package-name">Creative Director</div>
+                                <div class="package-version">v1.2.0</div>
+                            </div>
+                        </div>
+                        <div class="package-stats">
+                            <div class="stat">
+                                <div class="stat-number">5K</div>
+                                <div class="stat-label">Concepts</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">100</div>
+                                <div class="stat-label">Styles</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">94%</div>
+                                <div class="stat-label">Innovation</div>
+                            </div>
+                        </div>
+                        <button class="download-button" id="creative-btn" onclick="downloadPackage('creative')">
+                            DOWNLOAD EXPERTISE
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Voice Page -->
+            <div class="page" id="voice-page">
+                <div class="voice-container">
+                    <div class="voice-interface">
+                        <div class="voice-circle-container">
+                            <div class="voice-ring"></div>
+                            <div class="voice-ring"></div>
+                            <div class="voice-ring"></div>
+                            <div class="voice-circle" id="voice-circle" onclick="toggleVoice()">
+                                🎙️
+                            </div>
+                        </div>
+                        
+                        <div class="voice-controls">
+                            <button class="add-button" onclick="startVoice()">Start Listening</button>
+                            <button class="add-button" onclick="stopVoice()">Stop</button>
+                            <button class="add-button" onclick="testVoice()">Test Speech</button>
+                        </div>
+                        
+                        <div class="voice-transcript" id="voice-transcript">
+                            <!-- Voice transcript will appear here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chat Page -->
+            <div class="page" id="chat-page">
+                <div class="chat-container">
+                    <div class="chat-main">
+                        <div class="chat-messages" id="chat-messages">
+                            <div class="chat-message ai">
+                                <div class="message-bubble">
+                                    <div class="message-header">OpenLifeOS</div>
+                                    <div class="message-content">
+                                        Hello! I'm your AI life companion. How can I enhance your day today?
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-input-container">
+                            <input type="text" class="chat-input" id="chat-input" placeholder="Type your message..." onkeypress="handleChatEnter(event)">
+                            <button class="chat-send" onclick="sendMessage()">Send</button>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-sidebar">
+                        <div class="active-packages">
+                            <div class="packages-title">Active Knowledge</div>
+                            <div id="active-packages">
+                                <span style="opacity: 0.6; font-size: 12px;">No active packages</span>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-suggestions">
+                            <div class="packages-title">Quick Actions</div>
+                            <button class="package-badge" onclick="quickAction('health')">Check Health</button>
+                            <button class="package-badge" onclick="quickAction('schedule')">View Schedule</button>
+                            <button class="package-badge" onclick="quickAction('advice')">Get Advice</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+    
+    <!-- Download Overlay -->
+    <div class="download-overlay" id="download-overlay">
+        <div class="download-modal">
+            <div class="download-title" id="download-title">DOWNLOADING KNOWLEDGE PACKAGE</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar">
+                    <div class="progress-text" id="progress-text">0%</div>
+                </div>
+            </div>
+            <div class="knowledge-stream" id="knowledge-stream"></div>
+            <canvas id="matrix-download" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.1; pointer-events: none;"></canvas>
+        </div>
+    </div>
+    
+    <script>
+        // Global State Management
+        const state = {
+            activePackages: new Set(),
+            isVoiceActive: false,
+            currentPage: 'dashboard',
+            todos: [],
+            biometrics: {
+                heartRate: 72,
+                bloodOxygen: 98,
+                stressLevel: 65,
+                temperature: 98.6,
+                hrv: 45
+            },
+            heartRateHistory: [],
+            stressHistory: [],
+            recognition: null
+        };
+        
+        // Advanced Matrix Rain Effect
+        class MatrixRain {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+                
+                this.fontSize = 14;
+                this.columns = this.canvas.width / this.fontSize;
+                this.drops = [];
+                
+                this.characters = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                this.charArray = this.characters.split('');
+                
+                for(let x = 0; x < this.columns; x++) {
+                    this.drops[x] = Math.floor(Math.random() * -100);
+                }
+                
+                this.animate();
+            }
+            
+            animate() {
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.ctx.fillStyle = '#0F0';
+                this.ctx.font = this.fontSize + 'px monospace';
+                
+                for(let i = 0; i < this.drops.length; i++) {
+                    const text = this.charArray[Math.floor(Math.random() * this.charArray.length)];
+                    this.ctx.fillText(text, i * this.fontSize, this.drops[i] * this.fontSize);
+                    
+                    if(this.drops[i] * this.fontSize > this.canvas.height && Math.random() > 0.975) {
+                        this.drops[i] = 0;
+                    }
+                    this.drops[i]++;
+                }
+                
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+        
+        // Initialize Matrix Background
+        const matrixCanvas = document.getElementById('matrix-bg');
+        new MatrixRain(matrixCanvas);
+        
+        // Create Neural Network Nodes
+        function createNeuralNetwork() {
+            const network = document.getElementById('neural-network');
+            for(let i = 0; i < 50; i++) {
+                const node = document.createElement('div');
+                node.className = 'neural-node';
+                node.style.left = Math.random() * 100 + '%';
+                node.style.top = Math.random() * 100 + '%';
+                node.style.animationDelay = Math.random() * 4 + 's';
+                network.appendChild(node);
+            }
+        }
+        createNeuralNetwork();
+        
+        // Page Navigation
+        function switchPage(pageName) {
+            state.currentPage = pageName;
+            
+            // Update tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if(tab.textContent.toLowerCase().includes(pageName.substring(0, 4))) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            // Update pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(`${pageName}-page`).classList.add('active');
+            
+            // Page-specific initialization
+            if(pageName === 'biometrics') {
+                startBiometricsMonitoring();
+            } else if(pageName === 'planning') {
+                loadTodos();
+                loadSchedule();
+            } else if(pageName === 'voice') {
+                initializeVoice();
+            }
+        }
+        
+        // Enhanced Voice Functions
+        function initializeVoice() {
+            const transcript = document.getElementById('voice-transcript');
+            if(!transcript.innerHTML) {
+                transcript.innerHTML = '<div style="color: #0ff; padding: 20px; text-align: center;">Ready for voice interaction. Click the microphone or press "Start Listening".</div>';
+            }
+        }
+        
+        function toggleVoice() {
+            if(state.isVoiceActive) {
+                stopVoice();
+            } else {
+                startVoice();
+            }
+        }
+        
+        function startVoice() {
+            const circle = document.getElementById('voice-circle');
+            
+            if(!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                showNotification('Voice recognition not supported in this browser. Please use Chrome or Edge.');
+                return;
+            }
+            
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            state.recognition = new SpeechRecognition();
+            
+            state.recognition.continuous = true;
+            state.recognition.interimResults = true;
+            state.recognition.lang = 'en-US';
+            
+            state.recognition.onstart = () => {
+                state.isVoiceActive = true;
+                circle.classList.add('listening');
+                addVoiceTranscript('system', 'Listening... Say "download legal expertise" or ask me anything!');
+                updateAIStatus('LISTENING');
+            };
+            
+            state.recognition.onresult = (event) => {
+                let interimTranscript = '';
+                let finalTranscript = '';
+                
+                for(let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+                    if(event.results[i].isFinal) {
+                        finalTranscript += transcript;
+                    } else {
+                        interimTranscript += transcript;
+                    }
+                }
+                
+                if(finalTranscript) {
+                    addVoiceTranscript('user', finalTranscript);
+                    processVoiceCommand(finalTranscript);
+                }
+            };
+            
+            state.recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                addVoiceTranscript('system', `Error: ${event.error}. Please try again.`);
+                stopVoice();
+            };
+            
+            state.recognition.onend = () => {
+                if(state.isVoiceActive) {
+                    // Restart if still active
+                    state.recognition.start();
+                }
+            };
+            
+            try {
+                state.recognition.start();
+            } catch(e) {
+                console.error('Failed to start recognition:', e);
+                showNotification('Failed to start voice recognition. Please check microphone permissions.');
+            }
+        }
+        
+        function stopVoice() {
+            const circle = document.getElementById('voice-circle');
+            
+            state.isVoiceActive = false;
+            circle.classList.remove('listening', 'speaking');
+            
+            if(state.recognition) {
+                state.recognition.stop();
+                state.recognition = null;
+            }
+            
+            addVoiceTranscript('system', 'Voice interaction stopped.');
+            updateAIStatus('QUANTUM READY');
+        }
+        
+        function testVoice() {
+            const circle = document.getElementById('voice-circle');
+            circle.classList.add('speaking');
+            
+            const text = 'Hello! I am OpenLifeOS, your advanced AI companion. I can download expertise instantly and help you optimize every aspect of your life.';
+            
+            if('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.9;
+                utterance.pitch = 1.0;
+                utterance.volume = 1.0;
+                
+                // Try to use a better voice if available
+                const voices = speechSynthesis.getVoices();
+                const preferredVoice = voices.find(voice => voice.name.includes('Google') || voice.name.includes('Microsoft'));
+                if(preferredVoice) {
+                    utterance.voice = preferredVoice;
+                }
+                
+                utterance.onend = () => {
+                    circle.classList.remove('speaking');
+                    if(state.isVoiceActive) {
+                        circle.classList.add('listening');
+                    }
+                };
+                
+                speechSynthesis.speak(utterance);
+                addVoiceTranscript('ai', text);
+            } else {
+                showNotification('Speech synthesis not supported in this browser.');
+            }
+        }
+        
+        function processVoiceCommand(command) {
+            const lower = command.toLowerCase();
+            let response = '';
+            let action = null;
+            
+            // Knowledge package commands
+            if(lower.includes('download') || lower.includes('install') || lower.includes('activate')) {
+                if(lower.includes('legal')) {
+                    action = () => downloadPackage('legal');
+                    response = 'Initiating legal expertise download. This will take just 3 seconds.';
+                } else if(lower.includes('medical') || lower.includes('health')) {
+                    action = () => downloadPackage('medical');
+                    response = 'Downloading medical advisor package. Please wait.';
+                } else if(lower.includes('financial') || lower.includes('finance')) {
+                    action = () => downloadPackage('financial');
+                    response = 'Downloading financial expertise. Preparing to optimize your wealth.';
+                } else if(lower.includes('tech') || lower.includes('technical')) {
+                    action = () => downloadPackage('technical');
+                    response = 'Downloading technical architecture knowledge.';
+                } else if(lower.includes('wellness') || lower.includes('fitness')) {
+                    action = () => downloadPackage('wellness');
+                    response = 'Downloading wellness coach package.';
+                } else if(lower.includes('creative') || lower.includes('design')) {
+                    action = () => downloadPackage('creative');
+                    response = 'Downloading creative director expertise.';
+                } else {
+                    response = 'Please specify which package to download: legal, medical, financial, technical, wellness, or creative.';
+                }
+            }
+            // Navigation commands
+            else if(lower.includes('show') || lower.includes('go to') || lower.includes('open')) {
+                if(lower.includes('biometric') || lower.includes('health') || lower.includes('vital')) {
+                    action = () => switchPage('biometrics');
+                    response = 'Opening biometrics monitoring.';
+                } else if(lower.includes('plan') || lower.includes('schedule') || lower.includes('todo')) {
+                    action = () => switchPage('planning');
+                    response = 'Opening life planning interface.';
+                } else if(lower.includes('knowledge') || lower.includes('package')) {
+                    action = () => switchPage('knowledge');
+                    response = 'Opening knowledge packages.';
+                } else if(lower.includes('chat') || lower.includes('message')) {
+                    action = () => switchPage('chat');
+                    response = 'Opening chat interface.';
+                } else if(lower.includes('dashboard') || lower.includes('home')) {
+                    action = () => switchPage('dashboard');
+                    response = 'Returning to dashboard.';
+                }
+            }
+            // Health queries
+            else if(lower.includes('heart rate') || lower.includes('pulse')) {
+                response = `Your current heart rate is ${state.biometrics.heartRate} beats per minute. ${state.biometrics.heartRate > 80 ? 'Slightly elevated. Consider taking a break.' : 'Normal resting rate.'}`;
+            }
+            else if(lower.includes('stress')) {
+                response = `Your stress level is at ${state.biometrics.stressLevel}%. ${state.biometrics.stressLevel > 70 ? 'I recommend a 5-minute breathing exercise.' : 'You\'re managing stress well.'}`;
+            }
+            else if(lower.includes('oxygen') || lower.includes('spo2')) {
+                response = `Blood oxygen saturation is ${state.biometrics.bloodOxygen}%. This is within the healthy range.`;
+            }
+            // Task management
+            else if(lower.includes('add task') || lower.includes('add todo')) {
+                const taskMatch = command.match(/(?:add task|add todo|create task)\s+(.+)/i);
+                if(taskMatch) {
+                    action = () => {
+                        addTodoItem(taskMatch[1], 'medium');
+                        switchPage('planning');
+                    };
+                    response = `Task added: "${taskMatch[1]}". Opening planning interface.`;
+                } else {
+                    response = 'What task would you like to add?';
+                }
+            }
+            // General queries
+            else if(lower.includes('help')) {
+                response = 'I can help you download knowledge packages, monitor your health, manage tasks, and optimize your life. Try saying "download legal expertise" or "show my biometrics".';
+            }
+            else if(lower.includes('hello') || lower.includes('hi ')) {
+                response = `Hello! I'm OpenLifeOS, your quantum-powered AI companion. How can I enhance your life today?`;
+            }
+            else if(lower.includes('how are you')) {
+                response = 'I\'m operating at quantum coherence with ${state.activePackages.size} knowledge packages active. Ready to assist you!';
+            }
+            else if(lower.includes('thank')) {
+                response = 'You\'re welcome! I\'m here to help you reach your full potential.';
+            }
+            else {
+                response = `I understood: "${command}". I'm continuously learning to better assist you. Try asking about health metrics, downloading expertise, or managing tasks.`;
+            }
+            
+            // Speak response
+            speakResponse(response);
+            addVoiceTranscript('ai', response);
+            
+            // Execute action if any
+            if(action) {
+                setTimeout(action, 1500);
+            }
+        }
+        
+        function speakResponse(text) {
+            const circle = document.getElementById('voice-circle');
+            
+            if('speechSynthesis' in window) {
+                // Cancel any ongoing speech
+                speechSynthesis.cancel();
+                
+                circle.classList.remove('listening');
+                circle.classList.add('speaking');
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.95;
+                utterance.pitch = 1.0;
+                utterance.volume = 1.0;
+                
+                // Use better voice if available
+                const voices = speechSynthesis.getVoices();
+                const preferredVoice = voices.find(voice => 
+                    voice.name.includes('Google') || 
+                    voice.name.includes('Microsoft') ||
+                    voice.name.includes('Samantha')
+                );
+                if(preferredVoice) {
+                    utterance.voice = preferredVoice;
+                }
+                
+                utterance.onend = () => {
+                    circle.classList.remove('speaking');
+                    if(state.isVoiceActive) {
+                        circle.classList.add('listening');
+                    }
+                };
+                
+                speechSynthesis.speak(utterance);
+            }
+        }
+        
+        function addVoiceTranscript(type, text) {
+            const transcript = document.getElementById('voice-transcript');
+            if(!transcript) return;
+            
+            const entry = document.createElement('div');
+            entry.style.cssText = `
+                padding: 12px;
+                margin: 8px 0;
+                border-radius: 8px;
+                animation: fadeIn 0.3s ease;
+                ${type === 'user' ? 
+                    'background: linear-gradient(135deg, rgba(0,255,0,0.1), rgba(0,255,255,0.1)); border: 1px solid #0f0; text-align: right;' : 
+                    type === 'ai' ? 
+                        'background: linear-gradient(135deg, rgba(255,0,255,0.1), rgba(0,255,255,0.1)); border: 1px solid #f0f;' :
+                        'background: rgba(0,0,0,0.3); border: 1px solid #666; text-align: center; font-size: 12px;'
+                }
+            `;
+            
+            entry.innerHTML = `
+                <strong style="color: ${type === 'user' ? '#0f0' : type === 'ai' ? '#f0f' : '#888'}; font-size: 11px; text-transform: uppercase;">
+                    ${type === 'user' ? 'You' : type === 'ai' ? 'OpenLifeOS' : 'System'}
+                </strong><br>
+                <span style="color: #fff;">${text}</span>
+            `;
+            
+            transcript.appendChild(entry);
+            transcript.scrollTop = transcript.scrollHeight;
+            
+            // Keep only last 10 entries
+            while(transcript.children.length > 10) {
+                transcript.removeChild(transcript.firstChild);
+            }
+        }
+        
+        // Knowledge Package Download
+        async function downloadPackage(packageType) {
+            const button = document.getElementById(`${packageType}-btn`);
+            if(!button || button.disabled) return;
+            
+            const overlay = document.getElementById('download-overlay');
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const knowledgeStream = document.getElementById('knowledge-stream');
+            const downloadTitle = document.getElementById('download-title');
+            
+            const packages = {
+                legal: {
+                    name: 'Legal Expert',
+                    icon: '⚖️',
+                    messages: [
+                        'Connecting to Harvard Law database...',
+                        'Downloading 50,000 case precedents...',
+                        'Loading constitutional frameworks...',
+                        'Importing international law treaties...',
+                        'Building legal reasoning engine...',
+                        '✓ COMPLETE: Legal Expert v2.1.0 activated'
+                    ]
+                },
+                medical: {
+                    name: 'Medical Advisor',
+                    icon: '🏥',
+                    messages: [
+                        'Accessing Johns Hopkins medical database...',
+                        'Downloading diagnostic algorithms...',
+                        'Loading 100,000 clinical studies...',
+                        'Importing treatment protocols...',
+                        'Calibrating symptom analyzer...',
+                        '✓ COMPLETE: Medical Advisor v3.0.1 activated'
+                    ]
+                },
+                technical: {
+                    name: 'Tech Architect',
+                    icon: '💻',
+                    messages: [
+                        'Fetching design patterns repository...',
+                        'Downloading SOLID principles...',
+                        'Loading 500 architecture patterns...',
+                        'Importing optimization algorithms...',
+                        'Building code analysis engine...',
+                        '✓ COMPLETE: Tech Architect v1.8.2 activated'
+                    ]
+                },
+                financial: {
+                    name: 'Financial Advisor',
+                    icon: '📈',
+                    messages: [
+                        'Connecting to Bloomberg terminal...',
+                        'Downloading market analysis models...',
+                        'Loading 10,000 trading strategies...',
+                        'Importing risk assessment frameworks...',
+                        'Calibrating portfolio optimizer...',
+                        '✓ COMPLETE: Financial Advisor v2.0.0 activated'
+                    ]
+                },
+                wellness: {
+                    name: 'Wellness Coach',
+                    icon: '🧘',
+                    messages: [
+                        'Accessing wellness research database...',
+                        'Downloading exercise programs...',
+                        'Loading nutrition guidelines...',
+                        'Importing mindfulness practices...',
+                        'Building personalization engine...',
+                        '✓ COMPLETE: Wellness Coach v1.5.0 activated'
+                    ]
+                },
+                creative: {
+                    name: 'Creative Director',
+                    icon: '🎨',
+                    messages: [
+                        'Connecting to design inspiration network...',
+                        'Downloading creative frameworks...',
+                        'Loading 5,000 design concepts...',
+                        'Importing color theory models...',
+                        'Building innovation engine...',
+                        '✓ COMPLETE: Creative Director v1.2.0 activated'
+                    ]
+                }
+            };
+            
+            const packageData = packages[packageType];
+            if(!packageData) return;
+            
+            // Update AI status
+            updateAIStatus('DOWNLOADING');
+            
+            // Show overlay
+            overlay.classList.add('active');
+            downloadTitle.textContent = `DOWNLOADING ${packageData.name.toUpperCase()}`;
+            progressBar.style.width = '0%';
+            progressText.textContent = '0%';
+            knowledgeStream.innerHTML = '';
+            
+            // Disable button
+            button.disabled = true;
+            button.textContent = 'DOWNLOADING...';
+            
+            // Create matrix effect for download
+            const downloadMatrix = new MatrixRain(document.getElementById('matrix-download'));
+            
+            // Animate download
+            for(let i = 0; i <= 100; i++) {
+                await sleep(30);
+                progressBar.style.width = i + '%';
+                progressText.textContent = i + '%';
+                
+                // Add knowledge messages at intervals
+                if(i % 20 === 0) {
+                    const messageIndex = Math.floor(i / 20);
+                    if(packageData.messages[messageIndex]) {
+                        const line = document.createElement('div');
+                        line.className = 'knowledge-line';
+                        line.style.top = (Math.random() * 150 + 20) + 'px';
+                        line.textContent = packageData.messages[messageIndex];
+                        knowledgeStream.appendChild(line);
+                    }
+                }
+            }
+            
+            await sleep(1000);
+            overlay.classList.remove('active');
+            
+            // Mark as active
+            state.activePackages.add(packageType);
+            updateActivePackages();
+            
+            // Update button
+            button.textContent = '✓ ACTIVATED';
+            button.classList.add('activated');
+            button.disabled = false;
+            
+            // Update AI status
+            updateAIStatus('ENHANCED');
+            
+            // Show notification
+            showNotification(`${packageData.icon} ${packageData.name} successfully activated!`);
+            
+            // Add to chat
+            addChatMessage('ai', `${packageData.name} successfully activated! I now have expert-level ${packageType} knowledge. How can I help you with ${packageType} matters?`, true);
+            
+            // Save state
+            saveState();
+        }
+        
+        // Biometrics Monitoring
+        function startBiometricsMonitoring() {
+            // Real-time updates
+            setInterval(() => {
+                // Heart rate variation
+                const baseHR = 72;
+                const variation = Math.sin(Date.now() / 3000) * 5 + Math.random() * 3;
+                state.biometrics.heartRate = Math.round(baseHR + variation);
+                document.getElementById('heart-rate').textContent = state.biometrics.heartRate;
+                
+                // Update heart rate chart
+                updateHeartRateChart();
+                
+                // Blood oxygen
+                state.biometrics.bloodOxygen = 97 + Math.floor(Math.random() * 3);
+                document.getElementById('blood-oxygen').textContent = state.biometrics.bloodOxygen;
+                
+                // Stress level
+                const stressChange = Math.random() * 10 - 5;
+                state.biometrics.stressLevel = Math.min(100, Math.max(20, state.biometrics.stressLevel + stressChange));
+                const stressElement = document.getElementById('stress-level');
+                stressElement.textContent = Math.round(state.biometrics.stressLevel);
+                stressElement.className = state.biometrics.stressLevel > 70 ? 'vital-value danger' : 
+                                          state.biometrics.stressLevel > 50 ? 'vital-value warning' : 
+                                          'vital-value';
+                
+                // Temperature
+                state.biometrics.temperature = (98.6 + (Math.random() * 0.4 - 0.2)).toFixed(1);
+                document.getElementById('temperature').textContent = state.biometrics.temperature;
+                
+                // HRV
+                state.biometrics.hrv = 40 + Math.floor(Math.random() * 20);
+                document.getElementById('hrv').textContent = state.biometrics.hrv;
+                
+                // Update charts
+                updateBiometricCharts();
+            }, 2000);
+        }
+        
+        function updateHeartRateChart() {
+            const chart = document.getElementById('heart-chart-line');
+            if(!chart) return;
+            
+            state.heartRateHistory.push(state.biometrics.heartRate);
+            if(state.heartRateHistory.length > 20) {
+                state.heartRateHistory.shift();
+            }
+            
+            const points = state.heartRateHistory.map((hr, i) => {
+                const x = (i / 20) * 100;
+                const y = 40 - ((hr - 60) / 40) * 35;
+                return `${x},${y}`;
+            }).join(' ');
+            
+            chart.setAttribute('points', points);
+        }
+        
+        function updateBiometricCharts() {
+            // Update HRV chart
+            const hrvCanvas = document.getElementById('hrv-chart');
+            if(hrvCanvas) {
+                const ctx = hrvCanvas.getContext('2d');
+                hrvCanvas.width = hrvCanvas.parentElement.offsetWidth;
+                hrvCanvas.height = 150;
+                
+                ctx.strokeStyle = '#00ffff';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                
+                for(let i = 0; i < 50; i++) {
+                    const x = (i / 50) * hrvCanvas.width;
+                    const y = hrvCanvas.height / 2 + Math.sin(i / 5 + Date.now() / 1000) * 30;
+                    if(i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                
+                ctx.stroke();
+            }
+            
+            // Update stress chart
+            const stressCanvas = document.getElementById('stress-chart');
+            if(stressCanvas) {
+                const ctx = stressCanvas.getContext('2d');
+                stressCanvas.width = stressCanvas.parentElement.offsetWidth;
+                stressCanvas.height = 150;
+                
+                state.stressHistory.push(state.biometrics.stressLevel);
+                if(state.stressHistory.length > 30) {
+                    state.stressHistory.shift();
+                }
+                
+                ctx.strokeStyle = state.biometrics.stressLevel > 70 ? '#ff4444' : 
+                                  state.biometrics.stressLevel > 50 ? '#ffd700' : 
+                                  '#00ff00';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                
+                state.stressHistory.forEach((stress, i) => {
+                    const x = (i / 30) * stressCanvas.width;
+                    const y = stressCanvas.height - (stress / 100) * stressCanvas.height;
+                    if(i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                });
+                
+                ctx.stroke();
+            }
+        }
+        
+        // Life Planning Functions
+        function loadTodos() {
+            const todoList = document.getElementById('todo-list');
+            if(!todoList) return;
+            
+            // Load saved todos or create defaults
+            const savedState = localStorage.getItem('lifeOS_state');
+            if(savedState) {
+                const data = JSON.parse(savedState);
+                state.todos = data.todos || [];
+            }
+            
+            if(state.todos.length === 0) {
+                // Default todos
+                state.todos = [
+                    { text: 'Complete AugHacks MIT presentation', priority: 'high', completed: false, time: '10:00 AM' },
+                    { text: 'Test voice integration features', priority: 'high', completed: false, time: '11:00 AM' },
+                    { text: 'Review competition strategy', priority: 'medium', completed: false, time: '2:00 PM' },
+                    { text: 'Team sync meeting', priority: 'medium', completed: false, time: '3:00 PM' },
+                    { text: 'Optimize demo performance', priority: 'low', completed: false, time: '4:00 PM' }
+                ];
+            }
+            
+            renderTodos();
+        }
+        
+        function renderTodos() {
+            const todoList = document.getElementById('todo-list');
+            if(!todoList) return;
+            
+            todoList.innerHTML = '';
+            state.todos.forEach((todo, index) => {
+                const todoItem = document.createElement('div');
+                todoItem.className = 'todo-item';
+                todoItem.innerHTML = `
+                    <div class="todo-checkbox ${todo.completed ? 'checked' : ''}" onclick="toggleTodo(${index})"></div>
+                    <div class="todo-text ${todo.completed ? 'completed' : ''}">${todo.text}</div>
+                    <div class="todo-meta">
+                        <div class="todo-time">${todo.time || ''}</div>
+                        <div class="todo-priority priority-${todo.priority}">${todo.priority}</div>
+                    </div>
+                `;
+                todoList.appendChild(todoItem);
+            });
+            
+            updateAISuggestion();
+        }
+        
+        function toggleTodo(index) {
+            state.todos[index].completed = !state.todos[index].completed;
+            renderTodos();
+            saveState();
+            
+            const completed = state.todos.filter(t => t.completed).length;
+            const total = state.todos.length;
+            showNotification(`Tasks: ${completed}/${total} completed`);
+        }
+        
+        function addSmartTodo() {
+            const text = prompt('Enter task description:');
+            if(!text) return;
+            
+            const priority = prompt('Priority (high/medium/low):', 'medium') || 'medium';
+            const time = prompt('Time (optional):', '');
+            
+            addTodoItem(text, priority, time);
+        }
+        
+        function addTodoItem(text, priority = 'medium', time = '') {
+            state.todos.push({
+                text: text,
+                priority: priority.toLowerCase(),
+                completed: false,
+                time: time
+            });
+            
+            renderTodos();
+            saveState();
+            showNotification('Task added successfully!');
+        }
+        
+        function updateAISuggestion() {
+            const suggestion = document.getElementById('ai-suggestion');
+            if(!suggestion) return;
+            
+            const incompleteTodos = state.todos.filter(t => !t.completed);
+            const highPriority = incompleteTodos.filter(t => t.priority === 'high').length;
+            
+            let suggestionText = '';
+            
+            if(highPriority > 2) {
+                suggestionText = `You have ${highPriority} high-priority tasks. Consider delegating or rescheduling lower priority items to maintain focus.`;
+            } else if(state.biometrics.stressLevel > 70) {
+                suggestionText = 'Your stress levels are elevated. Consider taking a 10-minute break before tackling your next task.';
+            } else if(new Date().getHours() < 12) {
+                suggestionText = 'Morning productivity peak detected. This is the optimal time for complex, creative tasks.';
+            } else if(new Date().getHours() > 14 && new Date().getHours() < 16) {
+                suggestionText = 'Post-lunch energy dip expected. Schedule routine tasks or take a power nap.';
+            } else {
+                suggestionText = 'Based on your patterns, you\'re most productive now. Focus on high-impact tasks.';
+            }
+            
+            suggestion.textContent = suggestionText;
+        }
+        
+        function loadSchedule() {
+            const schedule = document.getElementById('schedule');
+            if(!schedule) return;
+            
+            const events = [
+                { time: '9:00 AM', title: 'Morning Review', type: 'routine' },
+                { time: '10:00 AM', title: 'Deep Work Block', type: 'focus' },
+                { time: '12:00 PM', title: 'Lunch & Recovery', type: 'break' },
+                { time: '2:00 PM', title: 'Team Collaboration', type: 'meeting' },
+                { time: '4:00 PM', title: 'Admin & Planning', type: 'routine' },
+                { time: '6:00 PM', title: 'Personal Time', type: 'personal' }
+            ];
+            
+            schedule.innerHTML = `
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    ${events.map(event => `
+                        <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 8px; border-left: 3px solid ${
+                            event.type === 'focus' ? '#00ff00' :
+                            event.type === 'meeting' ? '#00ffff' :
+                            event.type === 'break' ? '#ffd700' :
+                            event.type === 'personal' ? '#ff00ff' :
+                            '#888'
+                        };">
+                            <div style="font-size: 12px; color: #888; min-width: 70px;">${event.time}</div>
+                            <div style="flex: 1; color: #fff;">${event.title}</div>
+                            <div style="font-size: 11px; padding: 4px 8px; background: rgba(0,255,255,0.1); border: 1px solid rgba(0,255,255,0.3); border-radius: 12px; text-transform: uppercase;">
+                                ${event.type}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        function optimizeSchedule() {
+            showNotification('Analyzing your productivity patterns and optimizing schedule...');
+            setTimeout(() => {
+                loadSchedule();
+                showNotification('Schedule optimized based on your circadian rhythm and energy levels!');
+            }, 2000);
+        }
+        
+        // Chat Functions
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if(!message) return;
+            
+            addChatMessage('user', message);
+            input.value = '';
+            
+            // Generate response
+            setTimeout(() => {
+                const response = generateChatResponse(message);
+                addChatMessage('ai', response.content, response.isExpert);
+            }, 500 + Math.random() * 1000);
+        }
+        
+        function handleChatEnter(event) {
+            if(event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        function addChatMessage(type, content, isExpert = false) {
+            const messagesContainer = document.getElementById('chat-messages');
+            if(!messagesContainer) return;
+            
+            const message = document.createElement('div');
+            message.className = `chat-message ${type} ${isExpert ? 'expert' : ''}`;
+            
+            message.innerHTML = `
+                <div class="message-bubble">
+                    <div class="message-header">
+                        ${type === 'user' ? 'You' : `OpenLifeOS ${isExpert ? '- Expert Mode' : ''}`}
+                    </div>
+                    <div class="message-content">${content}</div>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(message);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        function generateChatResponse(message) {
+            const lower = message.toLowerCase();
+            
+            // Check active packages for expert responses
+            if(state.activePackages.has('legal') && (lower.includes('legal') || lower.includes('contract') || lower.includes('law'))) {
+                return {
+                    content: 'As your legal expert: ' + generateLegalResponse(message),
+                    isExpert: true
+                };
+            }
+            
+            if(state.activePackages.has('medical') && (lower.includes('health') || lower.includes('medical') || lower.includes('symptom'))) {
+                return {
+                    content: 'Medical analysis: ' + generateMedicalResponse(message),
+                    isExpert: true
+                };
+            }
+            
+            if(state.activePackages.has('financial') && (lower.includes('invest') || lower.includes('money') || lower.includes('financial'))) {
+                return {
+                    content: 'Financial advice: ' + generateFinancialResponse(message),
+                    isExpert: true
+                };
+            }
+            
+            // Default responses
+            if(lower.includes('hello') || lower.includes('hi ')) {
+                return {
+                    content: `Hello! I'm OpenLifeOS with ${state.activePackages.size} expert packages active. How can I enhance your life today?`,
+                    isExpert: false
+                };
+            }
+            
+            if(lower.includes('help')) {
+                return {
+                    content: 'I can help you with: biometric monitoring, task management, knowledge downloads, and expert advice. What would you like to explore?',
+                    isExpert: false
+                };
+            }
+            
+            return {
+                content: `I understand you're asking about "${message}". ${state.activePackages.size > 0 ? 'My expert packages are ready to assist.' : 'Download a knowledge package for expert-level insights.'}`,
+                isExpert: false
+            };
+        }
+        
+        function generateLegalResponse(message) {
+            const responses = [
+                'Based on precedent cases, I recommend documenting all communications and maintaining a clear paper trail.',
+                'This situation requires careful analysis of contract law. Key considerations include mutual consent, consideration, and capacity.',
+                'From a legal perspective, you have several options. The most conservative approach would ensure compliance while minimizing risk.',
+                'I\'ve analyzed similar cases. The legal framework suggests pursuing mediation before litigation.'
+            ];
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+        
+        function generateMedicalResponse(message) {
+            const responses = [
+                'Based on your symptoms and biometric data, I recommend monitoring for 24 hours. Seek immediate care if symptoms worsen.',
+                'Your vital signs indicate stable condition. Continue current wellness protocols and maintain hydration.',
+                'This pattern suggests stress-related factors. Consider implementing relaxation techniques and sleep hygiene improvements.',
+                'Clinical guidelines recommend a comprehensive evaluation. I can help you prepare questions for your healthcare provider.'
+            ];
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+        
+        function generateFinancialResponse(message) {
+            const responses = [
+                'Based on current market conditions, diversification across asset classes would optimize risk-adjusted returns.',
+                'Financial analysis suggests maintaining 6 months emergency fund before aggressive investment strategies.',
+                'Tax-advantaged accounts should be maximized before taxable investments. Consider your 401k and IRA options.',
+                'Market volatility presents opportunities. Dollar-cost averaging could mitigate timing risk.'
+            ];
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+        
+        function quickAction(action) {
+            switch(action) {
+                case 'health':
+                    addChatMessage('ai', `Current Health Status:\n• Heart Rate: ${state.biometrics.heartRate} bpm\n• Stress Level: ${state.biometrics.stressLevel}%\n• Blood Oxygen: ${state.biometrics.bloodOxygen}%\n• Overall: ${state.biometrics.stressLevel < 50 ? 'Excellent' : state.biometrics.stressLevel < 70 ? 'Good' : 'Needs Attention'}`);
+                    break;
+                case 'schedule':
+                    switchPage('planning');
+                    break;
+                case 'advice':
+                    const advice = [
+                        'Your productivity peaks in 90-minute cycles. Take a 15-minute break soon.',
+                        'Hydration levels may be low. Consider drinking water.',
+                        'Your focus is optimal now. Tackle your most challenging task.',
+                        'Stress is building. Try a 4-7-8 breathing exercise.'
+                    ];
+                    addChatMessage('ai', advice[Math.floor(Math.random() * advice.length)]);
+                    break;
+            }
+        }
+        
+        // Update Active Packages Display
+        function updateActivePackages() {
+            const container = document.getElementById('active-packages');
+            if(!container) return;
+            
+            if(state.activePackages.size === 0) {
+                container.innerHTML = '<span style="opacity: 0.6; font-size: 12px;">No active packages</span>';
+            } else {
+                const icons = {
+                    legal: '⚖️',
+                    medical: '🏥',
+                    technical: '💻',
+                    financial: '📈',
+                    wellness: '🧘',
+                    creative: '🎨'
+                };
+                
+                container.innerHTML = Array.from(state.activePackages).map(pkg => 
+                    `<div class="package-badge expert">${icons[pkg]} ${pkg.charAt(0).toUpperCase() + pkg.slice(1)}</div>`
+                ).join('');
+            }
+        }
+        
+        // Demo Functions
+        async function runDemo(demoType) {
+            if(demoType === 'wellness') {
+                switchPage('biometrics');
+                await sleep(1000);
+                state.biometrics.stressLevel = 85;
+                showNotification('High stress detected! Initiating wellness protocol...');
+                await sleep(2000);
+                switchPage('chat');
+                addChatMessage('ai', 'I\'ve detected elevated stress levels. Based on your patterns, I recommend:\n\n1. 5-minute breathing exercise\n2. 10-minute walk\n3. Postpone non-critical tasks\n\nWould you like me to guide you through a relaxation session?');
+            } else if(demoType === 'productivity') {
+                switchPage('planning');
+                showNotification('Analyzing your productivity patterns...');
+                await sleep(2000);
+                updateAISuggestion();
+                showNotification('Schedule optimized for maximum productivity!');
+            }
+        }
+        
+        // Apply Insights
+        function applyInsight(type) {
+            if(type === 'stress') {
+                switchPage('planning');
+                showNotification('Rescheduling afternoon tasks to reduce stress...');
+                setTimeout(() => {
+                    loadSchedule();
+                    showNotification('Schedule updated with stress-reduction breaks!');
+                }, 2000);
+            }
+        }
+        
+        function scheduleCheckup() {
+            addTodoItem('Schedule medical checkup - irregular rhythm detected', 'high', 'Tomorrow');
+            switchPage('planning');
+            showNotification('Medical checkup added to your tasks with high priority.');
+        }
+        
+        // Update Stats
+        function updateStats() {
+            // Knowledge nodes animation
+            let nodes = parseInt(document.getElementById('knowledge-nodes').textContent.replace(/,/g, '')) || 0;
+            const targetNodes = 50000 + state.activePackages.size * 10000;
+            
+            const nodeInterval = setInterval(() => {
+                nodes += Math.floor(Math.random() * 1000) + 500;
+                if(nodes >= targetNodes) {
+                    nodes = targetNodes;
+                    clearInterval(nodeInterval);
+                }
+                document.getElementById('knowledge-nodes').textContent = nodes.toLocaleString();
+            }, 50);
+            
+            // Response time
+            setInterval(() => {
+                const baseTime = state.activePackages.size > 0 ? 8 : 20;
+                const time = baseTime + Math.floor(Math.random() * 10);
+                document.getElementById('response-time').textContent = time + 'ms';
+            }, 3000);
+            
+            // Sync status
+            setInterval(() => {
+                const sync = 95 + Math.floor(Math.random() * 5);
+                document.getElementById('sync-status').textContent = sync + '%';
+            }, 5000);
+            
+            // System time
+            setInterval(() => {
+                const now = new Date();
+                document.getElementById('time').textContent = now.toLocaleTimeString();
+            }, 1000);
+        }
+        
+        // Update AI Status
+        function updateAIStatus(status) {
+            const statusElement = document.getElementById('ai-status');
+            if(statusElement) {
+                statusElement.textContent = status;
+                
+                // Flash effect
+                statusElement.style.animation = 'none';
+                setTimeout(() => {
+                    statusElement.style.animation = 'statusFlash 0.5s ease';
+                }, 10);
+            }
+        }
+        
+        // Add status flash animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes statusFlash {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.3; }
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Notification System
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // State Management
+        function saveState() {
+            localStorage.setItem('lifeOS_state', JSON.stringify({
+                activePackages: Array.from(state.activePackages),
+                todos: state.todos,
+                biometrics: state.biometrics
+            }));
+        }
+        
+        function loadState() {
+            const saved = localStorage.getItem('lifeOS_state');
+            if(saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    
+                    // Restore active packages
+                    if(data.activePackages) {
+                        data.activePackages.forEach(pkg => {
+                            state.activePackages.add(pkg);
+                            const btn = document.getElementById(`${pkg}-btn`);
+                            if(btn) {
+                                btn.textContent = '✓ ACTIVATED';
+                                btn.classList.add('activated');
+                            }
+                        });
+                        updateActivePackages();
+                    }
+                    
+                    // Restore todos
+                    if(data.todos) {
+                        state.todos = data.todos;
+                    }
+                    
+                    // Restore biometrics
+                    if(data.biometrics) {
+                        Object.assign(state.biometrics, data.biometrics);
+                    }
+                } catch(e) {
+                    console.error('Failed to load state:', e);
+                }
+            }
+        }
+        
+        // Helper function
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        // Initialize on load
+        window.addEventListener('load', () => {
+            loadState();
+            updateStats();
+            
+            // Load voice support
+            if('speechSynthesis' in window) {
+                // Load voices
+                speechSynthesis.getVoices();
+                speechSynthesis.onvoiceschanged = () => {
+                    speechSynthesis.getVoices();
+                };
+            }
+            
+            // Welcome message
+            setTimeout(() => {
+                showNotification('Welcome to OpenLifeOS Pro - Your Quantum AI Companion');
+            }, 1000);
+        });
+        
+        // Save state before unload
+        window.addEventListener('beforeunload', saveState);
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('matrix-bg');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>

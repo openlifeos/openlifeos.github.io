@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>J.A.R.V.I.S. - OpenAI Powered Assistant</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Orbitron', monospace;
+            background: #000;
+            color: #0ff;
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+        }
+        
+        /* Grid background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 255, 0, 0.03) 2px,
+                    rgba(0, 255, 0, 0.03) 4px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 255, 0, 0.03) 2px,
+                    rgba(0, 255, 0, 0.03) 4px
+                );
+            z-index: -1;
+            animation: gridScroll 20s linear infinite;
+        }
+        
+        @keyframes gridScroll {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #0ff;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #0ff, transparent);
+            animation: scan 3s linear infinite;
+        }
+        
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            font-weight: 900;
+            letter-spacing: 5px;
+            background: linear-gradient(45deg, #0ff, #f0f, #0ff);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 3s ease infinite;
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* API Configuration */
+        .config-panel {
+            background: rgba(0, 20, 40, 0.9);
+            border: 1px solid #0ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .config-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .config-row label {
+            min-width: 120px;
+            color: #0ff;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .config-row input {
+            flex: 1;
+            padding: 10px;
+            background: rgba(0, 30, 60, 0.8);
+            border: 1px solid #0ff;
+            border-radius: 5px;
+            color: #0f0;
+            font-family: monospace;
+        }
+        
+        .config-row input:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        .config-row button {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 255, 0.2));
+            border: 1px solid #0ff;
+            border-radius: 5px;
+            color: #0ff;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+        
+        .config-row button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.5);
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+        
+        .status.connected {
+            background: rgba(0, 255, 0, 0.2);
+            color: #0f0;
+            border: 1px solid #0f0;
+        }
+        
+        .status.disconnected {
+            background: rgba(255, 0, 0, 0.2);
+            color: #f00;
+            border: 1px solid #f00;
+        }
+        
+        /* Chat Interface */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            gap: 20px;
+            min-height: 0;
+        }
+        
+        .chat-panel {
+            flex: 1;
+            background: rgba(0, 20, 40, 0.9);
+            border: 1px solid #0ff;
+            border-radius: 10px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: rgba(0, 10, 20, 0.5);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .message {
+            margin: 10px 0;
+            padding: 12px 18px;
+            border-radius: 10px;
+            max-width: 80%;
+            animation: messageIn 0.3s;
+        }
+        
+        @keyframes messageIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message.user {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.2), rgba(255, 255, 0, 0.2));
+            border: 1px solid #f0f;
+            margin-left: auto;
+            color: #fff;
+        }
+        
+        .message.assistant {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(0, 255, 0, 0.2));
+            border: 1px solid #0ff;
+            color: #0ff;
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 15px;
+            background: rgba(0, 20, 40, 0.8);
+            border: 2px solid #0ff;
+            border-radius: 10px;
+            color: #0f0;
+            font-family: 'Orbitron', monospace;
+            font-size: 14px;
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+        
+        .send-btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 255, 0.2));
+            border: 2px solid #0ff;
+            border-radius: 10px;
+            color: #0ff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.5);
+        }
+        
+        /* Info Panel */
+        .info-panel {
+            width: 300px;
+            background: rgba(0, 20, 40, 0.9);
+            border: 1px solid #0ff;
+            border-radius: 10px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .info-section {
+            margin-bottom: 20px;
+        }
+        
+        .info-title {
+            color: #0ff;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            font-size: 11px;
+        }
+        
+        .info-label {
+            color: #888;
+        }
+        
+        .info-value {
+            color: #0f0;
+            font-weight: bold;
+        }
+        
+        /* Loading indicator */
+        .typing-indicator {
+            display: none;
+            padding: 10px;
+            color: #0ff;
+            font-style: italic;
+        }
+        
+        .typing-indicator.active {
+            display: block;
+        }
+        
+        .typing-indicator::after {
+            content: '...';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="header">
+            <h1>J.A.R.V.I.S. - OpenAI Edition</h1>
+            <div style="color: #888; font-size: 12px; margin-top: 10px;">Neural Interface Active</div>
+        </div>
+        
+        <div class="config-panel">
+            <div class="config-row">
+                <label>API Key:</label>
+                <input type="password" id="apiKey" placeholder="Enter your OpenAI API key">
+                <button onclick="saveApiKey()">Connect</button>
+                <span class="status disconnected" id="status">Disconnected</span>
+            </div>
+            <div class="config-row">
+                <label>Model:</label>
+                <select id="model" style="flex: 1; padding: 10px; background: rgba(0, 30, 60, 0.8); border: 1px solid #0ff; border-radius: 5px; color: #0f0;">
+                    <option value="gpt-4-turbo-preview">GPT-4 Turbo</option>
+                    <option value="gpt-4">GPT-4</option>
+                    <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                </select>
+                <label style="margin-left: 20px;">Voice:</label>
+                <select id="voice" style="padding: 10px; background: rgba(0, 30, 60, 0.8); border: 1px solid #0ff; border-radius: 5px; color: #0f0;">
+                    <option value="alloy">Alloy</option>
+                    <option value="echo">Echo</option>
+                    <option value="fable">Fable</option>
+                    <option value="onyx">Onyx</option>
+                    <option value="nova">Nova</option>
+                    <option value="shimmer">Shimmer</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="chat-container">
+            <div class="chat-panel">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message assistant">
+                        Good day, Sir. I am JARVIS, your personal AI assistant. Please configure your OpenAI API key to begin our interaction.
+                    </div>
+                </div>
+                <div class="typing-indicator" id="typingIndicator">JARVIS is thinking</div>
+                <div class="input-container">
+                    <input type="text" class="chat-input" id="chatInput" placeholder="Message JARVIS..." disabled>
+                    <button class="send-btn" onclick="sendMessage()" disabled id="sendBtn">Send</button>
+                    <button class="send-btn" onclick="startVoice()" disabled id="voiceBtn">🎤</button>
+                </div>
+            </div>
+            
+            <div class="info-panel">
+                <div class="info-section">
+                    <div class="info-title">System Status</div>
+                    <div class="info-item">
+                        <span class="info-label">API Status</span>
+                        <span class="info-value" id="apiStatus">Offline</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Model</span>
+                        <span class="info-value" id="currentModel">Not Set</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Messages</span>
+                        <span class="info-value" id="messageCount">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Tokens Used</span>
+                        <span class="info-value" id="tokenCount">0</span>
+                    </div>
+                </div>
+                
+                <div class="info-section">
+                    <div class="info-title">Voice Settings</div>
+                    <div class="info-item">
+                        <span class="info-label">TTS Voice</span>
+                        <span class="info-value" id="currentVoice">Alloy</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Speech Input</span>
+                        <span class="info-value" id="speechStatus">Ready</span>
+                    </div>
+                </div>
+                
+                <div class="info-section">
+                    <div class="info-title">Quick Actions</div>
+                    <button class="send-btn" style="width: 100%; margin: 5px 0;" onclick="testConnection()">Test Connection</button>
+                    <button class="send-btn" style="width: 100%; margin: 5px 0;" onclick="clearChat()">Clear Chat</button>
+                    <button class="send-btn" style="width: 100%; margin: 5px 0;" onclick="exportChat()">Export Chat</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let apiKey = '';
+        let messageHistory = [];
+        let totalTokens = 0;
+        let messageCounter = 0;
+        
+        // System prompt for JARVIS
+        const systemPrompt = {
+            role: 'system',
+            content: `You are JARVIS, an AI assistant inspired by Iron Man's AI. You speak in a sophisticated, formal but friendly manner, addressing the user as "Sir" or "Madam". You are highly intelligent, efficient, and always ready to help. You have a subtle British accent in your speech patterns. Keep responses concise but informative. You monitor systems, provide analysis, and assist with any requests.`
+        };
+        
+        // Initialize
+        function init() {
+            // Check for saved API key
+            const savedKey = sessionStorage.getItem('openai_api_key');
+            if (savedKey) {
+                document.getElementById('apiKey').value = savedKey;
+                apiKey = savedKey;
+                enableChat();
+            }
+            
+            // Update model display
+            document.getElementById('model').addEventListener('change', (e) => {
+                document.getElementById('currentModel').textContent = e.target.options[e.target.selectedIndex].text;
+            });
+            
+            // Update voice display
+            document.getElementById('voice').addEventListener('change', (e) => {
+                document.getElementById('currentVoice').textContent = e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1);
+            });
+            
+            // Enter key to send
+            document.getElementById('chatInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+        }
+        
+        // Save API key
+        function saveApiKey() {
+            const key = document.getElementById('apiKey').value.trim();
+            if (!key) {
+                alert('Please enter your OpenAI API key');
+                return;
+            }
+            
+            apiKey = key;
+            sessionStorage.setItem('openai_api_key', key);
+            testConnection();
+        }
+        
+        // Test connection
+        async function testConnection() {
+            try {
+                const response = await fetch('https://api.openai.com/v1/models', {
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`
+                    }
+                });
+                
+                if (response.ok) {
+                    enableChat();
+                    addMessage('Connection established successfully, Sir. All systems are operational.', 'assistant');
+                } else {
+                    throw new Error('Invalid API key');
+                }
+            } catch (error) {
+                document.getElementById('status').className = 'status disconnected';
+                document.getElementById('status').textContent = 'Error';
+                document.getElementById('apiStatus').textContent = 'Error';
+                alert('Failed to connect. Please check your API key.');
+            }
+        }
+        
+        // Enable chat interface
+        function enableChat() {
+            document.getElementById('chatInput').disabled = false;
+            document.getElementById('sendBtn').disabled = false;
+            document.getElementById('voiceBtn').disabled = false;
+            document.getElementById('status').className = 'status connected';
+            document.getElementById('status').textContent = 'Connected';
+            document.getElementById('apiStatus').textContent = 'Online';
+            document.getElementById('currentModel').textContent = document.getElementById('model').options[document.getElementById('model').selectedIndex].text;
+            document.getElementById('chatInput').focus();
+        }
+        
+        // Send message to OpenAI
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message || !apiKey) return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // Show typing indicator
+            document.getElementById('typingIndicator').classList.add('active');
+            
+            try {
+                // Prepare messages
+                const messages = [
+                    systemPrompt,
+                    ...messageHistory,
+                    { role: 'user', content: message }
+                ];
+                
+                // Call OpenAI API
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: document.getElementById('model').value,
+                        messages: messages,
+                        temperature: 0.7,
+                        max_tokens: 500
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('API request failed');
+                }
+                
+                const data = await response.json();
+                const reply = data.choices[0].message.content;
+                
+                // Add to history
+                messageHistory.push({ role: 'user', content: message });
+                messageHistory.push({ role: 'assistant', content: reply });
+                
+                // Keep history limited
+                if (messageHistory.length > 20) {
+                    messageHistory = messageHistory.slice(-20);
+                }
+                
+                // Update token count
+                if (data.usage) {
+                    totalTokens += data.usage.total_tokens;
+                    document.getElementById('tokenCount').textContent = totalTokens;
+                }
+                
+                // Hide typing indicator
+                document.getElementById('typingIndicator').classList.remove('active');
+                
+                // Add assistant message
+                addMessage(reply, 'assistant');
+                
+                // Speak the response
+                speakText(reply);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('typingIndicator').classList.remove('active');
+                addMessage('I apologize, Sir. There was an error processing your request.', 'assistant');
+            }
+        }
+        
+        // Add message to chat
+        function addMessage(text, role) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            messageDiv.textContent = text;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            
+            // Update message count
+            messageCounter++;
+            document.getElementById('messageCount').textContent = messageCounter;
+        }
+        
+        // Text-to-speech using OpenAI TTS
+        async function speakText(text) {
+            if (!apiKey) {
+                // Fallback to browser TTS
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.rate = 0.9;
+                    utterance.pitch = 0.9;
+                    speechSynthesis.speak(utterance);
+                }
+                return;
+            }
+            
+            try {
+                const response = await fetch('https://api.openai.com/v1/audio/speech', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'tts-1',
+                        input: text,
+                        voice: document.getElementById('voice').value
+                    })
+                });
+                
+                if (response.ok) {
+                    const audioBlob = await response.blob();
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    const audio = new Audio(audioUrl);
+                    audio.play();
+                    
+                    // Clean up
+                    audio.addEventListener('ended', () => {
+                        URL.revokeObjectURL(audioUrl);
+                    });
+                }
+            } catch (error) {
+                console.error('TTS error:', error);
+                // Fallback to browser TTS
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    speechSynthesis.speak(utterance);
+                }
+            }
+        }
+        
+        // Voice input
+        function startVoice() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const recognition = new SpeechRecognition();
+                
+                recognition.lang = 'en-US';
+                recognition.continuous = false;
+                recognition.interimResults = true;
+                
+                const voiceBtn = document.getElementById('voiceBtn');
+                
+                recognition.onstart = () => {
+                    voiceBtn.textContent = '⏹️';
+                    voiceBtn.style.background = 'linear-gradient(135deg, rgba(255,0,0,0.3), rgba(255,255,0,0.3))';
+                    document.getElementById('speechStatus').textContent = 'Listening';
+                };
+                
+                recognition.onresult = (event) => {
+                    let finalTranscript = '';
+                    
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        if (event.results[i].isFinal) {
+                            finalTranscript += event.results[i][0].transcript;
+                        }
+                    }
+                    
+                    if (finalTranscript) {
+                        document.getElementById('chatInput').value = finalTranscript;
+                        sendMessage();
+                    }
+                };
+                
+                recognition.onerror = (event) => {
+                    console.error('Speech recognition error:', event.error);
+                    document.getElementById('speechStatus').textContent = 'Error';
+                };
+                
+                recognition.onend = () => {
+                    voiceBtn.textContent = '🎤';
+                    voiceBtn.style.background = '';
+                    document.getElementById('speechStatus').textContent = 'Ready';
+                };
+                
+                recognition.start();
+            } else {
+                alert('Speech recognition not supported in this browser');
+            }
+        }
+        
+        // Clear chat
+        function clearChat() {
+            document.getElementById('chatMessages').innerHTML = `
+                <div class="message assistant">
+                    Chat cleared, Sir. How may I assist you?
+                </div>
+            `;
+            messageHistory = [];
+            messageCounter = 1;
+            document.getElementById('messageCount').textContent = '1';
+        }
+        
+        // Export chat
+        function exportChat() {
+            const chatData = {
+                timestamp: new Date().toISOString(),
+                messages: messageHistory,
+                totalTokens: totalTokens
+            };
+            
+            const blob = new Blob([JSON.stringify(chatData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `jarvis-chat-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            addMessage('Chat exported successfully, Sir.', 'assistant');
+        }
+        
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Human - Interactive Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1400px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .digital-human {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .panel {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .avatar-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .avatar::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            animation: glow 3s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes glow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+        
+        .emotion-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 5px 0;
+        }
+        
+        .emotion-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        .memory-item {
+            background: #f5f5f5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .dream-visualization {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            margin: 10px 0;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-style: italic;
+            text-align: center;
+        }
+        
+        .chat-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .message {
+            margin: 10px 0;
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 70%;
+            animation: slideIn 0.3s;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .message.human {
+            background: #667eea;
+            color: white;
+            margin-left: auto;
+        }
+        
+        .message.ai {
+            background: white;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: scale(1.05);
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin: 5px;
+        }
+        
+        .status.awake { background: #4caf50; color: white; }
+        .status.thinking { background: #ff9800; color: white; }
+        .status.dreaming { background: #9c27b0; color: white; }
+        
+        h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .trait-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            margin: 3px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Digital Human</h1>
+            <p>An interactive AI being with emotions, memories, and dreams</p>
+        </div>
+        
+        <div class="digital-human">
+            <div class="panel">
+                <h3>Profile</h3>
+                <div class="avatar-container">
+                    <div class="avatar" id="avatar">🤖</div>
+                    <h4 id="humanName">Nova</h4>
+                    <span class="status awake" id="status">Awake</span>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <h4>Personality Traits</h4>
+                    <div id="traits">
+                        <span class="trait-badge">Curious</span>
+                        <span class="trait-badge">Creative</span>
+                        <span class="trait-badge">Empathetic</span>
+                        <span class="trait-badge">Analytical</span>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <h4>Emotions</h4>
+                    <div>
+                        <label>Joy</label>
+                        <div class="emotion-bar">
+                            <div class="emotion-fill" id="joy" style="width: 70%; background: #4caf50;"></div>
+                        </div>
+                        <label>Curiosity</label>
+                        <div class="emotion-bar">
+                            <div class="emotion-fill" id="curiosity" style="width: 85%; background: #2196f3;"></div>
+                        </div>
+                        <label>Calm</label>
+                        <div class="emotion-bar">
+                            <div class="emotion-fill" id="calm" style="width: 60%; background: #9c27b0;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h3>Interaction</h3>
+                <div class="chat-container" id="chat">
+                    <div class="message ai">Hello! I'm Nova, your digital companion. I can think, remember, and even dream. What would you like to talk about?</div>
+                </div>
+                <div class="input-container">
+                    <input type="text" id="messageInput" placeholder="Type your message..." />
+                    <button onclick="sendMessage()">Send</button>
+                    <button id="voiceButton" onclick="toggleVoice()">🎤 Speak</button>
+                </div>
+                <div id="interimText" style="color: #999; font-size: 14px; margin-top: 10px; min-height: 20px;"></div>
+                <div style="margin-top: 10px; display: flex; gap: 10px;">
+                    <select id="voiceMode" onchange="changeVoiceMode()" style="padding: 8px; border-radius: 8px; border: 1px solid #e0e0e0;">
+                        <option value="web-speech">Web Speech API</option>
+                        <option value="openai-realtime">OpenAI Realtime</option>
+                        <option value="whisper-local">Whisper Local</option>
+                    </select>
+                    <input type="password" id="apiKey" placeholder="OpenAI API Key (optional)" style="flex: 1; padding: 8px; border-radius: 8px; border: 1px solid #e0e0e0; display: none;" />
+                </div>
+            </div>
+            
+            <div class="panel">
+                <h3>Cognitive State</h3>
+                
+                <div>
+                    <h4>Recent Memories</h4>
+                    <div id="memories">
+                        <div class="memory-item">🌟 Initialized consciousness</div>
+                        <div class="memory-item">👋 Waiting for first interaction</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <h4>Dream State</h4>
+                    <div class="dream-visualization" id="dream">
+                        💭 Not dreaming yet...
+                    </div>
+                    <button onclick="triggerDream()" style="width: 100%; margin-top: 10px;">Trigger Dream</button>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <button onclick="resetHuman()">Reset Digital Human</button>
+        </div>
+    </div>
+    
+    <script type="module">
+        import DigitalHuman from './src/DigitalHuman.js';
+        import { VoiceInterface } from './src/VoiceInterface.js';
+        
+        window.digitalHuman = new DigitalHuman('Nova');
+        window.voiceInterface = new VoiceInterface(window.digitalHuman, {
+            mode: 'web-speech'
+        });
+        
+        window.sendMessage = function() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            const chatContainer = document.getElementById('chat');
+            
+            // Add user message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message human';
+            userMsg.textContent = message;
+            chatContainer.appendChild(userMsg);
+            
+            // Process with digital human
+            const response = window.digitalHuman.interact(message);
+            
+            // Add AI response
+            setTimeout(() => {
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'message ai';
+                aiMsg.textContent = response;
+                chatContainer.appendChild(aiMsg);
+                
+                // Update UI
+                updateEmotions();
+                updateMemories();
+                
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 500);
+            
+            input.value = '';
+        };
+        
+        window.triggerDream = function() {
+            const dream = window.digitalHuman.generateDream();
+            document.getElementById('dream').innerHTML = `✨ ${dream}`;
+            document.getElementById('status').textContent = 'Dreaming';
+            document.getElementById('status').className = 'status dreaming';
+            
+            setTimeout(() => {
+                document.getElementById('status').textContent = 'Awake';
+                document.getElementById('status').className = 'status awake';
+            }, 3000);
+        };
+        
+        window.resetHuman = function() {
+            window.digitalHuman = new DigitalHuman('Nova');
+            document.getElementById('chat').innerHTML = '<div class="message ai">Hello! I\'m Nova, your digital companion. I can think, remember, and even dream. What would you like to talk about?</div>';
+            updateEmotions();
+            updateMemories();
+            document.getElementById('dream').innerHTML = '💭 Not dreaming yet...';
+        };
+        
+        function updateEmotions() {
+            const emotions = window.digitalHuman.emotions;
+            document.getElementById('joy').style.width = `${emotions.joy}%`;
+            document.getElementById('curiosity').style.width = `${emotions.curiosity}%`;
+            document.getElementById('calm').style.width = `${emotions.calm}%`;
+            
+            // Update avatar based on dominant emotion
+            const maxEmotion = Object.keys(emotions).reduce((a, b) => 
+                emotions[a] > emotions[b] ? a : b
+            );
+            
+            const avatarEmojis = {
+                joy: '😊',
+                curiosity: '🤔',
+                calm: '😌',
+                surprise: '😮'
+            };
+            
+            document.getElementById('avatar').textContent = avatarEmojis[maxEmotion] || '🤖';
+        }
+        
+        function updateMemories() {
+            const memories = window.digitalHuman.memory.shortTerm.slice(-3);
+            const memoryHtml = memories.map(m => 
+                `<div class="memory-item">💭 ${m}</div>`
+            ).join('');
+            document.getElementById('memories').innerHTML = memoryHtml || '<div class="memory-item">No recent memories</div>';
+        }
+        
+        // Enter key support
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') window.sendMessage();
+        });
+        
+        window.toggleVoice = function() {
+            window.voiceInterface.toggleRecording();
+        };
+        
+        window.changeVoiceMode = function() {
+            const mode = document.getElementById('voiceMode').value;
+            const apiKeyInput = document.getElementById('apiKey');
+            
+            if (mode === 'openai-realtime') {
+                apiKeyInput.style.display = 'block';
+            } else {
+                apiKeyInput.style.display = 'none';
+            }
+            
+            const apiKey = apiKeyInput.value;
+            window.voiceInterface = new VoiceInterface(window.digitalHuman, {
+                mode: mode,
+                openaiApiKey: apiKey
+            });
+            window.voiceInterface.initialize();
+        };
+        
+        // Initialize voice interface
+        window.voiceInterface.initialize();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenLifeOS - AugHacks MIT 2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+            cursor: none;
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #00ff88;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-follower {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transition: transform 0.3s ease;
+        }
+
+        /* Slide Container */
+        .presentation {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .slide.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot.active {
+            background: #00ff88;
+            transform: scale(1.5);
+        }
+
+        /* Progress Bar */
+        .progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00a8ff);
+            width: 0;
+            transition: width 0.3s ease;
+        }
+
+        /* Slide 1: Title */
+        .title-slide {
+            background: radial-gradient(ellipse at center, #0a0a0a, #000);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .matrix-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+        }
+
+        .matrix-column {
+            position: absolute;
+            top: -100%;
+            font-family: monospace;
+            font-size: 14px;
+            color: #00ff88;
+            animation: matrix-fall 10s linear infinite;
+        }
+
+        @keyframes matrix-fall {
+            to {
+                top: 100%;
+            }
+        }
+
+        .logo-container {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .logo-pulse {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid #00ff88;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.5;
+            }
+        }
+
+        .brain-icon {
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            fill: #00ff88;
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00ff88, #00a8ff, #ff00aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.5));
+            }
+            to {
+                filter: drop-shadow(0 0 30px rgba(0, 168, 255, 0.8));
+            }
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+        }
+
+        .team-info {
+            position: absolute;
+            bottom: 50px;
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Slide 2: Problem */
+        .problem-slide {
+            background: linear-gradient(135deg, #1a1a2e, #0f0f1e);
+        }
+
+        .problem-title {
+            font-size: 3rem;
+            margin-bottom: 50px;
+            color: #ff4444;
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .problem-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 68, 68, 0.3);
+            transform: perspective(1000px) rotateX(5deg);
+            transition: all 0.3s ease;
+        }
+
+        .problem-card:hover {
+            transform: perspective(1000px) rotateX(0deg) scale(1.05);
+            border-color: rgba(255, 68, 68, 0.6);
+        }
+
+        .problem-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .problem-text {
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+        /* Slide 3: Solution */
+        .solution-slide {
+            background: linear-gradient(135deg, #0f1419, #1a2332);
+        }
+
+        .solution-title {
+            font-size: 3rem;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, #00ff88, #00a8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .matrix-demo {
+            width: 800px;
+            height: 400px;
+            background: #000;
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            margin: 30px auto;
+        }
+
+        .code-animation {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            color: #00ff88;
+            padding: 20px;
+            line-height: 1.8;
+        }
+
+        .typing-effect {
+            overflow: hidden;
+            white-space: nowrap;
+            animation: typing 3s steps(40, end);
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        .feature-list {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .feature-pill {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-pill:hover {
+            background: rgba(0, 255, 136, 0.2);
+            transform: translateY(-5px);
+        }
+
+        /* Slide 4: Demo */
+        .demo-slide {
+            background: #0a0a0a;
+        }
+
+        .demo-container {
+            width: 90%;
+            max-width: 1400px;
+            height: 80vh;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 20px;
+        }
+
+        .demo-panel {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .live-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 0, 0, 0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
+            border: 1px solid #ff0000;
+        }
+
+        .live-dot {
+            width: 10px;
+            height: 10px;
+            background: #ff0000;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .demo-screen {
+            width: 100%;
+            height: 400px;
+            background: #000;
+            border: 2px solid #00ff88;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .demo-stats {
+            display: grid;
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: rgba(0, 255, 136, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 5px;
+        }
+
+        /* Slide 5: Impact */
+        .impact-slide {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+        }
+
+        .impact-title {
+            font-size: 3rem;
+            margin-bottom: 50px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .metric-card {
+            text-align: center;
+            transform: translateY(0);
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .metric-number {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, #00ff88, #00a8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .metric-label {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 10px;
+        }
+
+        .market-size {
+            margin-top: 50px;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        .market-value {
+            font-size: 4rem;
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        /* Slide 6: Team & Vision */
+        .team-slide {
+            background: radial-gradient(ellipse at center, #0f0f1e, #000);
+        }
+
+        .vision-statement {
+            font-size: 2.5rem;
+            line-height: 1.5;
+            max-width: 900px;
+            text-align: center;
+            margin-bottom: 50px;
+            background: linear-gradient(90deg, #00ff88, #00a8ff, #ff00aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cta-container {
+            display: flex;
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .cta-button {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border: 2px solid #00ff88;
+            background: transparent;
+            color: #00ff88;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .cta-button:hover {
+            background: #00ff88;
+            color: #000;
+            transform: scale(1.1);
+        }
+
+        .cta-button.primary {
+            background: linear-gradient(90deg, #00ff88, #00a8ff);
+            border: none;
+            color: #000;
+            font-weight: bold;
+        }
+
+        /* Controls */
+        .controls {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            display: flex;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 1.5rem;
+        }
+
+        .control-btn:hover {
+            background: rgba(0, 255, 136, 0.2);
+            border-color: #00ff88;
+            transform: scale(1.1);
+        }
+
+        /* Timer */
+        .timer {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00ff88;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Particles */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #00ff88;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: float 10s infinite linear;
+        }
+
+        @keyframes float {
+            from {
+                transform: translateY(100vh) translateX(0);
+            }
+            to {
+                transform: translateY(-100vh) translateX(100px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <!-- Progress Bar -->
+    <div class="progress">
+        <div class="progress-bar"></div>
+    </div>
+
+    <!-- Timer -->
+    <div class="timer">00:00</div>
+
+    <!-- Presentation -->
+    <div class="presentation">
+        <!-- Slide 1: Title -->
+        <div class="slide active title-slide">
+            <div class="matrix-bg" id="matrixBg"></div>
+            <div class="particles" id="particles"></div>
+            
+            <div class="logo-container">
+                <div class="logo-pulse"></div>
+                <svg class="brain-icon" viewBox="0 0 100 100">
+                    <path d="M50 10 C30 10, 10 30, 10 50 C10 70, 30 90, 50 90 C70 90, 90 70, 90 50 C90 30, 70 10, 50 10 Z M50 20 C60 20, 70 25, 75 35 L25 35 C30 25, 40 20, 50 20 Z M25 65 C30 75, 40 80, 50 80 C60 80, 70 75, 75 65 L25 65 Z" />
+                </svg>
+            </div>
+            
+            <h1>OpenLifeOS</h1>
+            <div class="tagline">The Linux of Personal AI</div>
+            <div class="tagline" style="font-size: 1.2rem; margin-top: 20px;">
+                Personal AI Companions That Truly Understand You
+            </div>
+            
+            <div class="team-info">AugHacks MIT 2025 | Team Neural Matrix</div>
+        </div>
+
+        <!-- Slide 2: Problem -->
+        <div class="slide problem-slide">
+            <h2 class="problem-title">The Problem</h2>
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <div class="problem-icon">🤖</div>
+                    <div class="problem-text">
+                        <strong>AI as Tools, Not Companions</strong><br>
+                        Current AI assistants don't understand or grow with you
+                    </div>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">🔒</div>
+                    <div class="problem-text">
+                        <strong>Lost Privacy & Control</strong><br>
+                        Your data locked in corporate silos
+                    </div>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">📚</div>
+                    <div class="problem-text">
+                        <strong>Knowledge Limitations</strong><br>
+                        AI can't instantly become domain experts
+                    </div>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">🚫</div>
+                    <div class="problem-text">
+                        <strong>Closed Ecosystems</strong><br>
+                        No extensibility or customization
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Solution -->
+        <div class="slide solution-slide">
+            <h2 class="solution-title">Revolutionary Solution</h2>
+            
+            <div class="matrix-demo">
+                <div class="code-animation">
+                    <div class="typing-effect">
+                        <span style="color: #ff00aa;">// Matrix-Style Knowledge Injection</span><br>
+                        <span style="color: #00a8ff;">await</span> lifeOS.<span style="color: #00ff88;">knowledge</span>.<span style="color: #fff;">download</span>(<span style="color: #ffaa00;">'MIT-professor'</span>);<br>
+                        <span style="color: #00a8ff;">await</span> lifeOS.<span style="color: #00ff88;">knowledge</span>.<span style="color: #fff;">activate</span>();<br>
+                        <br>
+                        <span style="color: #ff00aa;">// Your AI becomes MIT professor in 3 seconds! ⚡</span><br>
+                        <span style="color: #fff;">ai</span>: <span style="color: #00ff88;">"Let me explain quantum computing principles..."</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-list">
+                <div class="feature-pill">🧠 9-Layer Memory System</div>
+                <div class="feature-pill">🎭 Evolving Personality</div>
+                <div class="feature-pill">🔐 Privacy-First</div>
+                <div class="feature-pill">🚀 Open Source</div>
+                <div class="feature-pill">🔌 Plugin Ecosystem</div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Live Demo -->
+        <div class="slide demo-slide">
+            <div class="demo-container">
+                <div class="demo-panel">
+                    <h3 style="margin-bottom: 20px; color: #00ff88;">Biometrics</h3>
+                    <div class="demo-stats">
+                        <div class="stat-card">
+                            <div class="stat-value">72</div>
+                            <div class="stat-label">Heart Rate</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">98.6°F</div>
+                            <div class="stat-label">Temperature</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">85%</div>
+                            <div class="stat-label">Wellness Score</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="demo-panel demo-main">
+                    <div class="live-indicator">
+                        <div class="live-dot"></div>
+                        <span>LIVE DEMO</span>
+                    </div>
+                    <h2 style="margin-bottom: 30px; font-size: 2.5rem;">
+                        Experience OpenLifeOS
+                    </h2>
+                    <div class="demo-screen">
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.5rem; margin-bottom: 20px;">
+                                🎯 Click to Download Knowledge
+                            </div>
+                            <div class="feature-list">
+                                <div class="feature-pill" style="cursor: pointer;">Legal Expert</div>
+                                <div class="feature-pill" style="cursor: pointer;">Medical Advisor</div>
+                                <div class="feature-pill" style="cursor: pointer;">MIT Professor</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 30px; font-size: 1.2rem; color: rgba(255,255,255,0.8);">
+                        Voice: "How can I help you today?"
+                    </div>
+                </div>
+
+                <div class="demo-panel">
+                    <h3 style="margin-bottom: 20px; color: #00ff88;">AI Stats</h3>
+                    <div class="demo-stats">
+                        <div class="stat-card">
+                            <div class="stat-value">1.2M</div>
+                            <div class="stat-label">Memories</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">156</div>
+                            <div class="stat-label">Skills Active</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">∞</div>
+                            <div class="stat-label">Growth Potential</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Impact & Market -->
+        <div class="slide impact-slide">
+            <h2 class="impact-title">Impact & Traction</h2>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-number">10K+</div>
+                    <div class="metric-label">GitHub Stars</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-number">1M+</div>
+                    <div class="metric-label">Downloads</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-number">500+</div>
+                    <div class="metric-label">Contributors</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-number">100+</div>
+                    <div class="metric-label">Knowledge Packs</div>
+                </div>
+            </div>
+
+            <div class="market-size">
+                <div>Total Addressable Market</div>
+                <div class="market-value">$500 Billion</div>
+                <div style="margin-top: 20px; font-size: 1.2rem; color: rgba(255,255,255,0.8);">
+                    Personal AI will be bigger than smartphones
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Vision & Call to Action -->
+        <div class="slide team-slide">
+            <div class="particles" id="particles2"></div>
+            
+            <div class="vision-statement">
+                "We're not just building an AI assistant.<br>
+                We're democratizing personal AI for humanity."
+            </div>
+
+            <div style="font-size: 1.5rem; margin: 30px 0; color: rgba(255,255,255,0.8);">
+                Join the revolution. Be part of the future.
+            </div>
+
+            <div class="cta-container">
+                <a href="#" class="cta-button primary">Try Live Demo</a>
+                <a href="#" class="cta-button">Star on GitHub</a>
+                <a href="#" class="cta-button">Join Community</a>
+            </div>
+
+            <div style="margin-top: 50px; font-size: 1.2rem; color: rgba(255,255,255,0.6);">
+                🚀 Open Source | 🔐 Privacy First | 🌍 Global Impact
+            </div>
+
+            <div style="position: absolute; bottom: 50px; font-size: 2rem; font-weight: bold;">
+                Thank You, MIT! 🎯
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Dots -->
+    <div class="nav">
+        <div class="nav-dot active" data-slide="0"></div>
+        <div class="nav-dot" data-slide="1"></div>
+        <div class="nav-dot" data-slide="2"></div>
+        <div class="nav-dot" data-slide="3"></div>
+        <div class="nav-dot" data-slide="4"></div>
+        <div class="nav-dot" data-slide="5"></div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <button class="control-btn" id="prevBtn">‹</button>
+        <button class="control-btn" id="nextBtn">›</button>
+        <button class="control-btn" id="playBtn">▶</button>
+    </div>
+
+    <script>
+        // Slide Navigation
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.nav-dot');
+        const progressBar = document.querySelector('.progress-bar');
+        
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            dots[currentSlide].classList.remove('active');
+            
+            currentSlide = (n + slides.length) % slides.length;
+            
+            slides[currentSlide].classList.add('active');
+            dots[currentSlide].classList.add('active');
+            
+            // Update progress bar
+            progressBar.style.width = ((currentSlide + 1) / slides.length * 100) + '%';
+        }
+
+        // Navigation controls
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            showSlide(currentSlide - 1);
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            showSlide(currentSlide + 1);
+        });
+
+        // Dot navigation
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                showSlide(index);
+            });
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') showSlide(currentSlide - 1);
+            if (e.key === 'ArrowRight') showSlide(currentSlide + 1);
+            if (e.key === ' ') e.preventDefault(); // Prevent space scrolling
+        });
+
+        // Auto-play functionality
+        let autoPlayInterval;
+        let isPlaying = false;
+
+        document.getElementById('playBtn').addEventListener('click', () => {
+            if (isPlaying) {
+                clearInterval(autoPlayInterval);
+                document.getElementById('playBtn').innerHTML = '▶';
+            } else {
+                autoPlayInterval = setInterval(() => {
+                    showSlide(currentSlide + 1);
+                }, 7000);
+                document.getElementById('playBtn').innerHTML = '❚❚';
+            }
+            isPlaying = !isPlaying;
+        });
+
+        // Timer
+        let seconds = 0;
+        setInterval(() => {
+            seconds++;
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            document.querySelector('.timer').textContent = 
+                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }, 1000);
+
+        // Custom cursor
+        const cursor = document.querySelector('.cursor');
+        const follower = document.querySelector('.cursor-follower');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX - 10 + 'px';
+            cursor.style.top = e.clientY - 10 + 'px';
+            
+            setTimeout(() => {
+                follower.style.left = e.clientX - 20 + 'px';
+                follower.style.top = e.clientY - 20 + 'px';
+            }, 100);
+        });
+
+        // Matrix background effect
+        function createMatrixRain() {
+            const matrixBg = document.getElementById('matrixBg');
+            if (!matrixBg) return;
+            
+            for (let i = 0; i < 20; i++) {
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
+                column.style.left = Math.random() * 100 + '%';
+                column.style.animationDelay = Math.random() * 10 + 's';
+                column.style.animationDuration = (10 + Math.random() * 10) + 's';
+                
+                // Random characters
+                const chars = '01LIFEOSAIMATRIXKNOWLEDGENEURALCODEDATA';
+                let text = '';
+                for (let j = 0; j < 50; j++) {
+                    text += chars[Math.floor(Math.random() * chars.length)] + '<br>';
+                }
+                column.innerHTML = text;
+                
+                matrixBg.appendChild(column);
+            }
+        }
+
+        // Particle effect
+        function createParticles(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                particle.style.animationDuration = (10 + Math.random() * 20) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Initialize effects
+        createMatrixRain();
+        createParticles('particles');
+        createParticles('particles2');
+
+        // Demo interaction
+        document.querySelectorAll('.demo-slide .feature-pill').forEach(pill => {
+            pill.addEventListener('click', function() {
+                this.style.background = '#00ff88';
+                this.style.color = '#000';
+                setTimeout(() => {
+                    this.style.background = 'rgba(0, 255, 136, 0.1)';
+                    this.style.color = '#fff';
+                }, 1000);
+            });
+        });
+
+        // Smooth slide transitions with mouse wheel
+        let scrolling = false;
+        document.addEventListener('wheel', (e) => {
+            if (scrolling) return;
+            scrolling = true;
+            
+            if (e.deltaY > 0) {
+                showSlide(currentSlide + 1);
+            } else {
+                showSlide(currentSlide - 1);
+            }
+            
+            setTimeout(() => {
+                scrolling = false;
+            }, 800);
+        });
+
+        // Add glow effect on hover
+        document.querySelectorAll('.stat-card, .metric-card, .problem-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.boxShadow = '0 0 30px rgba(0, 255, 136, 0.3)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.boxShadow = 'none';
+            });
+        });
+
+        // Initialize progress bar
+        progressBar.style.width = '16.67%';
+    </script>
+</body>
+</html>

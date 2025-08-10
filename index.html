@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenLifeOS - The Open-Source Life Operating System for AI Companions</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 800px;
+        }
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from { text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+            to { text-shadow: 0 0 20px rgba(255,255,255,0.8); }
+        }
+        .tagline {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        .description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 3rem;
+            opacity: 0.8;
+        }
+        .buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 1rem 2rem;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .code-demo {
+            background: rgba(0,0,0,0.3);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 2rem 0;
+            font-family: 'Courier New', monospace;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>OpenLifeOS</h1>
+        <p class="tagline">Not an assistant. Another you.</p>
+        <p class="description">
+            The world's first open-source platform for building personal AI companions 
+            that truly understand and grow with you. Experience the future of human-AI 
+            symbiosis with Matrix-style knowledge downloads and personality evolution.
+        </p>
+        
+        <div class="code-demo">
+            <code>
+                // Transform your AI into any expert in seconds<br>
+                await openLifeOS.knowledge.download('legal-expert');<br>
+                await openLifeOS.knowledge.activate();<br>
+                // Your AI is now a professional legal advisor
+            </code>
+        </div>
+        
+        <div class="buttons">
+            <a href="/demos/life-os-ultimate-v2.html" class="btn">Try Demo</a>
+            <a href="/docs" class="btn">Documentation</a>
+            <a href="https://github.com/openlifeos/core" class="btn">GitHub</a>
+            <a href="https://discord.gg/openlifeos" class="btn">Discord</a>
+        </div>
+    </div>
+</body>
+</html>

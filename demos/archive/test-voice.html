@@ -1,0 +1,389 @@
+<\!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Interface Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        .test-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 90%;
+        }
+        h1 {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 16px;
+        }
+        button:hover { transform: scale(1.05); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .transcript {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            min-height: 50px;
+            border: 2px solid #e0e0e0;
+        }
+        .indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .indicator.active { background: #4caf50; animation: pulse 1s infinite; }
+        .indicator.inactive { background: #ccc; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎤 Voice Interface Test Suite</h1>
+        
+        <div class="test-section">
+            <h3>1. Browser Compatibility</h3>
+            <div id="browserTest"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>2. Web Speech API Test</h3>
+            <button id="webSpeechBtn" onclick="testWebSpeech()">Test Web Speech</button>
+            <div class="transcript" id="webSpeechTranscript">Press button and speak...</div>
+            <div id="webSpeechStatus"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>3. Text-to-Speech Test</h3>
+            <button onclick="testTTS()">Test Speech Synthesis</button>
+            <div id="ttsStatus"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>4. Microphone Access</h3>
+            <button onclick="testMicrophone()">Test Microphone</button>
+            <div id="micStatus"></div>
+            <canvas id="visualizer" width="500" height="100" style="width: 100%; height: 100px; background: #f0f0f0; border-radius: 8px; margin-top: 10px;"></canvas>
+        </div>
+        
+        <div class="test-section">
+            <h3>5. Integration Test</h3>
+            <button onclick="testFullIntegration()">Run Full Test</button>
+            <div id="integrationStatus"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>Test Results Summary</h3>
+            <div id="summary"></div>
+        </div>
+    </div>
+    
+    <script type="module">
+        // Test results storage
+        window.testResults = {
+            browser: false,
+            webSpeech: false,
+            tts: false,
+            microphone: false,
+            integration: false
+        };
+        
+        // 1. Browser Compatibility Test
+        function testBrowserCompatibility() {
+            const browserTest = document.getElementById('browserTest');
+            let html = '';
+            
+            // Check for Web Speech API
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                html += '<div class="status success"><span class="indicator active"></span>✓ Speech Recognition API available</div>';
+                window.testResults.browser = true;
+            } else {
+                html += '<div class="status error"><span class="indicator inactive"></span>✗ Speech Recognition API not available</div>';
+            }
+            
+            // Check for Speech Synthesis
+            if ('speechSynthesis' in window) {
+                html += '<div class="status success"><span class="indicator active"></span>✓ Speech Synthesis API available</div>';
+            } else {
+                html += '<div class="status error"><span class="indicator inactive"></span>✗ Speech Synthesis API not available</div>';
+            }
+            
+            // Check for getUserMedia
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                html += '<div class="status success"><span class="indicator active"></span>✓ Media Devices API available</div>';
+            } else {
+                html += '<div class="status error"><span class="indicator inactive"></span>✗ Media Devices API not available</div>';
+            }
+            
+            // Check for Web Audio API
+            if (window.AudioContext || window.webkitAudioContext) {
+                html += '<div class="status success"><span class="indicator active"></span>✓ Web Audio API available</div>';
+            } else {
+                html += '<div class="status error"><span class="indicator inactive"></span>✗ Web Audio API not available</div>';
+            }
+            
+            browserTest.innerHTML = html;
+            updateSummary();
+        }
+        
+        // 2. Web Speech API Test
+        window.testWebSpeech = function() {
+            const status = document.getElementById('webSpeechStatus');
+            const transcript = document.getElementById('webSpeechTranscript');
+            const button = document.getElementById('webSpeechBtn');
+            
+            try {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const recognition = new SpeechRecognition();
+                
+                recognition.continuous = false;
+                recognition.interimResults = true;
+                recognition.lang = 'en-US';
+                
+                status.innerHTML = '<div class="status info"><span class="indicator active"></span>Listening... Speak now\!</div>';
+                button.disabled = true;
+                
+                recognition.onresult = (event) => {
+                    const last = event.results.length - 1;
+                    const text = event.results[last][0].transcript;
+                    transcript.textContent = text;
+                    
+                    if (event.results[last].isFinal) {
+                        status.innerHTML = '<div class="status success">✓ Speech recognized: "' + text + '"</div>';
+                        window.testResults.webSpeech = true;
+                        updateSummary();
+                    }
+                };
+                
+                recognition.onerror = (event) => {
+                    status.innerHTML = '<div class="status error">✗ Error: ' + event.error + '</div>';
+                    button.disabled = false;
+                };
+                
+                recognition.onend = () => {
+                    button.disabled = false;
+                };
+                
+                recognition.start();
+                
+            } catch (error) {
+                status.innerHTML = '<div class="status error">✗ Failed to initialize: ' + error.message + '</div>';
+                button.disabled = false;
+            }
+        };
+        
+        // 3. Text-to-Speech Test
+        window.testTTS = function() {
+            const status = document.getElementById('ttsStatus');
+            
+            try {
+                if (\!window.speechSynthesis) {
+                    throw new Error('Speech Synthesis not available');
+                }
+                
+                const utterance = new SpeechSynthesisUtterance('Hello\! I am your digital human. Testing speech synthesis.');
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
+                utterance.volume = 1.0;
+                
+                utterance.onstart = () => {
+                    status.innerHTML = '<div class="status info"><span class="indicator active"></span>Speaking...</div>';
+                };
+                
+                utterance.onend = () => {
+                    status.innerHTML = '<div class="status success">✓ Speech synthesis successful</div>';
+                    window.testResults.tts = true;
+                    updateSummary();
+                };
+                
+                utterance.onerror = (event) => {
+                    status.innerHTML = '<div class="status error">✗ Speech error: ' + event.error + '</div>';
+                };
+                
+                window.speechSynthesis.speak(utterance);
+                
+            } catch (error) {
+                status.innerHTML = '<div class="status error">✗ Failed: ' + error.message + '</div>';
+            }
+        };
+        
+        // 4. Microphone Test
+        window.testMicrophone = function() {
+            const status = document.getElementById('micStatus');
+            const canvas = document.getElementById('visualizer');
+            const canvasCtx = canvas.getContext('2d');
+            
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    status.innerHTML = '<div class="status success">✓ Microphone access granted</div>';
+                    
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    const analyser = audioContext.createAnalyser();
+                    const microphone = audioContext.createMediaStreamSource(stream);
+                    microphone.connect(analyser);
+                    
+                    analyser.fftSize = 256;
+                    const bufferLength = analyser.frequencyBinCount;
+                    const dataArray = new Uint8Array(bufferLength);
+                    
+                    function draw() {
+                        requestAnimationFrame(draw);
+                        analyser.getByteFrequencyData(dataArray);
+                        
+                        canvasCtx.fillStyle = '#f0f0f0';
+                        canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+                        
+                        const barWidth = (canvas.width / bufferLength) * 2.5;
+                        let barHeight;
+                        let x = 0;
+                        
+                        for(let i = 0; i < bufferLength; i++) {
+                            barHeight = dataArray[i] / 2;
+                            
+                            const gradient = canvasCtx.createLinearGradient(0, 0, 0, canvas.height);
+                            gradient.addColorStop(0, '#667eea');
+                            gradient.addColorStop(1, '#764ba2');
+                            
+                            canvasCtx.fillStyle = gradient;
+                            canvasCtx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+                            
+                            x += barWidth + 1;
+                        }
+                    }
+                    
+                    draw();
+                    window.testResults.microphone = true;
+                    updateSummary();
+                    
+                    // Stop after 5 seconds
+                    setTimeout(() => {
+                        stream.getTracks().forEach(track => track.stop());
+                        status.innerHTML += '<div class="status info">Microphone stopped after test</div>';
+                    }, 5000);
+                })
+                .catch(error => {
+                    status.innerHTML = '<div class="status error">✗ Microphone access denied: ' + error.message + '</div>';
+                });
+        };
+        
+        // 5. Full Integration Test
+        window.testFullIntegration = function() {
+            const status = document.getElementById('integrationStatus');
+            let testSteps = [];
+            
+            // Step 1: Initialize
+            testSteps.push('<div class="status info">Starting integration test...</div>');
+            status.innerHTML = testSteps.join('');
+            
+            // Step 2: Check all APIs
+            setTimeout(() => {
+                if (window.testResults.browser) {
+                    testSteps.push('<div class="status success">✓ Browser APIs ready</div>');
+                } else {
+                    testSteps.push('<div class="status error">✗ Browser APIs missing</div>');
+                }
+                status.innerHTML = testSteps.join('');
+                
+                // Step 3: Test voice input
+                setTimeout(() => {
+                    if (window.testResults.webSpeech) {
+                        testSteps.push('<div class="status success">✓ Voice input working</div>');
+                    } else {
+                        testSteps.push('<div class="status warning">⚠ Voice input not tested</div>');
+                    }
+                    status.innerHTML = testSteps.join('');
+                    
+                    // Step 4: Test voice output
+                    setTimeout(() => {
+                        if (window.testResults.tts) {
+                            testSteps.push('<div class="status success">✓ Voice output working</div>');
+                        } else {
+                            testSteps.push('<div class="status warning">⚠ Voice output not tested</div>');
+                        }
+                        status.innerHTML = testSteps.join('');
+                        
+                        // Final result
+                        const allPassed = Object.values(window.testResults).every(v => v);
+                        if (allPassed) {
+                            testSteps.push('<div class="status success"><strong>✓ All systems operational\!</strong></div>');
+                            window.testResults.integration = true;
+                        } else {
+                            testSteps.push('<div class="status warning"><strong>⚠ Some features may be limited</strong></div>');
+                        }
+                        status.innerHTML = testSteps.join('');
+                        updateSummary();
+                    }, 1000);
+                }, 1000);
+            }, 1000);
+        };
+        
+        function updateSummary() {
+            const summary = document.getElementById('summary');
+            const passed = Object.values(window.testResults).filter(v => v).length;
+            const total = Object.keys(window.testResults).length;
+            
+            let statusClass = 'success';
+            if (passed < total) statusClass = 'warning';
+            if (passed === 0) statusClass = 'error';
+            
+            summary.innerHTML = `
+                <div class="status ${statusClass}">
+                    <strong>Test Results: ${passed}/${total} passed</strong>
+                    <ul style="margin: 10px 0; padding-left: 20px;">
+                        <li>Browser Compatibility: ${window.testResults.browser ? '✓' : '✗'}</li>
+                        <li>Web Speech API: ${window.testResults.webSpeech ? '✓' : '✗'}</li>
+                        <li>Text-to-Speech: ${window.testResults.tts ? '✓' : '✗'}</li>
+                        <li>Microphone Access: ${window.testResults.microphone ? '✓' : '✗'}</li>
+                        <li>Integration: ${window.testResults.integration ? '✓' : '✗'}</li>
+                    </ul>
+                </div>
+            `;
+        }
+        
+        // Run browser test on load
+        testBrowserCompatibility();
+    </script>
+</body>
+</html>

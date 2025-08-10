@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Human System - Main Portal</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Orbitron', monospace;
+            background: #000;
+            color: #0ff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        #particles-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #0ff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #0ff;
+            animation: float 20s infinite linear;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+        
+        /* Grid Overlay */
+        .grid-overlay {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,255,0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 10s linear infinite;
+            z-index: -1;
+        }
+        
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(180deg, rgba(0,255,255,0.1), transparent);
+            border-bottom: 2px solid #0ff;
+            position: relative;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #0ff, transparent);
+            animation: scan 3s linear infinite;
+        }
+        
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        h1 {
+            font-size: 3em;
+            font-weight: 900;
+            letter-spacing: 5px;
+            background: linear-gradient(45deg, #0ff, #f0f, #ff0, #0ff);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 3s ease infinite;
+            margin-bottom: 10px;
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .subtitle {
+            color: #888;
+            font-size: 14px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        /* Application Grid */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .app-card {
+            background: rgba(0, 20, 40, 0.9);
+            border: 1px solid #0ff;
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #0ff, transparent);
+            animation: cardScan 3s linear infinite;
+            animation-play-state: paused;
+        }
+        
+        .app-card:hover::before {
+            animation-play-state: running;
+        }
+        
+        @keyframes cardScan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 50px rgba(0, 255, 255, 0.4);
+            border-color: #f0f;
+        }
+        
+        .app-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            display: block;
+            text-align: center;
+        }
+        
+        .app-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #0ff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .app-description {
+            color: #888;
+            font-size: 12px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .app-features {
+            list-style: none;
+            font-size: 11px;
+        }
+        
+        .app-features li {
+            padding: 5px 0;
+            color: #0f0;
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        .app-features li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #0ff;
+        }
+        
+        .launch-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background: linear-gradient(135deg, rgba(0,255,255,0.2), rgba(255,0,255,0.2));
+            border: 1px solid #0ff;
+            border-radius: 8px;
+            color: #0ff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+        }
+        
+        .launch-btn:hover {
+            background: linear-gradient(135deg, rgba(0,255,255,0.3), rgba(255,0,255,0.3));
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            transform: scale(1.05);
+        }
+        
+        /* Status Panel */
+        .status-panel {
+            background: rgba(0, 20, 40, 0.9);
+            border: 1px solid #0ff;
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 40px;
+        }
+        
+        .status-title {
+            font-size: 16px;
+            color: #0ff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .status-item {
+            text-align: center;
+        }
+        
+        .status-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0f0;
+            text-shadow: 0 0 10px #0f0;
+        }
+        
+        .status-label {
+            font-size: 11px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid rgba(0, 255, 255, 0.3);
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .footer a {
+            color: #0ff;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-bg"></div>
+    <div class="grid-overlay"></div>
+    
+    <div class="header">
+        <h1>DIGITAL HUMAN SYSTEM</h1>
+        <div class="subtitle">Quantum Consciousness Interface Portal</div>
+    </div>
+    
+    <div class="container">
+        <!-- Status Panel -->
+        <div class="status-panel">
+            <div class="status-title">System Status</div>
+            <div class="status-grid">
+                <div class="status-item">
+                    <div class="status-value" id="activeApps">12</div>
+                    <div class="status-label">Applications</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-value" id="systemHealth">98%</div>
+                    <div class="status-label">System Health</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-value" id="aiStatus">ONLINE</div>
+                    <div class="status-label">AI Status</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-value" id="apiStatus">READY</div>
+                    <div class="status-label">API Status</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Application Grid -->
+        <div class="app-grid">
+            <!-- JARVIS Assistant -->
+            <div class="app-card" onclick="window.location.href='jarvis-assistant.html'">
+                <span class="app-icon">🤖</span>
+                <div class="app-title">J.A.R.V.I.S. Assistant</div>
+                <div class="app-description">
+                    Personal AI assistant with health monitoring, memory system, and intelligent responses.
+                </div>
+                <ul class="app-features">
+                    <li>Real-time biometric monitoring</li>
+                    <li>ElevenLabs voice synthesis</li>
+                    <li>Personal memory system</li>
+                    <li>Health analysis & alerts</li>
+                </ul>
+                <a href="jarvis-assistant.html" class="launch-btn">Launch JARVIS</a>
+            </div>
+            
+            <!-- Biometric Dashboard -->
+            <div class="app-card" onclick="window.location.href='biometric-dashboard.html'">
+                <span class="app-icon">💓</span>
+                <div class="app-title">Biometric Dashboard</div>
+                <div class="app-description">
+                    Advanced health monitoring with real-time vitals, brainwaves, and comprehensive analytics.
+                </div>
+                <ul class="app-features">
+                    <li>15+ vital signs tracking</li>
+                    <li>Brainwave visualization</li>
+                    <li>Activity monitoring</li>
+                    <li>Health recommendations</li>
+                </ul>
+                <a href="biometric-dashboard.html" class="launch-btn">Open Dashboard</a>
+            </div>
+            
+            <!-- OpenAI JARVIS -->
+            <div class="app-card" onclick="window.location.href='jarvis-openai.html'">
+                <span class="app-icon">🧠</span>
+                <div class="app-title">JARVIS OpenAI Edition</div>
+                <div class="app-description">
+                    OpenAI-powered JARVIS with GPT-4, voice synthesis, and advanced conversation capabilities.
+                </div>
+                <ul class="app-features">
+                    <li>GPT-4 Turbo integration</li>
+                    <li>OpenAI TTS voices</li>
+                    <li>Speech recognition</li>
+                    <li>Token tracking</li>
+                </ul>
+                <a href="jarvis-openai.html" class="launch-btn">Launch OpenAI</a>
+            </div>
+            
+            <!-- Quantum Interface -->
+            <div class="app-card" onclick="window.location.href='quantum-interface.html'">
+                <span class="app-icon">⚛️</span>
+                <div class="app-title">Quantum Interface</div>
+                <div class="app-description">
+                    Futuristic quantum consciousness interface with neural visualization and dimensional controls.
+                </div>
+                <ul class="app-features">
+                    <li>Neural network display</li>
+                    <li>Quantum state monitoring</li>
+                    <li>Dimensional controls</li>
+                    <li>Matrix effects</li>
+                </ul>
+                <a href="quantum-interface.html" class="launch-btn">Enter Quantum</a>
+            </div>
+            
+            <!-- Ultimate Demo -->
+            <div class="app-card" onclick="window.location.href='demo-ultimate.html'">
+                <span class="app-icon">🌟</span>
+                <div class="app-title">Ultimate Demo</div>
+                <div class="app-description">
+                    Complete digital human demonstration with all features integrated in stunning interface.
+                </div>
+                <ul class="app-features">
+                    <li>Full feature showcase</li>
+                    <li>Holographic design</li>
+                    <li>Multi-modal inputs</li>
+                    <li>Dream visualization</li>
+                </ul>
+                <a href="demo-ultimate.html" class="launch-btn">Launch Demo</a>
+            </div>
+            
+            <!-- Monitor System -->
+            <div class="app-card" onclick="window.location.href='monitor.html'">
+                <span class="app-icon">📊</span>
+                <div class="app-title">System Monitor</div>
+                <div class="app-description">
+                    Real-time monitoring dashboard for all system components and performance metrics.
+                </div>
+                <ul class="app-features">
+                    <li>Live system metrics</li>
+                    <li>Performance tracking</li>
+                    <li>API monitoring</li>
+                    <li>Test results display</li>
+                </ul>
+                <a href="monitor.html" class="launch-btn">Open Monitor</a>
+            </div>
+            
+            <!-- Test Complete -->
+            <div class="app-card" onclick="window.location.href='test-complete.html'">
+                <span class="app-icon">🧪</span>
+                <div class="app-title">Test Suite</div>
+                <div class="app-description">
+                    Comprehensive testing interface for all system components and API integrations.
+                </div>
+                <ul class="app-features">
+                    <li>Component testing</li>
+                    <li>API validation</li>
+                    <li>Voice testing</li>
+                    <li>Integration tests</li>
+                </ul>
+                <a href="test-complete.html" class="launch-btn">Run Tests</a>
+            </div>
+            
+            <!-- Futuristic GUI -->
+            <div class="app-card" onclick="window.location.href='futuristic-gui.html'">
+                <span class="app-icon">🎮</span>
+                <div class="app-title">Futuristic GUI</div>
+                <div class="app-description">
+                    Cyberpunk-themed interface with Matrix effects and quantum consciousness simulation.
+                </div>
+                <ul class="app-features">
+                    <li>Matrix rain effect</li>
+                    <li>Holographic panels</li>
+                    <li>Neural visualization</li>
+                    <li>Quantum responses</li>
+                </ul>
+                <a href="futuristic-gui.html" class="launch-btn">Enter Interface</a>
+            </div>
+            
+            <!-- Voice Test -->
+            <div class="app-card" onclick="window.location.href='voice-test-simple.html'">
+                <span class="app-icon">🎤</span>
+                <div class="app-title">Voice Test</div>
+                <div class="app-description">
+                    Simple voice testing interface for speech recognition and synthesis validation.
+                </div>
+                <ul class="app-features">
+                    <li>Browser compatibility test</li>
+                    <li>Voice input testing</li>
+                    <li>Speech synthesis test</li>
+                    <li>API configuration</li>
+                </ul>
+                <a href="voice-test-simple.html" class="launch-btn">Test Voice</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Digital Human System v1.0 | Powered by Advanced AI Technologies</p>
+        <p>© 2024 Quantum Consciousness Project | <a href="https://github.com">GitHub</a></p>
+    </div>
+    
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const container = document.getElementById('particles-bg');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+        
+        createParticles();
+        
+        // Update status values
+        function updateStatus() {
+            // Simulate dynamic values
+            document.getElementById('systemHealth').textContent = 
+                Math.floor(95 + Math.random() * 5) + '%';
+            
+            // Check API status
+            const hasOpenAI = sessionStorage.getItem('openai_api_key');
+            const hasElevenLabs = sessionStorage.getItem('elevenlabs_api_key');
+            
+            if (hasOpenAI || hasElevenLabs) {
+                document.getElementById('apiStatus').textContent = 'CONNECTED';
+                document.getElementById('apiStatus').style.color = '#0f0';
+            } else {
+                document.getElementById('apiStatus').textContent = 'READY';
+                document.getElementById('apiStatus').style.color = '#ff0';
+            }
+        }
+        
+        // Update every 5 seconds
+        setInterval(updateStatus, 5000);
+        updateStatus();
+    </script>
+</body>
+</html>

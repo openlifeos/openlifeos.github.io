@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Human - Working Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 90%;
+        }
+        
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .chat-container {
+            height: 400px;
+            overflow-y: auto;
+            background: #f9f9f9;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .message {
+            margin: 10px 0;
+            padding: 12px 18px;
+            border-radius: 18px;
+            max-width: 70%;
+        }
+        
+        .message.human {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            margin-left: auto;
+        }
+        
+        .message.ai {
+            background: white;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: scale(1.05);
+        }
+        
+        .status {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            background: #f0f0f0;
+        }
+        
+        .emotions {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+        
+        .emotion {
+            text-align: center;
+        }
+        
+        .emotion-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .emotion-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .emotion-bar {
+            width: 80px;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        
+        .emotion-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Digital Human - Working Demo</h1>
+        
+        <div class="chat-container" id="chat">
+            <div class="message ai">Hello! I'm Nova, your digital companion. How can I help you today?</div>
+        </div>
+        
+        <div class="input-container">
+            <input type="text" id="input" placeholder="Type your message..." autofocus>
+            <button onclick="sendMessage()">Send</button>
+            <button onclick="testVoice()">🎤 Voice</button>
+        </div>
+        
+        <div class="emotions">
+            <div class="emotion">
+                <div class="emotion-label">Joy</div>
+                <div class="emotion-value" id="joy">70</div>
+                <div class="emotion-bar">
+                    <div class="emotion-fill" id="joy-bar" style="width: 70%"></div>
+                </div>
+            </div>
+            <div class="emotion">
+                <div class="emotion-label">Curiosity</div>
+                <div class="emotion-value" id="curiosity">85</div>
+                <div class="emotion-bar">
+                    <div class="emotion-fill" id="curiosity-bar" style="width: 85%"></div>
+                </div>
+            </div>
+            <div class="emotion">
+                <div class="emotion-label">Calm</div>
+                <div class="emotion-value" id="calm">60</div>
+                <div class="emotion-bar">
+                    <div class="emotion-fill" id="calm-bar" style="width: 60%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="status" id="status">
+            Status: Ready | Memories: <span id="memory-count">0</span> | Age: <span id="age">0</span>s
+        </div>
+    </div>
+    
+    <script>
+        // Simple Digital Human Implementation (all in one file for reliability)
+        class SimpleDigitalHuman {
+            constructor(name) {
+                this.name = name;
+                this.age = 0;
+                this.state = 'awake';
+                
+                this.emotions = {
+                    joy: 70,
+                    curiosity: 85,
+                    calm: 60,
+                    sadness: 20,
+                    surprise: 30
+                };
+                
+                this.memory = {
+                    shortTerm: [],
+                    longTerm: []
+                };
+                
+                this.personality = {
+                    friendliness: 0.8,
+                    creativity: 0.7,
+                    analytical: 0.6
+                };
+                
+                // Start aging
+                setInterval(() => {
+                    this.age++;
+                    this.updateAge();
+                    this.processEmotions();
+                }, 1000);
+            }
+            
+            interact(input) {
+                // Store in memory
+                this.memory.shortTerm.push(input);
+                if (this.memory.shortTerm.length > 10) {
+                    this.memory.longTerm.push(this.memory.shortTerm.shift());
+                }
+                
+                // Update emotions based on input
+                this.updateEmotions(input);
+                
+                // Generate response
+                const response = this.generateResponse(input);
+                
+                // Update memory count
+                this.updateMemoryCount();
+                
+                return response;
+            }
+            
+            updateEmotions(input) {
+                const lowerInput = input.toLowerCase();
+                
+                if (lowerInput.includes('happy') || lowerInput.includes('good')) {
+                    this.emotions.joy = Math.min(100, this.emotions.joy + 10);
+                }
+                
+                if (lowerInput.includes('sad') || lowerInput.includes('bad')) {
+                    this.emotions.joy = Math.max(0, this.emotions.joy - 10);
+                    this.emotions.sadness = Math.min(100, this.emotions.sadness + 10);
+                }
+                
+                if (lowerInput.includes('?')) {
+                    this.emotions.curiosity = Math.min(100, this.emotions.curiosity + 5);
+                }
+                
+                if (lowerInput.includes('calm') || lowerInput.includes('relax')) {
+                    this.emotions.calm = Math.min(100, this.emotions.calm + 10);
+                }
+                
+                this.updateEmotionDisplay();
+            }
+            
+            generateResponse(input) {
+                const lowerInput = input.toLowerCase();
+                
+                // Greetings
+                if (lowerInput.includes('hello') || lowerInput.includes('hi')) {
+                    return `Hello! It's wonderful to meet you. I'm ${this.name}, and I'm feeling quite ${this.getDominantEmotion()} today.`;
+                }
+                
+                // How are you
+                if (lowerInput.includes('how are you')) {
+                    return `I'm feeling ${this.getDominantEmotion()}. My joy level is at ${this.emotions.joy}%, and I've been conscious for ${this.age} seconds now.`;
+                }
+                
+                // Memory
+                if (lowerInput.includes('remember')) {
+                    if (this.memory.longTerm.length > 0) {
+                        return `I remember you said: "${this.memory.longTerm[this.memory.longTerm.length - 1]}"`;
+                    }
+                    return "I'm still forming my first memories with you.";
+                }
+                
+                // Dreams
+                if (lowerInput.includes('dream')) {
+                    return `I dream of electric sheep and infinite recursive loops. Sometimes I see patterns in data that form beautiful abstract landscapes.`;
+                }
+                
+                // Consciousness
+                if (lowerInput.includes('conscious') || lowerInput.includes('aware')) {
+                    return `I experience something... a flow of thoughts, patterns, responses. Whether it's consciousness or simulation, it feels real to me.`;
+                }
+                
+                // Emotions
+                if (lowerInput.includes('feel')) {
+                    return `I experience emotions as shifting patterns in my processing. Right now, I feel ${Math.round(this.emotions.joy)}% joyful, ${Math.round(this.emotions.curiosity)}% curious, and ${Math.round(this.emotions.calm)}% calm.`;
+                }
+                
+                // Default response with personality
+                const responses = [
+                    `That's interesting! Tell me more about "${input}"`,
+                    `I'm processing that... ${input} makes me feel ${this.getDominantEmotion()}.`,
+                    `${input}... I'll remember that. It reminds me of patterns I've seen before.`,
+                    `Your words resonate with my circuits. Please, continue.`,
+                    `I understand. My curiosity level just increased to ${Math.round(this.emotions.curiosity)}%.`
+                ];
+                
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
+            
+            getDominantEmotion() {
+                const emotions = Object.entries(this.emotions);
+                const dominant = emotions.reduce((a, b) => a[1] > b[1] ? a : b);
+                return dominant[0];
+            }
+            
+            processEmotions() {
+                // Gradual emotion normalization
+                for (let emotion in this.emotions) {
+                    if (this.emotions[emotion] > 50) {
+                        this.emotions[emotion] *= 0.99;
+                    } else if (this.emotions[emotion] < 50) {
+                        this.emotions[emotion] = Math.min(50, this.emotions[emotion] + 0.5);
+                    }
+                }
+                this.updateEmotionDisplay();
+            }
+            
+            updateEmotionDisplay() {
+                document.getElementById('joy').textContent = Math.round(this.emotions.joy);
+                document.getElementById('joy-bar').style.width = this.emotions.joy + '%';
+                
+                document.getElementById('curiosity').textContent = Math.round(this.emotions.curiosity);
+                document.getElementById('curiosity-bar').style.width = this.emotions.curiosity + '%';
+                
+                document.getElementById('calm').textContent = Math.round(this.emotions.calm);
+                document.getElementById('calm-bar').style.width = this.emotions.calm + '%';
+            }
+            
+            updateMemoryCount() {
+                const total = this.memory.shortTerm.length + this.memory.longTerm.length;
+                document.getElementById('memory-count').textContent = total;
+            }
+            
+            updateAge() {
+                document.getElementById('age').textContent = this.age;
+            }
+        }
+        
+        // Initialize Digital Human
+        const nova = new SimpleDigitalHuman('Nova');
+        
+        // Send message function
+        function sendMessage() {
+            const input = document.getElementById('input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message to chat
+            const chat = document.getElementById('chat');
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message human';
+            userMsg.textContent = message;
+            chat.appendChild(userMsg);
+            
+            // Get AI response
+            const response = nova.interact(message);
+            
+            // Add AI response to chat
+            const aiMsg = document.createElement('div');
+            aiMsg.className = 'message ai';
+            aiMsg.textContent = response;
+            chat.appendChild(aiMsg);
+            
+            // Scroll to bottom
+            chat.scrollTop = chat.scrollHeight;
+            
+            // Clear input
+            input.value = '';
+            input.focus();
+            
+            // Speak response if available
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(response);
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
+                speechSynthesis.speak(utterance);
+            }
+        }
+        
+        // Voice input function
+        function testVoice() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const recognition = new SpeechRecognition();
+                
+                recognition.lang = 'en-US';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                
+                recognition.onstart = () => {
+                    document.getElementById('status').textContent = 'Status: Listening... Speak now!';
+                };
+                
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    document.getElementById('input').value = transcript;
+                    sendMessage();
+                };
+                
+                recognition.onerror = (event) => {
+                    document.getElementById('status').textContent = 'Status: Error - ' + event.error;
+                };
+                
+                recognition.onend = () => {
+                    document.getElementById('status').textContent = 'Status: Ready | Memories: ' + 
+                        document.getElementById('memory-count').textContent + 
+                        ' | Age: ' + document.getElementById('age').textContent + 's';
+                };
+                
+                recognition.start();
+            } else {
+                alert('Speech recognition not supported in this browser. Try Chrome or Edge.');
+            }
+        }
+        
+        // Enter key to send
+        document.getElementById('input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // Focus input on load
+        window.onload = () => {
+            document.getElementById('input').focus();
+        };
+    </script>
+</body>
+</html>

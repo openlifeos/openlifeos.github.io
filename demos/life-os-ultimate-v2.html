@@ -1,0 +1,2291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenLifeOS Ultimate - Your Quantum AI Companion | AugHacks MIT 2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        :root {
+            --primary-green: #00ff00;
+            --primary-cyan: #00ffff;
+            --primary-gold: #ffd700;
+            --primary-red: #ff4444;
+            --primary-blue: #0088ff;
+            --primary-purple: #ff00ff;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #050505;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255,255,255,0.8);
+            --glass: rgba(255,255,255,0.05);
+            --glass-border: rgba(255,255,255,0.1);
+        }
+        
+        body {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+        }
+        
+        /* Matrix Background */
+        #matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.3;
+        }
+        
+        /* Quantum Grid */
+        .quantum-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0,255,0,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,0,0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 2;
+            animation: gridMove 30s linear infinite;
+        }
+        
+        @keyframes gridMove {
+            to { transform: translate(50px, 50px); }
+        }
+        
+        /* Main Container */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Top Bar */
+        .top-bar {
+            background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 100%);
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid var(--primary-green);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+        
+        .top-bar::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-green), var(--primary-cyan), transparent);
+            animation: scanline 3s linear infinite;
+        }
+        
+        @keyframes scanline {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .logo {
+            font-size: 32px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-cyan), var(--primary-purple));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: logoGlow 3s ease-in-out infinite;
+            letter-spacing: 2px;
+        }
+        
+        @keyframes logoGlow {
+            0%, 100% { background-position: 0% 50%; filter: drop-shadow(0 0 20px rgba(0,255,255,0.5)); }
+            50% { background-position: 100% 50%; filter: drop-shadow(0 0 30px rgba(0,255,0,0.8)); }
+        }
+        
+        .tagline {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            opacity: 0.8;
+        }
+        
+        /* Live Stats */
+        .stats-container {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+        
+        .stat-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+        }
+        
+        .stat-icon {
+            width: 8px;
+            height: 8px;
+            background: var(--primary-green);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+        }
+        
+        .stat-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--primary-cyan);
+            text-shadow: 0 0 10px rgba(0,255,255,0.5);
+        }
+        
+        .stat-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-left: 4px;
+        }
+        
+        /* Navigation */
+        .nav-container {
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 2px;
+        }
+        
+        .nav-tab {
+            padding: 10px 20px;
+            background: var(--glass);
+            border: 1px solid transparent;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav-tab:hover {
+            background: rgba(0,255,255,0.1);
+            border-color: var(--primary-cyan);
+            transform: translateY(-2px);
+        }
+        
+        .nav-tab.active {
+            background: linear-gradient(135deg, rgba(0,255,0,0.15), rgba(0,255,255,0.15));
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+        }
+        
+        .active-packages-display {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .packages-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        #active-packages {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .package-indicator {
+            padding: 4px 12px;
+            background: linear-gradient(135deg, rgba(255,0,255,0.2), rgba(0,255,255,0.2));
+            border: 1px solid var(--primary-purple);
+            border-radius: 12px;
+            font-size: 11px;
+            color: var(--primary-purple);
+        }
+        
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .page {
+            display: none;
+            width: 100%;
+            height: 100%;
+            animation: pageIn 0.5s ease;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        @keyframes pageIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        /* Dashboard Page - Improved Layout */
+        .dashboard {
+            padding: 30px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, rgba(0,255,0,0.05), rgba(0,255,255,0.05));
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0,255,255,0.1), transparent);
+            animation: heroGlow 10s ease-in-out infinite;
+        }
+        
+        @keyframes heroGlow {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(180deg); }
+        }
+        
+        .hero-title {
+            font-size: 48px;
+            font-weight: 900;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-cyan), var(--primary-purple));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textShimmer 3s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
+        }
+        
+        @keyframes textShimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .hero-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin-top: 30px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-stat {
+            text-align: center;
+        }
+        
+        .hero-stat-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--primary-cyan);
+            text-shadow: 0 0 20px rgba(0,255,255,0.5);
+        }
+        
+        .hero-stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 5px;
+        }
+        
+        /* Main Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            flex: 1;
+        }
+        
+        .feature-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary-cyan), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+        
+        .feature-card:hover::before {
+            transform: translateX(100%);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,255,255,0.2);
+            border-color: var(--primary-cyan);
+            background: linear-gradient(135deg, rgba(0,255,255,0.05), rgba(0,255,0,0.05));
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 20px currentColor);
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+        
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .feature-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .feature-description {
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        
+        .feature-status {
+            margin-top: auto;
+            padding-top: 15px;
+            font-size: 11px;
+            color: var(--primary-green);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Demo Scenarios Section */
+        .demos-section {
+            display: flex;
+            gap: 15px;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            overflow-x: auto;
+        }
+        
+        .demo-card {
+            min-width: 200px;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(255,0,255,0.1), rgba(0,255,255,0.1));
+            border: 1px solid rgba(255,0,255,0.3);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .demo-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(255,0,255,0.3);
+        }
+        
+        .demo-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .demo-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--primary-purple);
+            margin-bottom: 5px;
+        }
+        
+        .demo-desc {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+        
+        /* Biometrics Page */
+        .biometrics-container {
+            padding: 20px;
+            height: 100%;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+        
+        .vitals-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .vital-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .vital-card:hover {
+            background: rgba(0,255,255,0.05);
+            border-color: var(--primary-cyan);
+            transform: translateX(5px);
+        }
+        
+        .vital-info {
+            flex: 1;
+        }
+        
+        .vital-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        .vital-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--primary-cyan);
+            text-shadow: 0 0 20px rgba(0,255,255,0.5);
+        }
+        
+        .vital-value.warning {
+            color: var(--primary-gold);
+            text-shadow: 0 0 20px rgba(255,215,0,0.5);
+        }
+        
+        .vital-value.danger {
+            color: var(--primary-red);
+            text-shadow: 0 0 20px rgba(255,68,68,0.5);
+            animation: dangerPulse 1s ease-in-out infinite;
+        }
+        
+        @keyframes dangerPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .vital-unit {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-left: 5px;
+        }
+        
+        .charts-panel {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .chart-container {
+            flex: 1;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 15px;
+            position: relative;
+        }
+        
+        .chart-title {
+            font-size: 14px;
+            color: var(--primary-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+        
+        .chart {
+            width: 100%;
+            height: 150px;
+        }
+        
+        /* Planning Page */
+        .planning-container {
+            padding: 20px;
+            height: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .planning-section {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .add-button {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, rgba(0,255,0,0.2), rgba(0,255,255,0.2));
+            border: 1px solid var(--primary-cyan);
+            border-radius: 20px;
+            color: var(--primary-cyan);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .add-button:hover {
+            background: var(--primary-cyan);
+            color: var(--bg-dark);
+            transform: scale(1.05);
+        }
+        
+        .todo-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            border-left: 3px solid var(--primary-cyan);
+            transition: all 0.3s ease;
+        }
+        
+        .todo-item:hover {
+            background: rgba(0,255,255,0.05);
+            transform: translateX(5px);
+        }
+        
+        .todo-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary-cyan);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .todo-checkbox.checked {
+            background: var(--primary-cyan);
+            position: relative;
+        }
+        
+        .todo-checkbox.checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--bg-dark);
+            font-weight: bold;
+        }
+        
+        .todo-text {
+            flex: 1;
+            color: var(--text-primary);
+        }
+        
+        .todo-text.completed {
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+        
+        .todo-priority {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .priority-high {
+            background: rgba(255,68,68,0.2);
+            color: var(--primary-red);
+            border: 1px solid rgba(255,68,68,0.5);
+        }
+        
+        .priority-medium {
+            background: rgba(255,215,0,0.2);
+            color: var(--primary-gold);
+            border: 1px solid rgba(255,215,0,0.5);
+        }
+        
+        .priority-low {
+            background: rgba(0,255,255,0.2);
+            color: var(--primary-cyan);
+            border: 1px solid rgba(0,255,255,0.5);
+        }
+        
+        /* Knowledge Page */
+        .knowledge-container {
+            padding: 20px;
+            height: 100%;
+            overflow-y: auto;
+        }
+        
+        .knowledge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .package-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .package-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,255,255,0.2);
+            border-color: var(--primary-cyan);
+        }
+        
+        .package-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .package-icon {
+            font-size: 48px;
+            filter: drop-shadow(0 0 20px currentColor);
+        }
+        
+        .package-info {
+            flex: 1;
+        }
+        
+        .package-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+        
+        .package-version {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .package-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-cyan);
+        }
+        
+        .stat-desc {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .download-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(0,255,0,0.2), rgba(0,255,255,0.2));
+            border: 2px solid var(--primary-cyan);
+            border-radius: 12px;
+            color: var(--primary-cyan);
+            font-weight: bold;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .download-button:hover {
+            background: var(--primary-cyan);
+            color: var(--bg-dark);
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0,255,255,0.5);
+        }
+        
+        .download-button.activated {
+            background: linear-gradient(135deg, rgba(0,255,0,0.3), rgba(0,255,0,0.2));
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+            cursor: default;
+        }
+        
+        /* Voice Page */
+        .voice-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 40px;
+        }
+        
+        .voice-circle-container {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin-bottom: 40px;
+        }
+        
+        .voice-ring {
+            position: absolute;
+            border: 2px solid rgba(0,255,255,0.2);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .voice-ring:nth-child(1) {
+            width: 100%;
+            height: 100%;
+            animation: ringPulse 3s ease-in-out infinite;
+        }
+        
+        .voice-ring:nth-child(2) {
+            width: 75%;
+            height: 75%;
+            animation: ringPulse 3s ease-in-out infinite 0.5s;
+        }
+        
+        .voice-ring:nth-child(3) {
+            width: 50%;
+            height: 50%;
+            animation: ringPulse 3s ease-in-out infinite 1s;
+        }
+        
+        @keyframes ringPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.2; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.5; }
+        }
+        
+        .voice-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(0,255,255,0.2), rgba(0,255,0,0.2));
+            border: 3px solid var(--primary-cyan);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .voice-circle.listening {
+            animation: listening 1.5s ease-in-out infinite;
+            background: linear-gradient(135deg, rgba(0,255,0,0.3), rgba(0,255,255,0.3));
+            border-color: var(--primary-green);
+        }
+        
+        @keyframes listening {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.15); }
+        }
+        
+        .voice-circle.speaking {
+            animation: speaking 0.5s ease-in-out infinite;
+            background: linear-gradient(135deg, rgba(255,0,255,0.3), rgba(0,255,255,0.3));
+            border-color: var(--primary-purple);
+        }
+        
+        @keyframes speaking {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(0.95); }
+        }
+        
+        .voice-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .voice-transcript {
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        /* Chat Page */
+        .chat-container {
+            padding: 20px;
+            height: 100%;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .chat-message {
+            max-width: 70%;
+            animation: messageIn 0.3s ease;
+        }
+        
+        @keyframes messageIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .chat-message.user {
+            align-self: flex-end;
+        }
+        
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: 16px;
+        }
+        
+        .chat-message.user .message-bubble {
+            background: linear-gradient(135deg, rgba(0,255,0,0.2), rgba(0,255,255,0.2));
+            border: 1px solid var(--primary-green);
+        }
+        
+        .chat-message.ai .message-bubble {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+        }
+        
+        .chat-message.ai.expert .message-bubble {
+            background: linear-gradient(135deg, rgba(255,0,255,0.1), rgba(0,255,255,0.1));
+            border: 1px solid rgba(255,0,255,0.5);
+        }
+        
+        .message-header {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .message-content {
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+        
+        .chat-input-container {
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            gap: 12px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .chat-input:focus {
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 20px rgba(0,255,255,0.2);
+        }
+        
+        .chat-send {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, rgba(0,255,0,0.2), rgba(0,255,255,0.2));
+            border: 1px solid var(--primary-cyan);
+            border-radius: 24px;
+            color: var(--primary-cyan);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .chat-send:hover {
+            background: var(--primary-cyan);
+            color: var(--bg-dark);
+            transform: scale(1.05);
+        }
+        
+        .chat-sidebar {
+            width: 300px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, rgba(0,255,0,0.9), rgba(0,255,255,0.9));
+            color: var(--bg-dark);
+            border-radius: 12px;
+            font-weight: bold;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,255,255,0.5);
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        /* Download Overlay */
+        .download-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .download-overlay.active {
+            display: flex;
+        }
+        
+        .download-modal {
+            background: var(--bg-dark);
+            border: 2px solid var(--primary-cyan);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+        }
+        
+        .download-title {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .progress-container {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            height: 40px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-green), var(--primary-cyan));
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .progress-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            color: var(--text-primary);
+            font-weight: bold;
+            line-height: 40px;
+        }
+        
+        .knowledge-stream {
+            height: 200px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 16px;
+            overflow: hidden;
+            position: relative;
+            font-family: monospace;
+            font-size: 12px;
+            color: var(--primary-green);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .biometrics-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .planning-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .chat-sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Matrix Background -->
+    <canvas id="matrix-bg"></canvas>
+    
+    <!-- Quantum Grid -->
+    <div class="quantum-grid"></div>
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="logo-section">
+                <div class="logo">LIFE OS</div>
+                <div class="tagline">Not an assistant. Another you.</div>
+            </div>
+            
+            <div class="stats-container">
+                <div class="stat-group">
+                    <div class="stat-icon"></div>
+                    <span class="stat-value" id="knowledge-nodes">0</span>
+                    <span class="stat-label">Nodes</span>
+                </div>
+                <div class="stat-group">
+                    <div class="stat-icon"></div>
+                    <span class="stat-value" id="response-time">12ms</span>
+                    <span class="stat-label">Latency</span>
+                </div>
+                <div class="stat-group">
+                    <div class="stat-icon"></div>
+                    <span class="stat-value" id="sync-status">100%</span>
+                    <span class="stat-label">Sync</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="nav-container">
+            <div class="nav-tabs">
+                <div class="nav-tab active" onclick="switchPage('dashboard')">
+                    <span>🏠 Dashboard</span>
+                </div>
+                <div class="nav-tab" onclick="switchPage('biometrics')">
+                    <span>📊 Biometrics</span>
+                </div>
+                <div class="nav-tab" onclick="switchPage('planning')">
+                    <span>📋 Planning</span>
+                </div>
+                <div class="nav-tab" onclick="switchPage('knowledge')">
+                    <span>🧠 Knowledge</span>
+                </div>
+                <div class="nav-tab" onclick="switchPage('voice')">
+                    <span>🎤 Voice</span>
+                </div>
+                <div class="nav-tab" onclick="switchPage('chat')">
+                    <span>💬 Chat</span>
+                </div>
+            </div>
+            
+            <div class="active-packages-display">
+                <span class="packages-label">Active:</span>
+                <div id="active-packages">
+                    <span style="opacity: 0.5; font-size: 11px;">None</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Dashboard Page -->
+            <div class="page active" id="dashboard-page">
+                <div class="dashboard">
+                    <!-- Hero Section -->
+                    <div class="hero-section">
+                        <div class="hero-title">OpenLifeOS Ultimate</div>
+                        <div class="hero-subtitle">Your Quantum AI Life Companion</div>
+                        <div class="hero-stats">
+                            <div class="hero-stat">
+                                <div class="hero-stat-value" id="ai-iq">200</div>
+                                <div class="hero-stat-label">AI IQ</div>
+                            </div>
+                            <div class="hero-stat">
+                                <div class="hero-stat-value" id="packages-count">0</div>
+                                <div class="hero-stat-label">Expert Packages</div>
+                            </div>
+                            <div class="hero-stat">
+                                <div class="hero-stat-value" id="uptime">99.9%</div>
+                                <div class="hero-stat-label">Uptime</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Features Grid -->
+                    <div class="features-grid">
+                        <div class="feature-card" onclick="switchPage('knowledge')">
+                            <div class="feature-icon">🧠</div>
+                            <div class="feature-title">Matrix Knowledge</div>
+                            <div class="feature-description">Download expert-level knowledge packages in 3 seconds. Transform from generalist to specialist instantly.</div>
+                            <div class="feature-status">Ready for Download</div>
+                        </div>
+                        
+                        <div class="feature-card" onclick="switchPage('biometrics')">
+                            <div class="feature-icon">💤</div>
+                            <div class="feature-title">Real-Time Biometrics</div>
+                            <div class="feature-description">Monitor heart rate, stress levels, and vital signs with AI-powered health insights and predictions.</div>
+                            <div class="feature-status">Monitoring Active</div>
+                        </div>
+                        
+                        <div class="feature-card" onclick="switchPage('planning')">
+                            <div class="feature-icon">📋</div>
+                            <div class="feature-title">Intelligent Planning</div>
+                            <div class="feature-description">AI-optimized schedules, smart task prioritization, and productivity insights based on your patterns.</div>
+                            <div class="feature-status">Optimizing</div>
+                        </div>
+                        
+                        <div class="feature-card" onclick="switchPage('voice')">
+                            <div class="feature-icon">🎤</div>
+                            <div class="feature-title">Natural Voice AI</div>
+                            <div class="feature-description">Conversational AI with emotional intelligence, context awareness, and natural language processing.</div>
+                            <div class="feature-status">Voice Ready</div>
+                        </div>
+                        
+                        <div class="feature-card" onclick="switchPage('chat')">
+                            <div class="feature-icon">💬</div>
+                            <div class="feature-title">Expert Consultation</div>
+                            <div class="feature-description">Chat with AI experts in law, medicine, finance, technology, and more based on downloaded knowledge.</div>
+                            <div class="feature-status">Chat Available</div>
+                        </div>
+                        
+                        <div class="feature-card" onclick="runDemo('memory')">
+                            <div class="feature-icon">🧠</div>
+                            <div class="feature-title">Memory System</div>
+                            <div class="feature-description">9-layer human-inspired memory architecture: sensory, working, short-term, long-term, and episodic.</div>
+                            <div class="feature-status">Memory Active</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Demo Scenarios -->
+                    <div class="demos-section">
+                        <div class="demo-card" onclick="runDemo('legal')">
+                            <div class="demo-icon">⚖️</div>
+                            <div class="demo-title">Legal Analysis</div>
+                            <div class="demo-desc">Contract review demo</div>
+                        </div>
+                        
+                        <div class="demo-card" onclick="runDemo('medical')">
+                            <div class="demo-icon">🏥</div>
+                            <div class="demo-title">Health Assessment</div>
+                            <div class="demo-desc">Medical advisory demo</div>
+                        </div>
+                        
+                        <div class="demo-card" onclick="runDemo('wellness')">
+                            <div class="demo-icon">🧘</div>
+                            <div class="demo-title">Wellness Coach</div>
+                            <div class="demo-desc">Stress management demo</div>
+                        </div>
+                        
+                        <div class="demo-card" onclick="runDemo('productivity')">
+                            <div class="demo-icon">🚀</div>
+                            <div class="demo-title">Productivity Optimizer</div>
+                            <div class="demo-desc">Schedule optimization</div>
+                        </div>
+                        
+                        <div class="demo-card" onclick="runDemo('financial')">
+                            <div class="demo-icon">📈</div>
+                            <div class="demo-title">Financial Advisor</div>
+                            <div class="demo-desc">Investment analysis</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Biometrics Page -->
+            <div class="page" id="biometrics-page">
+                <div class="biometrics-container">
+                    <div class="vitals-panel">
+                        <div class="vital-card">
+                            <div class="vital-info">
+                                <div class="vital-label">Heart Rate</div>
+                                <div class="vital-value" id="heart-rate">72<span class="vital-unit">bpm</span></div>
+                            </div>
+                        </div>
+                        
+                        <div class="vital-card">
+                            <div class="vital-info">
+                                <div class="vital-label">Blood Oxygen</div>
+                                <div class="vital-value" id="blood-oxygen">98<span class="vital-unit">%</span></div>
+                            </div>
+                        </div>
+                        
+                        <div class="vital-card">
+                            <div class="vital-info">
+                                <div class="vital-label">Stress Level</div>
+                                <div class="vital-value warning" id="stress-level">65<span class="vital-unit">%</span></div>
+                            </div>
+                        </div>
+                        
+                        <div class="vital-card">
+                            <div class="vital-info">
+                                <div class="vital-label">Temperature</div>
+                                <div class="vital-value" id="temperature">98.6<span class="vital-unit">°F</span></div>
+                            </div>
+                        </div>
+                        
+                        <div class="vital-card">
+                            <div class="vital-info">
+                                <div class="vital-label">HRV</div>
+                                <div class="vital-value" id="hrv">45<span class="vital-unit">ms</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="charts-panel">
+                        <div class="chart-container">
+                            <div class="chart-title">Heart Rate Trend (24h)</div>
+                            <canvas class="chart" id="heart-chart"></canvas>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <div class="chart-title">Stress Pattern Analysis</div>
+                            <canvas class="chart" id="stress-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Planning Page -->
+            <div class="page" id="planning-page">
+                <div class="planning-container">
+                    <div class="planning-section">
+                        <div class="section-header">
+                            <div class="section-title">Smart Tasks</div>
+                            <button class="add-button" onclick="addTodo()">+ Add Task</button>
+                        </div>
+                        <div class="todo-list" id="todo-list">
+                            <!-- Todos will be added dynamically -->
+                        </div>
+                    </div>
+                    
+                    <div class="planning-section">
+                        <div class="section-header">
+                            <div class="section-title">Optimized Schedule</div>
+                            <button class="add-button" onclick="optimizeSchedule()">Optimize</button>
+                        </div>
+                        <div id="schedule-container">
+                            <!-- Schedule will be populated -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Knowledge Page -->
+            <div class="page" id="knowledge-page">
+                <div class="knowledge-container">
+                    <div class="knowledge-grid">
+                        <div class="package-card">
+                            <div class="package-header">
+                                <div class="package-icon">⚖️</div>
+                                <div class="package-info">
+                                    <div class="package-name">Legal Expert</div>
+                                    <div class="package-version">v2.1.0</div>
+                                </div>
+                            </div>
+                            <div class="package-stats">
+                                <div class="stat">
+                                    <div class="stat-number">50K</div>
+                                    <div class="stat-desc">Cases</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-number">12</div>
+                                    <div class="stat-desc">Domains</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-number">99%</div>
+                                    <div class="stat-desc">Accuracy</div>
+                                </div>
+                            </div>
+                            <button class="download-button" id="legal-btn" onclick="downloadPackage('legal')">
+                                DOWNLOAD EXPERTISE
+                            </button>
+                        </div>
+                        
+                        <div class="package-card">
+                            <div class="package-header">
+                                <div class="package-icon">🏥</div>
+                                <div class="package-info">
+                                    <div class="package-name">Medical Advisor</div>
+                                    <div class="package-version">v3.0.1</div>
+                                </div>
+                            </div>
+                            <div class="package-stats">
+                                <div class="stat">
+                                    <div class="stat-number">100K</div>
+                                    <div class="stat-desc">Studies</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-number">25</div>
+                                    <div class="stat-desc">Specialties</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-number">97%</div>
+                                    <div class="stat-desc">Accuracy</div>
+                                </div>
+                            </div>
+                            <button class="download-button" id="medical-btn" onclick="downloadPackage('medical')">
+                                DOWNLOAD EXPERTISE
+                            </button>
+                        </div>
+                        
+                        <div class="package-card">
+                            <div class="package-header">
+                                <div class="package-icon">💻</div>
+                                <div class="package-info">
+                                    <div class="package-name">Tech Architect</div>
+                                    <div class="package-version">v1.8.2</div>
+                                </div>
+                            </div>
+                            <div class="package-stats">
+                                <div class="stat">
+                                    <div class="stat-number">500</div>
+                                    <div class="stat-desc">Patterns</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-number">50</div>
+                                    <div class="stat-desc">Languages</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-number">95%</div>
+                                    <div class="stat-desc">Optimization</div>
+                                </div>
+                            </div>
+                            <button class="download-button" id="technical-btn" onclick="downloadPackage('technical')">
+                                DOWNLOAD EXPERTISE
+                            </button>
+                        </div>
+                        
+                        <div class="package-card">
+                            <div class="package-header">
+                                <div class="package-icon">📈</div>
+                                <div class="package-info">
+                                    <div class="package-name">Financial Advisor</div>
+                                    <div class="package-version">v2.0.0</div>
+                                </div>
+                            </div>
+                            <div class="package-stats">
+                                <div class="stat">
+                                    <div class="stat-number">10K</div>
+                                    <div class="stat-desc">Strategies</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-number">200</div>
+                                    <div class="stat-desc">Markets</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-number">92%</div>
+                                    <div class="stat-desc">Returns</div>
+                                </div>
+                            </div>
+                            <button class="download-button" id="financial-btn" onclick="downloadPackage('financial')">
+                                DOWNLOAD EXPERTISE
+                            </button>
+                        </div>
+                        
+                        <div class="package-card">
+                            <div class="package-header">
+                                <div class="package-icon">🧘</div>
+                                <div class="package-info">
+                                    <div class="package-name">Wellness Coach</div>
+                                    <div class="package-version">v1.5.0</div>
+                                </div>
+                            </div>
+                            <div class="package-stats">
+                                <div class="stat">
+                                    <div class="stat-number">1K</div>
+                                    <div class="stat-desc">Programs</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-number">30</div>
+                                    <div class="stat-desc">Modalities</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-number">98%</div>
+                                    <div class="stat-desc">Satisfaction</div>
+                                </div>
+                            </div>
+                            <button class="download-button" id="wellness-btn" onclick="downloadPackage('wellness')">
+                                DOWNLOAD EXPERTISE
+                            </button>
+                        </div>
+                        
+                        <div class="package-card">
+                            <div class="package-header">
+                                <div class="package-icon">🎨</div>
+                                <div class="package-info">
+                                    <div class="package-name">Creative Director</div>
+                                    <div class="package-version">v1.2.0</div>
+                                </div>
+                            </div>
+                            <div class="package-stats">
+                                <div class="stat">
+                                    <div class="stat-number">5K</div>
+                                    <div class="stat-desc">Concepts</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-number">100</div>
+                                    <div class="stat-desc">Styles</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-number">94%</div>
+                                    <div class="stat-desc">Innovation</div>
+                                </div>
+                            </div>
+                            <button class="download-button" id="creative-btn" onclick="downloadPackage('creative')">
+                                DOWNLOAD EXPERTISE
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Voice Page -->
+            <div class="page" id="voice-page">
+                <div class="voice-container">
+                    <div class="voice-circle-container">
+                        <div class="voice-ring"></div>
+                        <div class="voice-ring"></div>
+                        <div class="voice-ring"></div>
+                        <div class="voice-circle" id="voice-circle" onclick="toggleVoice()">
+                            🎤
+                        </div>
+                    </div>
+                    
+                    <div class="voice-controls">
+                        <button class="add-button" onclick="startVoice()">Start Listening</button>
+                        <button class="add-button" onclick="stopVoice()">Stop</button>
+                        <button class="add-button" onclick="testVoice()">Test Speech</button>
+                    </div>
+                    
+                    <div class="voice-transcript" id="voice-transcript">
+                        <div style="color: #0ff; text-align: center; padding: 20px;">Ready for voice interaction</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chat Page -->
+            <div class="page" id="chat-page">
+                <div class="chat-container">
+                    <div class="chat-main">
+                        <div class="chat-messages" id="chat-messages">
+                            <div class="chat-message ai">
+                                <div class="message-bubble">
+                                    <div class="message-header">OpenLifeOS</div>
+                                    <div class="message-content">Hello! I'm your quantum AI companion. How can I enhance your life today?</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="chat-input-container">
+                            <input type="text" class="chat-input" id="chat-input" placeholder="Ask me anything..." onkeypress="handleChatEnter(event)">
+                            <button class="chat-send" onclick="sendMessage()">Send</button>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-sidebar">
+                        <div>
+                            <div class="packages-label">Active Knowledge</div>
+                            <div id="chat-active-packages">No packages active</div>
+                        </div>
+                        
+                        <div>
+                            <div class="packages-label">Quick Actions</div>
+                            <button class="add-button" onclick="quickAction('health')">Check Health</button>
+                            <button class="add-button" onclick="quickAction('schedule')">View Schedule</button>
+                            <button class="add-button" onclick="quickAction('advice')">Get Advice</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+    
+    <!-- Download Overlay -->
+    <div class="download-overlay" id="download-overlay">
+        <div class="download-modal">
+            <div class="download-title" id="download-title">DOWNLOADING KNOWLEDGE PACKAGE</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+                <div class="progress-text" id="progress-text">0%</div>
+            </div>
+            <div class="knowledge-stream" id="knowledge-stream"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Global State
+        const state = {
+            activePackages: new Set(),
+            isVoiceActive: false,
+            currentPage: 'dashboard',
+            todos: [],
+            biometrics: {
+                heartRate: 72,
+                bloodOxygen: 98,
+                stressLevel: 65,
+                temperature: 98.6,
+                hrv: 45
+            },
+            recognition: null
+        };
+        
+        // Matrix Rain Effect
+        class MatrixRain {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+                
+                this.fontSize = 14;
+                this.columns = this.canvas.width / this.fontSize;
+                this.drops = [];
+                
+                this.characters = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                this.charArray = this.characters.split('');
+                
+                for(let x = 0; x < this.columns; x++) {
+                    this.drops[x] = Math.floor(Math.random() * -100);
+                }
+                
+                this.animate();
+            }
+            
+            animate() {
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.ctx.fillStyle = '#0F0';
+                this.ctx.font = this.fontSize + 'px monospace';
+                
+                for(let i = 0; i < this.drops.length; i++) {
+                    const text = this.charArray[Math.floor(Math.random() * this.charArray.length)];
+                    this.ctx.fillText(text, i * this.fontSize, this.drops[i] * this.fontSize);
+                    
+                    if(this.drops[i] * this.fontSize > this.canvas.height && Math.random() > 0.975) {
+                        this.drops[i] = 0;
+                    }
+                    this.drops[i]++;
+                }
+                
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+        
+        // Initialize Matrix
+        const matrixCanvas = document.getElementById('matrix-bg');
+        new MatrixRain(matrixCanvas);
+        
+        // Page Navigation
+        function switchPage(pageName) {
+            state.currentPage = pageName;
+            
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if(tab.textContent.toLowerCase().includes(pageName.substring(0, 4))) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageName + '-page').classList.add('active');
+            
+            if(pageName === 'biometrics') {
+                startBiometricsMonitoring();
+            } else if(pageName === 'planning') {
+                loadTodos();
+            } else if(pageName === 'voice') {
+                initializeVoice();
+            }
+        }
+        
+        // Voice Functions
+        function initializeVoice() {
+            const transcript = document.getElementById('voice-transcript');
+            transcript.innerHTML = '<div style="color: #0ff; text-align: center; padding: 20px;">Ready for voice interaction. Click microphone to start.</div>';
+        }
+        
+        function toggleVoice() {
+            if(state.isVoiceActive) {
+                stopVoice();
+            } else {
+                startVoice();
+            }
+        }
+        
+        function startVoice() {
+            const circle = document.getElementById('voice-circle');
+            
+            if(!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                showNotification('Voice recognition not supported. Please use Chrome or Edge.');
+                return;
+            }
+            
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            state.recognition = new SpeechRecognition();
+            
+            state.recognition.continuous = true;
+            state.recognition.interimResults = true;
+            state.recognition.lang = 'en-US';
+            
+            state.recognition.onstart = () => {
+                state.isVoiceActive = true;
+                circle.classList.add('listening');
+                addVoiceTranscript('system', 'Listening... Try: "download legal expertise", "what\'s my heart rate?"');
+            };
+            
+            state.recognition.onresult = (event) => {
+                let finalTranscript = '';
+                for(let i = event.resultIndex; i < event.results.length; i++) {
+                    if(event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript;
+                    }
+                }
+                
+                if(finalTranscript) {
+                    addVoiceTranscript('user', finalTranscript);
+                    processVoiceCommand(finalTranscript);
+                }
+            };
+            
+            state.recognition.onerror = (event) => {
+                addVoiceTranscript('system', `Voice error: ${event.error}`);
+                stopVoice();
+            };
+            
+            state.recognition.onend = () => {
+                if(state.isVoiceActive) {
+                    setTimeout(() => {
+                        if(state.isVoiceActive) state.recognition.start();
+                    }, 100);
+                }
+            };
+            
+            try {
+                state.recognition.start();
+            } catch(e) {
+                showNotification('Failed to start voice recognition.');
+            }
+        }
+        
+        function stopVoice() {
+            const circle = document.getElementById('voice-circle');
+            
+            state.isVoiceActive = false;
+            circle.classList.remove('listening', 'speaking');
+            
+            if(state.recognition) {
+                state.recognition.stop();
+                state.recognition = null;
+            }
+            
+            addVoiceTranscript('system', 'Voice interaction stopped.');
+        }
+        
+        function testVoice() {
+            const circle = document.getElementById('voice-circle');
+            circle.classList.add('speaking');
+            
+            const text = 'Hello! I am OpenLifeOS Ultimate, your quantum AI companion.';
+            
+            if('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.9;
+                
+                utterance.onend = () => {
+                    circle.classList.remove('speaking');
+                    if(state.isVoiceActive) {
+                        circle.classList.add('listening');
+                    }
+                };
+                
+                speechSynthesis.speak(utterance);
+                addVoiceTranscript('ai', text);
+            }
+        }
+        
+        function processVoiceCommand(command) {
+            const lower = command.toLowerCase();
+            let response = '';
+            let action = null;
+            
+            // Knowledge package commands
+            if(lower.includes('download') || lower.includes('install')) {
+                if(lower.includes('legal')) {
+                    action = () => downloadPackage('legal');
+                    response = 'Downloading legal expertise.';
+                } else if(lower.includes('medical')) {
+                    action = () => downloadPackage('medical');
+                    response = 'Downloading medical advisor.';
+                } else if(lower.includes('financial')) {
+                    action = () => downloadPackage('financial');
+                    response = 'Downloading financial expertise.';
+                }
+            }
+            // Navigation commands
+            else if(lower.includes('show') || lower.includes('open')) {
+                if(lower.includes('health') || lower.includes('biometric')) {
+                    action = () => switchPage('biometrics');
+                    response = 'Opening biometrics.';
+                } else if(lower.includes('plan')) {
+                    action = () => switchPage('planning');
+                    response = 'Opening planning.';
+                } else if(lower.includes('chat')) {
+                    action = () => switchPage('chat');
+                    response = 'Opening chat.';
+                }
+            }
+            // Health queries
+            else if(lower.includes('heart rate')) {
+                response = `Your heart rate is ${state.biometrics.heartRate} beats per minute.`;
+            }
+            else if(lower.includes('stress')) {
+                response = `Your stress level is ${Math.round(state.biometrics.stressLevel)}%.`;
+            }
+            // General
+            else if(lower.includes('hello')) {
+                response = 'Hello! How can I help you today?';
+            }
+            else {
+                response = `I heard: "${command}". I\'m learning to better assist you.`;
+            }
+            
+            speakResponse(response);
+            addVoiceTranscript('ai', response);
+            
+            if(action) {
+                setTimeout(action, 1000);
+            }
+        }
+        
+        function speakResponse(text) {
+            const circle = document.getElementById('voice-circle');
+            
+            if('speechSynthesis' in window) {
+                circle.classList.remove('listening');
+                circle.classList.add('speaking');
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.95;
+                
+                utterance.onend = () => {
+                    circle.classList.remove('speaking');
+                    if(state.isVoiceActive) {
+                        circle.classList.add('listening');
+                    }
+                };
+                
+                speechSynthesis.speak(utterance);
+            }
+        }
+        
+        function addVoiceTranscript(type, text) {
+            const transcript = document.getElementById('voice-transcript');
+            if(!transcript) return;
+            
+            const entry = document.createElement('div');
+            entry.style.cssText = `
+                padding: 12px; margin: 8px 0; border-radius: 8px;
+                ${type === 'user' ? 
+                    'background: rgba(0,255,0,0.1); border: 1px solid #0f0; text-align: right;' : 
+                    type === 'ai' ? 
+                        'background: rgba(255,0,255,0.1); border: 1px solid #f0f;' :
+                        'background: rgba(0,0,0,0.3); border: 1px solid #666; text-align: center; font-size: 12px;'
+                }
+            `;
+            
+            entry.innerHTML = `
+                <strong style="color: ${type === 'user' ? '#0f0' : type === 'ai' ? '#f0f' : '#888'}; font-size: 11px;">
+                    ${type === 'user' ? 'You' : type === 'ai' ? 'OpenLifeOS' : 'System'}
+                </strong><br>
+                <span style="color: #fff;">${text}</span>
+            `;
+            
+            transcript.appendChild(entry);
+            transcript.scrollTop = transcript.scrollHeight;
+            
+            // Keep only last 6 entries
+            while(transcript.children.length > 6) {
+                transcript.removeChild(transcript.firstChild);
+            }
+        }
+        
+        // Download Package
+        async function downloadPackage(packageType) {
+            const button = document.getElementById(packageType + '-btn');
+            if(!button || button.disabled) return;
+            
+            const packages = {
+                legal: { name: 'Legal Expert', icon: '⚖️' },
+                medical: { name: 'Medical Advisor', icon: '🏥' },
+                technical: { name: 'Tech Architect', icon: '💻' },
+                financial: { name: 'Financial Advisor', icon: '📈' },
+                wellness: { name: 'Wellness Coach', icon: '🧘' },
+                creative: { name: 'Creative Director', icon: '🎨' }
+            };
+            
+            const packageData = packages[packageType];
+            const overlay = document.getElementById('download-overlay');
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const downloadTitle = document.getElementById('download-title');
+            
+            // Show overlay
+            overlay.classList.add('active');
+            downloadTitle.textContent = `DOWNLOADING ${packageData.name.toUpperCase()}`;
+            progressBar.style.width = '0%';
+            progressText.textContent = '0%';
+            
+            // Disable button
+            button.disabled = true;
+            button.textContent = 'DOWNLOADING...';
+            
+            // Animate download
+            for(let i = 0; i <= 100; i++) {
+                await sleep(25);
+                progressBar.style.width = i + '%';
+                progressText.textContent = i + '%';
+            }
+            
+            await sleep(500);
+            overlay.classList.remove('active');
+            
+            // Mark as active
+            state.activePackages.add(packageType);
+            updateActivePackages();
+            
+            // Update button
+            button.textContent = '✓ ACTIVATED';
+            button.classList.add('activated');
+            button.disabled = false;
+            
+            // Update hero stats
+            document.getElementById('packages-count').textContent = state.activePackages.size;
+            
+            // Show notification
+            showNotification(`${packageData.icon} ${packageData.name} activated!`);
+        }
+        
+        // Update Active Packages
+        function updateActivePackages() {
+            const icons = {
+                legal: '⚖️', medical: '🏥', technical: '💻',
+                financial: '📈', wellness: '🧘', creative: '🎨'
+            };
+            
+            const containers = [document.getElementById('active-packages'), document.getElementById('chat-active-packages')];
+            
+            containers.forEach(container => {
+                if(!container) return;
+                
+                if(state.activePackages.size === 0) {
+                    container.innerHTML = '<span style="opacity: 0.5; font-size: 11px;">None</span>';
+                } else {
+                    container.innerHTML = Array.from(state.activePackages).map(pkg => 
+                        `<span class="package-indicator">${icons[pkg]} ${pkg}</span>`
+                    ).join(' ');
+                }
+            });
+        }
+        
+        // Biometrics Monitoring
+        let biometricsInterval = null;
+        function startBiometricsMonitoring() {
+            if(biometricsInterval) return;
+            
+            biometricsInterval = setInterval(() => {
+                // Simulate realistic vitals
+                state.biometrics.heartRate = 70 + Math.floor(Math.random() * 15);
+                state.biometrics.bloodOxygen = 97 + Math.floor(Math.random() * 3);
+                state.biometrics.stressLevel = Math.max(20, Math.min(100, state.biometrics.stressLevel + (Math.random() * 10 - 5)));
+                state.biometrics.temperature = (98.6 + (Math.random() - 0.5) * 0.6).toFixed(1);
+                state.biometrics.hrv = 35 + Math.floor(Math.random() * 25);
+                
+                // Update display
+                updateVitalsDisplay();
+                updateCharts();
+            }, 2000);
+        }
+        
+        function updateVitalsDisplay() {
+            document.getElementById('heart-rate').innerHTML = state.biometrics.heartRate + '<span class="vital-unit">bpm</span>';
+            document.getElementById('blood-oxygen').innerHTML = state.biometrics.bloodOxygen + '<span class="vital-unit">%</span>';
+            document.getElementById('temperature').innerHTML = state.biometrics.temperature + '<span class="vital-unit">°F</span>';
+            document.getElementById('hrv').innerHTML = state.biometrics.hrv + '<span class="vital-unit">ms</span>';
+            
+            // Update stress with color
+            const stressElement = document.getElementById('stress-level');
+            const stressValue = Math.round(state.biometrics.stressLevel);
+            stressElement.innerHTML = stressValue + '<span class="vital-unit">%</span>';
+            stressElement.className = stressValue > 70 ? 'vital-value danger' : 
+                                     stressValue > 50 ? 'vital-value warning' : 
+                                     'vital-value';
+        }
+        
+        function updateCharts() {
+            // Simple chart updates
+            const heartChart = document.getElementById('heart-chart');
+            const stressChart = document.getElementById('stress-chart');
+            
+            if(heartChart) {
+                const ctx = heartChart.getContext('2d');
+                heartChart.width = heartChart.offsetWidth;
+                heartChart.height = 150;
+                
+                ctx.strokeStyle = '#00ffff';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                
+                for(let i = 0; i < 30; i++) {
+                    const x = (i / 30) * heartChart.width;
+                    const y = 75 + Math.sin(i / 3 + Date.now() / 1000) * 25;
+                    if(i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                
+                ctx.stroke();
+            }
+        }
+        
+        // Todo Management
+        function loadTodos() {
+            if(state.todos.length === 0) {
+                state.todos = [
+                    { text: 'Complete AugHacks presentation', priority: 'high', completed: false },
+                    { text: 'Test voice integration', priority: 'high', completed: false },
+                    { text: 'Review demo scenarios', priority: 'medium', completed: false },
+                    { text: 'Team meeting', priority: 'medium', completed: false }
+                ];
+            }
+            renderTodos();
+        }
+        
+        function renderTodos() {
+            const todoList = document.getElementById('todo-list');
+            if(!todoList) return;
+            
+            todoList.innerHTML = '';
+            
+            state.todos.forEach((todo, index) => {
+                const todoItem = document.createElement('div');
+                todoItem.className = 'todo-item';
+                todoItem.innerHTML = `
+                    <div class="todo-checkbox ${todo.completed ? 'checked' : ''}" onclick="toggleTodo(${index})"></div>
+                    <div class="todo-text ${todo.completed ? 'completed' : ''}">${todo.text}</div>
+                    <div class="todo-priority priority-${todo.priority}">${todo.priority}</div>
+                `;
+                todoList.appendChild(todoItem);
+            });
+        }
+        
+        function toggleTodo(index) {
+            state.todos[index].completed = !state.todos[index].completed;
+            renderTodos();
+            
+            const completed = state.todos.filter(t => t.completed).length;
+            showNotification(`Tasks: ${completed}/${state.todos.length} completed`);
+        }
+        
+        function addTodo() {
+            const text = prompt('Enter task:');
+            if(text) {
+                state.todos.push({ text: text, priority: 'medium', completed: false });
+                renderTodos();
+            }
+        }
+        
+        function optimizeSchedule() {
+            showNotification('Optimizing schedule based on your productivity patterns...');
+        }
+        
+        // Chat Functions
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if(!message) return;
+            
+            addChatMessage('user', message);
+            input.value = '';
+            
+            setTimeout(() => {
+                const response = generateResponse(message);
+                addChatMessage('ai', response.content, response.isExpert);
+            }, 500);
+        }
+        
+        function handleChatEnter(event) {
+            if(event.key === 'Enter') sendMessage();
+        }
+        
+        function addChatMessage(type, content, isExpert = false) {
+            const messagesContainer = document.getElementById('chat-messages');
+            if(!messagesContainer) return;
+            
+            const message = document.createElement('div');
+            message.className = `chat-message ${type} ${isExpert ? 'expert' : ''}`;
+            
+            message.innerHTML = `
+                <div class="message-bubble">
+                    <div class="message-header">${type === 'user' ? 'You' : `OpenLifeOS ${isExpert ? '- Expert' : ''}`}</div>
+                    <div class="message-content">${content}</div>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(message);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        function generateResponse(message) {
+            const lower = message.toLowerCase();
+            
+            if(lower.includes('hello')) {
+                return { content: `Hello! I have ${state.activePackages.size} expert packages active.`, isExpert: false };
+            }
+            
+            return { content: `Understood: "${message}". How can I help further?`, isExpert: false };
+        }
+        
+        function quickAction(action) {
+            switch(action) {
+                case 'health':
+                    addChatMessage('ai', `Health: HR ${state.biometrics.heartRate}bpm, Stress ${Math.round(state.biometrics.stressLevel)}%`);
+                    break;
+                case 'schedule':
+                    switchPage('planning');
+                    break;
+                case 'advice':
+                    addChatMessage('ai', 'Focus on high-priority tasks when your energy is highest.');
+                    break;
+            }
+        }
+        
+        // Demo Functions
+        async function runDemo(demoType) {
+            if(demoType === 'legal') {
+                switchPage('chat');
+                addChatMessage('user', 'Help me review my contract.');
+                await sleep(1000);
+                if(!state.activePackages.has('legal')) {
+                    await downloadPackage('legal');
+                }
+                addChatMessage('ai', 'CONTRACT ANALYSIS: I\'ve identified key issues with your agreement.', true);
+            } else if(demoType === 'wellness') {
+                switchPage('biometrics');
+                state.biometrics.stressLevel = 80;
+                await sleep(1000);
+                addChatMessage('ai', 'High stress detected. Recommend breathing exercises.');
+            }
+        }
+        
+        // Update Stats
+        function updateStats() {
+            let nodes = 0;
+            const target = 50000 + state.activePackages.size * 10000;
+            
+            const interval = setInterval(() => {
+                nodes += 1000;
+                if(nodes >= target) {
+                    nodes = target;
+                    clearInterval(interval);
+                }
+                document.getElementById('knowledge-nodes').textContent = nodes.toLocaleString();
+            }, 50);
+        }
+        
+        // Notification
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        // Initialize
+        window.addEventListener('load', () => {
+            updateStats();
+            showNotification('Welcome to OpenLifeOS Ultimate!');
+        });
+    </script>
+</body>
+</html>
+    </div>

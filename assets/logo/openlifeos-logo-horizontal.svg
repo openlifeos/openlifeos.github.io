@@ -1,0 +1,90 @@
+<!-- OpenLifeOS Horizontal Extended Logo -->
+<svg width="360" height="80" viewBox="0 0 360 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Logo Symbol: Neural Network Brain (Smaller) -->
+  <g id="logo-symbol">
+    <!-- Outer Circle (Brain) -->
+    <circle cx="35" cy="40" r="28" stroke="url(#gradient-horiz)" stroke-width="2" fill="none" opacity="0.95"/>
+    
+    <!-- Neural Network Nodes (Hexagonal Symmetry) -->
+    <circle cx="35" cy="24" r="3.5" fill="url(#gradient-horiz)"/>
+    <circle cx="23" cy="32" r="3.5" fill="url(#gradient-horiz)"/>
+    <circle cx="47" cy="32" r="3.5" fill="url(#gradient-horiz)"/>
+    <circle cx="23" cy="48" r="3.5" fill="url(#gradient-horiz)"/>
+    <circle cx="47" cy="48" r="3.5" fill="url(#gradient-horiz)"/>
+    <circle cx="35" cy="56" r="3.5" fill="url(#gradient-horiz)"/>
+    
+    <!-- Neural Connections -->
+    <path d="M35 24 L23 32 M35 24 L47 32 M23 32 L23 48 M47 32 L47 48 M23 48 L35 56 M47 48 L35 56 M23 32 L47 48 M47 32 L23 48" 
+          stroke="url(#gradient-horiz)" stroke-width="1.3" opacity="0.6"/>
+    
+    <!-- Central Core (AI) -->
+    <circle cx="35" cy="40" r="7" fill="url(#gradient-core-horiz)"/>
+    <circle cx="35" cy="40" r="4.5" fill="#ffffff"/>
+    <circle cx="35" cy="40" r="2.5" fill="url(#gradient-horiz)"/>
+    
+    <!-- Pulse Animation Rings -->
+    <circle cx="35" cy="40" r="18" stroke="url(#gradient-horiz)" stroke-width="1" fill="none" opacity="0.3">
+      <animate attributeName="r" values="18;24;18" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.3;0.1;0.3" dur="3s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Divider Line -->
+  <line x1="72" y1="25" x2="72" y2="55" stroke="url(#gradient-horiz)" stroke-width="1" opacity="0.3"/>
+  
+  <!-- Text Logo -->
+  <g id="logo-text">
+    <!-- Main Brand Name -->
+    <text x="88" y="38" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+          font-size="32" font-weight="800" fill="#1a1a1a">
+      <tspan fill="url(#gradient-horiz)">Open</tspan><tspan fill="#1a1a1a">Life</tspan><tspan fill="#666666">OS</tspan>
+    </text>
+    
+    <!-- Separator -->
+    <text x="250" y="38" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+          font-size="24" font-weight="300" fill="#cccccc">
+      |
+    </text>
+    
+    <!-- AI Badge -->
+    <rect x="268" y="23" width="32" height="18" rx="9" fill="url(#gradient-horiz)" opacity="0.15"/>
+    <text x="284" y="35" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+          font-size="11" font-weight="700" text-anchor="middle" fill="url(#gradient-horiz)">
+      AI
+    </text>
+    
+    <!-- Tagline -->
+    <text x="88" y="56" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+          font-size="13" font-weight="400" fill="#888888" letter-spacing="0.5">
+      Your Personal AI Companion Platform
+    </text>
+  </g>
+  
+  <!-- Feature Icons (Optional decorative elements) -->
+  <g id="features" opacity="0.4">
+    <circle cx="320" cy="30" r="2" fill="url(#gradient-horiz)"/>
+    <circle cx="330" cy="30" r="2" fill="url(#gradient-horiz)"/>
+    <circle cx="340" cy="30" r="2" fill="url(#gradient-horiz)"/>
+    
+    <circle cx="320" cy="50" r="2" fill="url(#gradient-horiz)"/>
+    <circle cx="330" cy="50" r="2" fill="url(#gradient-horiz)"/>
+    <circle cx="340" cy="50" r="2" fill="url(#gradient-horiz)"/>
+    
+    <path d="M320 30 L330 50 M330 30 L320 50 M340 30 L340 50" 
+          stroke="url(#gradient-horiz)" stroke-width="0.5" opacity="0.5"/>
+  </g>
+  
+  <!-- Gradients -->
+  <defs>
+    <linearGradient id="gradient-horiz" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#764ba2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f093fb;stop-opacity:1" />
+    </linearGradient>
+    
+    <radialGradient id="gradient-core-horiz">
+      <stop offset="0%" style="stop-color:#f5576c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f093fb;stop-opacity:1" />
+    </radialGradient>
+  </defs>
+</svg>

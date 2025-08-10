@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>J.A.R.V.I.S. - Personal AI Assistant</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Orbitron', 'SF Mono', Monaco, monospace;
+            background: #000;
+            color: #00ff00;
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+        }
+        
+        /* Matrix rain background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 255, 0, 0.03) 2px,
+                    rgba(0, 255, 0, 0.03) 4px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 255, 0, 0.03) 2px,
+                    rgba(0, 255, 0, 0.03) 4px
+                );
+            z-index: -1;
+            animation: gridScroll 20s linear infinite;
+        }
+        
+        @keyframes gridScroll {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        /* Cyber glitch overlay */
+        .cyber-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 255, 0, 0.03) 2px,
+                    rgba(0, 255, 0, 0.03) 4px
+                );
+            animation: flicker 0.1s infinite;
+            opacity: 0.1;
+        }
+        
+        @keyframes flicker {
+            0% { opacity: 0.1; }
+            50% { opacity: 0.08; }
+            100% { opacity: 0.1; }
+        }
+        
+        .main-container {
+            display: grid;
+            grid-template-rows: auto 1fr;
+            height: 100vh;
+            position: relative;
+        }
+        
+        /* Header */
+        .jarvis-header {
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            background: linear-gradient(180deg, rgba(0, 255, 0, 0.1) 0%, transparent 100%);
+            border-bottom: 2px solid rgba(0, 255, 0, 0.3);
+        }
+        
+        .jarvis-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, cyan, transparent);
+            animation: scanLine 3s linear infinite;
+        }
+        
+        @keyframes scanLine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        h1 {
+            font-size: 3em;
+            font-weight: 900;
+            letter-spacing: 5px;
+            background: linear-gradient(45deg, #00ffff, #ff00ff, #00ffff);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 3s ease infinite;
+            text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .user-greeting {
+            color: #00ffff;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-size: 14px;
+            margin-top: 10px;
+            animation: textGlow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes textGlow {
+            from { text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff; }
+            to { text-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff; }
+        }
+        
+        /* Main Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr 350px;
+            gap: 20px;
+            padding: 20px;
+            height: calc(100vh - 120px);
+            overflow: hidden;
+        }
+        
+        /* Panel Styles */
+        .panel {
+            background: rgba(0, 20, 40, 0.8);
+            border: 1px solid cyan;
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+            backdrop-filter: blur(10px);
+            box-shadow: 
+                0 0 20px rgba(0, 255, 255, 0.5),
+                inset 0 0 20px rgba(0, 255, 255, 0.05);
+            overflow: hidden;
+        }
+        
+        .panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, cyan, transparent);
+            animation: scanPanel 3s linear infinite;
+        }
+        
+        @keyframes scanPanel {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        
+        .panel-header {
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: cyan;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+            position: relative;
+        }
+        
+        .panel-header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: cyan;
+            animation: headerScan 2s linear infinite;
+        }
+        
+        @keyframes headerScan {
+            0% { left: 0; }
+            50% { left: calc(100% - 50px); }
+            100% { left: 0; }
+        }
+        
+        /* User Profile Section */
+        .user-profile {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .avatar-container {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+        
+        .avatar-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid cyan;
+            border-radius: 50%;
+            animation: rotate 10s linear infinite;
+        }
+        
+        .avatar-ring:nth-child(2) {
+            width: 90%;
+            height: 90%;
+            top: 5%;
+            left: 5%;
+            animation-direction: reverse;
+            border-color: magenta;
+        }
+        
+        .avatar-center {
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            background: radial-gradient(circle, cyan, transparent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: bold;
+            color: #00ffff;
+            text-shadow: 0 0 20px cyan;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .user-name {
+            font-size: 18px;
+            color: #00ffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+        
+        .user-status {
+            font-size: 12px;
+            color: #00ff00;
+            margin-bottom: 20px;
+        }
+        
+        /* Vital Signs */
+        .vital-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            margin: 8px 0;
+            background: rgba(0, 255, 255, 0.05);
+            border-left: 3px solid cyan;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .vital-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: linear-gradient(180deg, transparent, cyan, transparent);
+            animation: vitalScan 2s linear infinite;
+        }
+        
+        @keyframes vitalScan {
+            0% { top: -100%; }
+            100% { top: 100%; }
+        }
+        
+        .vital-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #00cc00;
+        }
+        
+        .vital-value {
+            font-size: 14px;
+            font-weight: bold;
+            color: #00ff00;
+            text-shadow: 0 0 5px #00ff00;
+        }
+        
+        /* Chat Interface */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: rgba(0, 10, 20, 0.5);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            scrollbar-width: thin;
+            scrollbar-color: cyan rgba(0, 255, 255, 0.1);
+        }
+        
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .chat-messages::-webkit-scrollbar-track {
+            background: rgba(0, 255, 255, 0.1);
+        }
+        
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: cyan;
+            border-radius: 3px;
+        }
+        
+        .message {
+            margin: 15px 0;
+            padding: 12px 18px;
+            border-radius: 10px;
+            max-width: 80%;
+            animation: messageSlide 0.3s ease;
+        }
+        
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message.jarvis {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(0, 255, 0, 0.2));
+            border: 1px solid cyan;
+            color: #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+        
+        .message.user {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.2), rgba(255, 255, 0, 0.2));
+            border: 1px solid magenta;
+            margin-left: auto;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
+        }
+        
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 15px;
+            background: rgba(0, 20, 40, 0.8);
+            border: 2px solid cyan;
+            border-radius: 10px;
+            color: #00ff00;
+            font-family: 'Orbitron', monospace;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            background: rgba(0, 30, 60, 0.9);
+        }
+        
+        .chat-input::placeholder {
+            color: rgba(0, 255, 255, 0.5);
+        }
+        
+        .send-btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 255, 0.2));
+            border: 2px solid cyan;
+            border-radius: 10px;
+            color: cyan;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.5);
+            text-shadow: 0 0 10px cyan;
+        }
+        
+        /* Memory & History Panel */
+        .memory-section {
+            margin-bottom: 20px;
+        }
+        
+        .memory-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(0, 255, 255, 0.05);
+            border-radius: 5px;
+            font-size: 12px;
+            border-left: 2px solid rgba(0, 255, 255, 0.5);
+        }
+        
+        .memory-timestamp {
+            color: #666;
+            font-size: 10px;
+            margin-bottom: 5px;
+        }
+        
+        .memory-content {
+            color: #00ffff;
+        }
+        
+        /* Activity Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, cyan, transparent);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin: 20px 0;
+            font-size: 12px;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -25px;
+            top: 5px;
+            width: 10px;
+            height: 10px;
+            background: cyan;
+            border-radius: 50%;
+            box-shadow: 0 0 10px cyan;
+            animation: timelinePulse 2s infinite;
+        }
+        
+        @keyframes timelinePulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+        }
+        
+        /* Health Analysis */
+        .health-score-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .health-score {
+            font-size: 48px;
+            font-weight: bold;
+            color: #00ff00;
+            text-shadow: 0 0 30px #00ff00;
+        }
+        
+        .health-label {
+            font-size: 12px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        /* Brainwave Monitor */
+        .brainwave-monitor {
+            margin: 20px 0;
+        }
+        
+        .wave-display {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 8px;
+            background: rgba(0, 255, 255, 0.05);
+            border-radius: 5px;
+        }
+        
+        .wave-type {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #888;
+        }
+        
+        .wave-value {
+            font-size: 12px;
+            color: cyan;
+            font-weight: bold;
+        }
+        
+        .wave-bar {
+            height: 4px;
+            background: rgba(0, 255, 255, 0.2);
+            border-radius: 2px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        
+        .wave-fill {
+            height: 100%;
+            background: linear-gradient(90deg, cyan, magenta);
+            transition: width 0.5s ease;
+            box-shadow: 0 0 5px cyan;
+        }
+        
+        /* Control Buttons */
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .control-btn {
+            padding: 10px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid cyan;
+            border-radius: 5px;
+            color: cyan;
+            cursor: pointer;
+            font-size: 11px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+        
+        .control-btn:hover {
+            background: rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        /* Alert Box */
+        .alert-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 0, 0, 0.2);
+            border: 2px solid #ff0000;
+            border-radius: 10px;
+            padding: 15px;
+            max-width: 300px;
+            display: none;
+            animation: alertPulse 1s infinite;
+        }
+        
+        .alert-box.active {
+            display: block;
+        }
+        
+        @keyframes alertPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(255, 0, 0, 0.8); }
+        }
+        
+        .alert-title {
+            color: #ff6666;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        
+        .alert-message {
+            color: #ffaaaa;
+            font-size: 12px;
+        }
+        
+        /* Loading Animation */
+        .loading-dots {
+            display: inline-block;
+        }
+        
+        .loading-dots::after {
+            content: '...';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+    </style>
+</head>
+<body>
+    <div class="cyber-overlay"></div>
+    
+    <div class="main-container">
+        <div class="jarvis-header">
+            <h1>J.A.R.V.I.S.</h1>
+            <div class="user-greeting" id="greeting">Good Morning, Sir</div>
+        </div>
+        
+        <div class="dashboard-grid">
+            <!-- Left Panel - User Profile & Vitals -->
+            <div class="panel">
+                <div class="panel-header">User Profile</div>
+                
+                <div class="user-profile">
+                    <div class="avatar-container">
+                        <div class="avatar-ring"></div>
+                        <div class="avatar-ring"></div>
+                        <div class="avatar-center" id="userInitial">R</div>
+                    </div>
+                    <div class="user-name" id="userName">Robert</div>
+                    <div class="user-status">● ONLINE</div>
+                </div>
+                
+                <div class="panel-header">Vital Signs</div>
+                
+                <div class="vital-item">
+                    <span class="vital-label">Heart Rate</span>
+                    <span class="vital-value" id="heartRate">72 bpm</span>
+                </div>
+                
+                <div class="vital-item">
+                    <span class="vital-label">Temperature</span>
+                    <span class="vital-value" id="temperature">98.6°F</span>
+                </div>
+                
+                <div class="vital-item">
+                    <span class="vital-label">Blood Pressure</span>
+                    <span class="vital-value" id="bloodPressure">120/80</span>
+                </div>
+                
+                <div class="vital-item">
+                    <span class="vital-label">Oxygen Level</span>
+                    <span class="vital-value" id="oxygen">98%</span>
+                </div>
+                
+                <div class="vital-item">
+                    <span class="vital-label">Stress Level</span>
+                    <span class="vital-value" id="stress">Low</span>
+                </div>
+                
+                <div class="vital-item">
+                    <span class="vital-label">Activity</span>
+                    <span class="vital-value" id="activity">Resting</span>
+                </div>
+                
+                <div class="panel-header">Health Score</div>
+                
+                <div class="health-score-container">
+                    <div class="health-score" id="healthScore">92</div>
+                    <div class="health-label">Overall Health</div>
+                </div>
+                
+                <div class="control-grid">
+                    <button class="control-btn" onclick="requestHealthAnalysis()">Analyze</button>
+                    <button class="control-btn" onclick="exportHealthData()">Export</button>
+                    <button class="control-btn" onclick="showHistory()">History</button>
+                    <button class="control-btn" onclick="updateProfile()">Settings</button>
+                </div>
+            </div>
+            
+            <!-- Center Panel - Chat Interface -->
+            <div class="panel chat-container">
+                <div class="panel-header">Neural Interface</div>
+                
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message jarvis">
+                        Good morning, Sir. All systems are operational. Your vital signs are within normal parameters. How may I assist you today?
+                    </div>
+                </div>
+                
+                <div class="chat-input-container">
+                    <input type="text" class="chat-input" id="chatInput" placeholder="Speak to JARVIS..." autofocus>
+                    <button class="send-btn" onclick="sendMessage()">Send</button>
+                    <button class="send-btn" onclick="startVoice()">🎤</button>
+                </div>
+            </div>
+            
+            <!-- Right Panel - Memory & Analytics -->
+            <div class="panel">
+                <div class="panel-header">Neural Activity</div>
+                
+                <div class="brainwave-monitor">
+                    <div class="wave-display">
+                        <span class="wave-type">Delta</span>
+                        <span class="wave-value" id="deltaWave">15%</span>
+                    </div>
+                    <div class="wave-bar">
+                        <div class="wave-fill" id="deltaBar" style="width: 15%;"></div>
+                    </div>
+                    
+                    <div class="wave-display">
+                        <span class="wave-type">Theta</span>
+                        <span class="wave-value" id="thetaWave">20%</span>
+                    </div>
+                    <div class="wave-bar">
+                        <div class="wave-fill" id="thetaBar" style="width: 20%;"></div>
+                    </div>
+                    
+                    <div class="wave-display">
+                        <span class="wave-type">Alpha</span>
+                        <span class="wave-value" id="alphaWave">35%</span>
+                    </div>
+                    <div class="wave-bar">
+                        <div class="wave-fill" id="alphaBar" style="width: 35%;"></div>
+                    </div>
+                    
+                    <div class="wave-display">
+                        <span class="wave-type">Beta</span>
+                        <span class="wave-value" id="betaWave">25%</span>
+                    </div>
+                    <div class="wave-bar">
+                        <div class="wave-fill" id="betaBar" style="width: 25%;"></div>
+                    </div>
+                    
+                    <div class="wave-display">
+                        <span class="wave-type">Gamma</span>
+                        <span class="wave-value" id="gammaWave">5%</span>
+                    </div>
+                    <div class="wave-bar">
+                        <div class="wave-fill" id="gammaBar" style="width: 5%;"></div>
+                    </div>
+                </div>
+                
+                <div class="panel-header">Memory Bank</div>
+                
+                <div class="memory-section" id="memorySection">
+                    <div class="memory-item">
+                        <div class="memory-timestamp">10:32 AM</div>
+                        <div class="memory-content">Morning routine completed. Coffee consumed.</div>
+                    </div>
+                    <div class="memory-item">
+                        <div class="memory-timestamp">09:15 AM</div>
+                        <div class="memory-content">Exercise session: 30 minutes cardio</div>
+                    </div>
+                    <div class="memory-item">
+                        <div class="memory-timestamp">08:00 AM</div>
+                        <div class="memory-content">Wake up. Sleep quality: 87%</div>
+                    </div>
+                </div>
+                
+                <div class="panel-header">Activity Timeline</div>
+                
+                <div class="timeline" id="timeline">
+                    <div class="timeline-item">
+                        <strong>Now</strong> - Monitoring active
+                    </div>
+                    <div class="timeline-item">
+                        <strong>1h ago</strong> - Heart rate spike detected
+                    </div>
+                    <div class="timeline-item">
+                        <strong>3h ago</strong> - Breakfast logged
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="alert-box" id="alertBox">
+        <div class="alert-title">SYSTEM ALERT</div>
+        <div class="alert-message" id="alertMessage"></div>
+    </div>
+    
+    <script>
+        // Inline all necessary code for standalone functionality
+        
+        // Simple Biometric System
+        class BiometricSystem {
+            constructor() {
+                this.vitals = {
+                    heartRate: { value: 72, trend: 'stable' },
+                    bloodPressure: { systolic: 120, diastolic: 80, trend: 'stable' },
+                    temperature: { value: 98.6, trend: 'stable' },
+                    respirationRate: { value: 16, trend: 'stable' },
+                    oxygenSaturation: { value: 98, trend: 'stable' },
+                    bloodGlucose: { value: 95 },
+                    cortisol: { value: 15 },
+                    hydration: { value: 75 },
+                    brainwaves: {
+                        delta: { amplitude: 20 },
+                        theta: { amplitude: 15 },
+                        alpha: { amplitude: 30 },
+                        beta: { amplitude: 25 },
+                        gamma: { amplitude: 10 }
+                    }
+                };
+                
+                this.activity = {
+                    state: 'resting',
+                    intensity: 20
+                };
+                
+                this.health = {
+                    overallScore: 92,
+                    stressLevel: 25,
+                    fatigueLevel: 20,
+                    cardiovascularHealth: 90,
+                    recoveryRate: 75
+                };
+                
+                this.alerts = [];
+                this.recommendations = [];
+                
+                // Start simulation
+                this.startSimulation();
+            }
+            
+            startSimulation() {
+                setInterval(() => {
+                    // Simulate realistic variations
+                    this.vitals.heartRate.value = 68 + Math.random() * 10;
+                    this.vitals.temperature.value = 98.2 + Math.random() * 0.8;
+                    this.vitals.oxygenSaturation.value = 96 + Math.random() * 4;
+                    this.vitals.respirationRate.value = 14 + Math.random() * 6;
+                    
+                    // Update blood pressure
+                    this.vitals.bloodPressure.systolic = 115 + Math.random() * 15;
+                    this.vitals.bloodPressure.diastolic = 75 + Math.random() * 10;
+                    
+                    // Update brainwaves
+                    Object.keys(this.vitals.brainwaves).forEach(wave => {
+                        this.vitals.brainwaves[wave].amplitude = 
+                            Math.max(5, Math.min(50, this.vitals.brainwaves[wave].amplitude + (Math.random() - 0.5) * 10));
+                    });
+                    
+                    // Update health score
+                    this.health.overallScore = Math.floor(85 + Math.random() * 15);
+                    this.health.stressLevel = Math.floor(20 + Math.random() * 40);
+                    
+                    // Randomly change activity
+                    if (Math.random() > 0.95) {
+                        const states = ['resting', 'active', 'walking', 'working'];
+                        this.activity.state = states[Math.floor(Math.random() * states.length)];
+                        this.activity.intensity = Math.random() * 100;
+                    }
+                    
+                    // Generate occasional alerts
+                    if (Math.random() > 0.98) {
+                        this.alerts = [{
+                            type: 'info',
+                            message: 'Slight elevation in heart rate detected'
+                        }];
+                    } else {
+                        this.alerts = [];
+                    }
+                    
+                    // Generate recommendations
+                    this.recommendations = [];
+                    if (this.vitals.hydration.value < 70) {
+                        this.recommendations.push('Increase water intake');
+                    }
+                    if (this.health.stressLevel > 60) {
+                        this.recommendations.push('Consider taking a break');
+                    }
+                }, 2000);
+            }
+            
+            getVitalsSnapshot() {
+                return {
+                    heartRate: Math.round(this.vitals.heartRate.value),
+                    bloodPressure: `${Math.round(this.vitals.bloodPressure.systolic)}/${Math.round(this.vitals.bloodPressure.diastolic)}`,
+                    temperature: this.vitals.temperature.value.toFixed(1),
+                    respiration: Math.round(this.vitals.respirationRate.value),
+                    oxygen: Math.round(this.vitals.oxygenSaturation.value),
+                    glucose: Math.round(this.vitals.bloodGlucose.value),
+                    hydration: Math.round(this.vitals.hydration.value),
+                    stress: Math.round(this.health.stressLevel),
+                    activity: this.activity.state,
+                    healthScore: this.health.overallScore
+                };
+            }
+            
+            getBrainwaveData() {
+                return this.vitals.brainwaves;
+            }
+            
+            getHealthMetrics() {
+                return this.health;
+            }
+            
+            getAlerts() {
+                return this.alerts;
+            }
+            
+            getRecommendations() {
+                return this.recommendations;
+            }
+            
+            simulateExercise() {
+                this.activity.state = 'exercising';
+                this.activity.intensity = 80;
+                this.vitals.heartRate.value = 120;
+            }
+        }
+        
+        // Simple Memory System
+        class MemorySystem {
+            constructor() {
+                this.memories = [];
+            }
+            
+            store(memory) {
+                this.memories.push({
+                    ...memory,
+                    timestamp: Date.now()
+                });
+                
+                // Keep only last 100 memories
+                if (this.memories.length > 100) {
+                    this.memories.shift();
+                }
+            }
+            
+            getRecentMemories(count) {
+                return this.memories.slice(-count);
+            }
+            
+            getTotalMemories() {
+                return this.memories.length;
+            }
+        }
+        
+        // Initialize systems
+        const biometrics = new BiometricSystem();
+        const memory = new MemorySystem();
+        
+        // User profile
+        const userProfile = {
+            name: 'Robert',
+            age: 30,
+            preferences: {
+                wakeTime: '07:00',
+                sleepTime: '23:00',
+                exerciseGoal: 30,
+                waterIntake: 8
+            },
+            medicalHistory: [],
+            personalMemories: []
+        };
+        
+        // Set initial greeting based on time
+        function updateGreeting() {
+            const hour = new Date().getHours();
+            const greetingEl = document.getElementById('greeting');
+            
+            if (hour < 12) {
+                greetingEl.textContent = `Good Morning, ${userProfile.name}`;
+            } else if (hour < 18) {
+                greetingEl.textContent = `Good Afternoon, ${userProfile.name}`;
+            } else {
+                greetingEl.textContent = `Good Evening, ${userProfile.name}`;
+            }
+        }
+        
+        // Update vitals display
+        function updateVitals() {
+            const vitals = biometrics.getVitalsSnapshot();
+            
+            document.getElementById('heartRate').textContent = `${vitals.heartRate} bpm`;
+            document.getElementById('temperature').textContent = `${vitals.temperature}°F`;
+            document.getElementById('bloodPressure').textContent = vitals.bloodPressure;
+            document.getElementById('oxygen').textContent = `${vitals.oxygen}%`;
+            document.getElementById('healthScore').textContent = vitals.healthScore;
+            
+            // Update stress level
+            const stressEl = document.getElementById('stress');
+            if (vitals.stress < 30) {
+                stressEl.textContent = 'Low';
+                stressEl.style.color = '#00ff00';
+            } else if (vitals.stress < 60) {
+                stressEl.textContent = 'Moderate';
+                stressEl.style.color = '#ffff00';
+            } else {
+                stressEl.textContent = 'High';
+                stressEl.style.color = '#ff6600';
+            }
+            
+            // Update activity
+            document.getElementById('activity').textContent = vitals.activity.charAt(0).toUpperCase() + vitals.activity.slice(1);
+            
+            // Update brainwaves
+            const brainwaves = biometrics.getBrainwaveData();
+            updateBrainwaves(brainwaves);
+            
+            // Check for alerts
+            checkHealthAlerts();
+        }
+        
+        // Update brainwave display
+        function updateBrainwaves(brainwaves) {
+            const waves = ['delta', 'theta', 'alpha', 'beta', 'gamma'];
+            waves.forEach(wave => {
+                const amplitude = brainwaves[wave].amplitude;
+                document.getElementById(`${wave}Wave`).textContent = `${Math.round(amplitude)}%`;
+                document.getElementById(`${wave}Bar`).style.width = `${amplitude}%`;
+            });
+        }
+        
+        // Check for health alerts
+        function checkHealthAlerts() {
+            const alerts = biometrics.getAlerts();
+            const alertBox = document.getElementById('alertBox');
+            const alertMessage = document.getElementById('alertMessage');
+            
+            if (alerts.length > 0) {
+                alertBox.classList.add('active');
+                alertMessage.textContent = alerts[0].message;
+                
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    alertBox.classList.remove('active');
+                }, 5000);
+            }
+        }
+        
+        // JARVIS Chat System
+        class JARVISChat {
+            constructor() {
+                this.context = [];
+                this.personality = {
+                    formal: true,
+                    helpful: true,
+                    proactive: true,
+                    witty: false
+                };
+            }
+            
+            async respond(input) {
+                // Store in memory
+                memory.store({
+                    type: 'conversation',
+                    content: input,
+                    timestamp: Date.now(),
+                    context: 'user_query'
+                });
+                
+                const lower = input.toLowerCase();
+                
+                // Health-related queries
+                if (lower.includes('health') || lower.includes('vitals') || lower.includes('feeling')) {
+                    const vitals = biometrics.getVitalsSnapshot();
+                    const health = biometrics.getHealthMetrics();
+                    
+                    return `Sir, your current health score is ${vitals.healthScore}. ` +
+                           `Heart rate: ${vitals.heartRate} bpm, Temperature: ${vitals.temperature}°F, ` +
+                           `Blood pressure: ${vitals.bloodPressure}. ` +
+                           `${health.stressLevel > 50 ? 'I detect elevated stress levels. Perhaps some relaxation would be beneficial.' : 'All parameters are within optimal range.'}`;
+                }
+                
+                // Schedule and routine
+                if (lower.includes('schedule') || lower.includes('today') || lower.includes('plan')) {
+                    const hour = new Date().getHours();
+                    return `Based on your usual routine, ${hour < 12 ? 'you have your morning workout scheduled' : 
+                            hour < 15 ? 'it\'s time for your afternoon focus session' : 
+                            'evening relaxation period is approaching'}. ` +
+                           `Your health metrics suggest you're in good condition for your planned activities.`;
+                }
+                
+                // Memory queries
+                if (lower.includes('remember') || lower.includes('memory')) {
+                    const recentMemories = memory.getRecentMemories(3);
+                    if (recentMemories.length > 0) {
+                        return `I recall your recent activities, Sir. ${recentMemories[0].content}. ` +
+                               `Your memory patterns show normal consolidation with ${memory.getTotalMemories()} items stored.`;
+                    }
+                    return "Your memory banks are functioning optimally, Sir. All cognitive parameters are within normal range.";
+                }
+                
+                // Analysis requests
+                if (lower.includes('analyze') || lower.includes('analysis')) {
+                    const analysis = this.performHealthAnalysis();
+                    return analysis;
+                }
+                
+                // Emergency or concern
+                if (lower.includes('emergency') || lower.includes('help') || lower.includes('pain')) {
+                    return "I'm initiating emergency protocols, Sir. Monitoring all vital signs closely. " +
+                           "Should I contact medical assistance or would you prefer I guide you through immediate remediation steps?";
+                }
+                
+                // Recommendations
+                if (lower.includes('recommend') || lower.includes('suggest') || lower.includes('should')) {
+                    const recommendations = biometrics.getRecommendations();
+                    if (recommendations.length > 0) {
+                        return `Based on current biometric data, I recommend: ${recommendations.join('. ')}`;
+                    }
+                    return "All systems are optimal, Sir. Continue with your current routine.";
+                }
+                
+                // Exercise or activity
+                if (lower.includes('exercise') || lower.includes('workout') || lower.includes('activity')) {
+                    biometrics.simulateExercise();
+                    return "I've activated exercise monitoring mode, Sir. I'll track your vitals closely and provide real-time feedback. Remember to maintain proper hydration.";
+                }
+                
+                // Sleep or rest
+                if (lower.includes('sleep') || lower.includes('rest') || lower.includes('tired')) {
+                    const health = biometrics.getHealthMetrics();
+                    return `Your current fatigue level is ${health.fatigueLevel}%. ` +
+                           `${health.fatigueLevel > 50 ? 'Rest is recommended, Sir. Shall I dim the lights and activate sleep monitoring?' : 
+                            'You appear well-rested, but a short break might enhance productivity.'}`;
+                }
+                
+                // Default intelligent response
+                return this.generateIntelligentResponse(input);
+            }
+            
+            performHealthAnalysis() {
+                const vitals = biometrics.getVitalsSnapshot();
+                const health = biometrics.getHealthMetrics();
+                const brainwaves = biometrics.getBrainwaveData();
+                
+                let analysis = `Comprehensive health analysis complete, Sir. `;
+                analysis += `Overall health score: ${vitals.healthScore}/100. `;
+                
+                // Cardiovascular
+                analysis += `Cardiovascular system: ${health.cardiovascularHealth}% efficiency. `;
+                
+                // Neurological
+                const dominantWave = this.getDominantBrainwave(brainwaves);
+                analysis += `Neural activity shows dominant ${dominantWave} waves, indicating ${
+                    dominantWave === 'alpha' ? 'relaxed awareness' :
+                    dominantWave === 'beta' ? 'active concentration' :
+                    dominantWave === 'gamma' ? 'high cognitive processing' :
+                    dominantWave === 'theta' ? 'meditative state' :
+                    'deep rest'
+                }. `;
+                
+                // Recommendations
+                if (health.stressLevel > 50) {
+                    analysis += "I recommend stress reduction techniques. ";
+                }
+                if (vitals.hydration < 70) {
+                    analysis += "Hydration levels are suboptimal. ";
+                }
+                
+                analysis += "All other parameters are within acceptable ranges.";
+                
+                return analysis;
+            }
+            
+            getDominantBrainwave(brainwaves) {
+                let maxWave = 'alpha';
+                let maxAmplitude = 0;
+                
+                Object.keys(brainwaves).forEach(wave => {
+                    if (brainwaves[wave].amplitude > maxAmplitude) {
+                        maxAmplitude = brainwaves[wave].amplitude;
+                        maxWave = wave;
+                    }
+                });
+                
+                return maxWave;
+            }
+            
+            generateIntelligentResponse(input) {
+                const responses = [
+                    `Understood, Sir. I'm processing your request: "${input}". All systems are ready to assist.`,
+                    `Certainly, Sir. Regarding "${input}", I'm analyzing optimal approaches based on your current biometric state.`,
+                    `Of course, Sir. I'll attend to that immediately. Your current health metrics indicate you're in excellent condition for this task.`,
+                    `Right away, Sir. I've logged your request and am coordinating all necessary systems.`,
+                    `Indeed, Sir. That's an interesting query. Based on my analysis and your historical patterns, I believe the optimal approach would be...`
+                ];
+                
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
+        }
+        
+        const jarvisChat = new JARVISChat();
+        
+        // Send message function
+        window.sendMessage = async function() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            
+            // Show typing indicator
+            const typingMsg = addMessage('<span class="loading-dots">JARVIS is thinking</span>', 'jarvis');
+            
+            // Get JARVIS response
+            setTimeout(async () => {
+                typingMsg.remove();
+                const response = await jarvisChat.respond(message);
+                addMessage(response, 'jarvis');
+                
+                // Use ElevenLabs for voice synthesis
+                if (elevenLabsKey) {
+                    await speakWithElevenLabs(response);
+                } else if ('speechSynthesis' in window) {
+                    // Fallback to browser TTS
+                    const utterance = new SpeechSynthesisUtterance(response);
+                    utterance.rate = 0.9;
+                    utterance.pitch = 0.8;
+                    speechSynthesis.speak(utterance);
+                }
+                
+                // Store in memory
+                addToMemory(message, response);
+            }, 1000 + Math.random() * 1000);
+            
+            input.value = '';
+            input.focus();
+        }
+        
+        // Add message to chat
+        function addMessage(text, type) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            message.innerHTML = text;
+            messagesContainer.appendChild(message);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            return message;
+        }
+        
+        // Add to memory display
+        function addToMemory(userInput, jarvisResponse) {
+            const memorySection = document.getElementById('memorySection');
+            const now = new Date();
+            const timestamp = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            
+            const memoryItem = document.createElement('div');
+            memoryItem.className = 'memory-item';
+            memoryItem.innerHTML = `
+                <div class="memory-timestamp">${timestamp}</div>
+                <div class="memory-content">Query: ${userInput.substring(0, 50)}...</div>
+            `;
+            
+            memorySection.insertBefore(memoryItem, memorySection.firstChild);
+            
+            // Keep only last 5 memories in display
+            while (memorySection.children.length > 5) {
+                memorySection.removeChild(memorySection.lastChild);
+            }
+            
+            // Update timeline
+            updateTimeline(`Interaction logged`);
+        }
+        
+        // Update timeline
+        function updateTimeline(event) {
+            const timeline = document.getElementById('timeline');
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            
+            const timelineItem = document.createElement('div');
+            timelineItem.className = 'timeline-item';
+            timelineItem.innerHTML = `<strong>${timeStr}</strong> - ${event}`;
+            
+            timeline.insertBefore(timelineItem, timeline.firstChild.nextSibling);
+            
+            // Keep only last 5 timeline items
+            while (timeline.children.length > 5) {
+                timeline.removeChild(timeline.lastChild);
+            }
+        }
+        
+        // Voice API Configuration
+        let elevenLabsKey = null;
+        let elevenLabsVoiceId = 'EXAVITQu4vr4xnSDxMaL'; // Bella voice (sophisticated)
+        let isRecording = false;
+        let audioContext = null;
+        
+        // Initialize ElevenLabs
+        async function initElevenLabs() {
+            // Check for stored API key
+            elevenLabsKey = sessionStorage.getItem('elevenlabs_api_key');
+            
+            if (!elevenLabsKey) {
+                elevenLabsKey = prompt('Please enter your ElevenLabs API key for voice synthesis:');
+                if (elevenLabsKey) {
+                    sessionStorage.setItem('elevenlabs_api_key', elevenLabsKey);
+                    
+                    // Test the API key
+                    try {
+                        const response = await fetch('https://api.elevenlabs.io/v1/voices', {
+                            headers: { 'xi-api-key': elevenLabsKey }
+                        });
+                        
+                        if (response.ok) {
+                            addMessage('ElevenLabs voice system activated, Sir.', 'jarvis');
+                            // Speak greeting with ElevenLabs
+                            await speakWithElevenLabs('Voice system initialized. How may I assist you, Sir?');
+                            return true;
+                        } else {
+                            throw new Error('Invalid API key');
+                        }
+                    } catch (error) {
+                        console.error('ElevenLabs error:', error);
+                        addMessage('Failed to connect to ElevenLabs. Using browser voice.', 'jarvis');
+                        sessionStorage.removeItem('elevenlabs_api_key');
+                        elevenLabsKey = null;
+                        return false;
+                    }
+                } else {
+                    addMessage('Voice synthesis will use browser default.', 'jarvis');
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+        
+        // Speak with ElevenLabs
+        async function speakWithElevenLabs(text) {
+            if (!elevenLabsKey) return false;
+            
+            try {
+                const response = await fetch(
+                    `https://api.elevenlabs.io/v1/text-to-speech/${elevenLabsVoiceId}/stream`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'audio/mpeg',
+                            'Content-Type': 'application/json',
+                            'xi-api-key': elevenLabsKey
+                        },
+                        body: JSON.stringify({
+                            text: text,
+                            model_id: 'eleven_multilingual_v2',
+                            voice_settings: {
+                                stability: 0.5,
+                                similarity_boost: 0.8,
+                                style: 0.0,
+                                use_speaker_boost: true
+                            }
+                        })
+                    }
+                );
+                
+                if (response.ok) {
+                    const audioBlob = await response.blob();
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    const audio = new Audio(audioUrl);
+                    
+                    // Add ended event to clean up
+                    audio.addEventListener('ended', () => {
+                        URL.revokeObjectURL(audioUrl);
+                    });
+                    
+                    await audio.play();
+                    return true;
+                } else {
+                    console.error('ElevenLabs TTS failed:', response.status);
+                    return false;
+                }
+            } catch (error) {
+                console.error('ElevenLabs error:', error);
+                return false;
+            }
+        }
+        
+        // Voice selector for ElevenLabs
+        const elevenLabsVoices = [
+            { id: 'EXAVITQu4vr4xnSDxMaL', name: 'Bella', description: 'Sophisticated female' },
+            { id: '21m00Tcm4TlvDq8ikWAM', name: 'Rachel', description: 'Calm female' },
+            { id: 'pNInz6obpgDQGcFmaJgB', name: 'Adam', description: 'Deep male' },
+            { id: 'yoZ06aMxZJJ28mfd3POQ', name: 'Sam', description: 'Raspy male' },
+            { id: 'flq6f7yk4E4fJM5XTYuZ', name: 'Michael', description: 'Energetic male' },
+            { id: 'MF3mGyEYCl7XYWbV9V6O', name: 'Elli', description: 'Young female' },
+            { id: 'TxGEqnHWrfWFTfGW9XjX', name: 'Josh', description: 'Mature male' },
+            { id: 'VR6AewLTigWG4xSOukaG', name: 'Arnold', description: 'Crisp male' }
+        ];
+        
+        // Add voice selector to UI
+        function addVoiceSelector() {
+            const selector = document.createElement('div');
+            selector.style.position = 'fixed';
+            selector.style.top = '60px';
+            selector.style.left = '20px';
+            selector.style.zIndex = '1000';
+            selector.style.background = 'rgba(0, 20, 40, 0.9)';
+            selector.style.border = '1px solid cyan';
+            selector.style.borderRadius = '10px';
+            selector.style.padding = '10px';
+            selector.style.display = 'none';
+            selector.id = 'voiceSelector';
+            
+            selector.innerHTML = `
+                <div style="color: cyan; font-size: 12px; margin-bottom: 10px; text-transform: uppercase;">Select Voice</div>
+                ${elevenLabsVoices.map(voice => `
+                    <div class="voice-option" data-id="${voice.id}" style="
+                        padding: 8px;
+                        margin: 5px 0;
+                        background: rgba(0, 255, 255, 0.1);
+                        border: 1px solid rgba(0, 255, 255, 0.3);
+                        border-radius: 5px;
+                        cursor: pointer;
+                        font-size: 11px;
+                        color: #0ff;
+                    " onmouseover="this.style.background='rgba(0, 255, 255, 0.2)'" 
+                       onmouseout="this.style.background='rgba(0, 255, 255, 0.1)'"
+                       onclick="selectVoice('${voice.id}', '${voice.name}')">
+                        <strong>${voice.name}</strong> - ${voice.description}
+                    </div>
+                `).join('')}
+            `;
+            
+            document.body.appendChild(selector);
+        }
+        
+        window.selectVoice = function(voiceId, voiceName) {
+            elevenLabsVoiceId = voiceId;
+            addMessage(`Voice changed to ${voiceName}, Sir.`, 'jarvis');
+            document.getElementById('voiceSelector').style.display = 'none';
+            speakWithElevenLabs(`This is ${voiceName} speaking. How may I assist you?`);
+        };
+        
+        // Voice input using Web Speech API
+        window.startVoice = async function() {
+            // Use browser speech recognition
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                const recognition = new SpeechRecognition();
+                
+                recognition.lang = 'en-US';
+                recognition.continuous = false;
+                recognition.interimResults = true;
+                
+                const voiceBtn = document.querySelector('.send-btn:last-child');
+                
+                recognition.onstart = () => {
+                    voiceBtn.textContent = '⏹️';
+                    voiceBtn.style.background = 'linear-gradient(135deg, rgba(255,0,0,0.3), rgba(255,255,0,0.3))';
+                    addMessage('Listening, Sir...', 'jarvis');
+                };
+                
+                recognition.onresult = (event) => {
+                    let finalTranscript = '';
+                    let interimTranscript = '';
+                    
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        const transcript = event.results[i][0].transcript;
+                        if (event.results[i].isFinal) {
+                            finalTranscript += transcript;
+                        } else {
+                            interimTranscript += transcript;
+                        }
+                    }
+                    
+                    // Update input field with interim results
+                    if (interimTranscript) {
+                        document.getElementById('chatInput').value = finalTranscript + interimTranscript;
+                    }
+                    
+                    // Send final transcript
+                    if (finalTranscript) {
+                        document.getElementById('chatInput').value = finalTranscript;
+                        sendMessage();
+                    }
+                };
+                
+                recognition.onerror = (event) => {
+                    console.error('Speech recognition error:', event.error);
+                    addMessage('Voice recognition error. Please try again.', 'jarvis');
+                    voiceBtn.textContent = '🎤';
+                    voiceBtn.style.background = '';
+                };
+                
+                recognition.onend = () => {
+                    voiceBtn.textContent = '🎤';
+                    voiceBtn.style.background = '';
+                };
+                
+                recognition.start();
+            } else {
+                addMessage('Voice recognition not supported in this browser, Sir.', 'jarvis');
+            }
+        }
+        
+        // Control functions
+        window.requestHealthAnalysis = () => {
+            document.getElementById('chatInput').value = 'Perform complete health analysis';
+            sendMessage();
+        };
+        
+        window.exportHealthData = () => {
+            const data = {
+                timestamp: new Date().toISOString(),
+                user: userProfile,
+                vitals: biometrics.getVitalsSnapshot(),
+                health: biometrics.getHealthMetrics(),
+                memories: memory.getRecentMemories(50)
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `jarvis-health-data-${Date.now()}.json`;
+            a.click();
+            
+            addMessage('Health data exported successfully, Sir.', 'jarvis');
+        };
+        
+        window.showHistory = () => {
+            document.getElementById('chatInput').value = 'Show me my recent history and memories';
+            sendMessage();
+        };
+        
+        window.updateProfile = () => {
+            const newName = prompt('Enter your name:', userProfile.name);
+            if (newName) {
+                userProfile.name = newName;
+                document.getElementById('userName').textContent = newName;
+                document.getElementById('userInitial').textContent = newName[0].toUpperCase();
+                updateGreeting();
+                addMessage(`Profile updated, ${newName}. It's a pleasure to serve you.`, 'jarvis');
+            }
+        };
+        
+        // Keyboard shortcuts
+        document.getElementById('chatInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // Initialize
+        updateGreeting();
+        setInterval(updateVitals, 1000);
+        setInterval(updateGreeting, 60000); // Update greeting every minute
+        
+        // Set user initial
+        document.getElementById('userInitial').textContent = userProfile.name[0].toUpperCase();
+        
+        // Add configuration buttons
+        const configContainer = document.createElement('div');
+        configContainer.style.position = 'fixed';
+        configContainer.style.top = '20px';
+        configContainer.style.left = '20px';
+        configContainer.style.zIndex = '1000';
+        configContainer.style.display = 'flex';
+        configContainer.style.flexDirection = 'column';
+        configContainer.style.gap = '10px';
+        
+        // ElevenLabs config button
+        const elevenLabsBtn = document.createElement('button');
+        elevenLabsBtn.className = 'control-btn';
+        elevenLabsBtn.textContent = 'Configure Voice';
+        elevenLabsBtn.onclick = () => {
+            const key = prompt('Enter ElevenLabs API key for voice synthesis:');
+            if (key) {
+                sessionStorage.setItem('elevenlabs_api_key', key);
+                elevenLabsKey = key;
+                initElevenLabs();
+            }
+        };
+        
+        // Voice selector button
+        const voiceBtn = document.createElement('button');
+        voiceBtn.className = 'control-btn';
+        voiceBtn.textContent = 'Select Voice';
+        voiceBtn.onclick = () => {
+            const selector = document.getElementById('voiceSelector');
+            if (selector) {
+                selector.style.display = selector.style.display === 'none' ? 'block' : 'none';
+            }
+        };
+        
+        configContainer.appendChild(elevenLabsBtn);
+        configContainer.appendChild(voiceBtn);
+        document.body.appendChild(configContainer);
+        
+        // Add voice selector
+        addVoiceSelector();
+        
+        console.log('JARVIS System Initialized');
+        console.log('All systems operational');
+        console.log('Click "Configure Voice" to enable ElevenLabs TTS');
+        
+        // Auto-initialize if API key exists
+        if (sessionStorage.getItem('elevenlabs_api_key')) {
+            elevenLabsKey = sessionStorage.getItem('elevenlabs_api_key');
+            setTimeout(() => initElevenLabs(), 1000);
+        }
+    </script>
+</body>
+</html>

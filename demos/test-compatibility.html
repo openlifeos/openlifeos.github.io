@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenLifeOS - Browser Compatibility Test</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #000;
+            color: #fff;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .test-section {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 1px solid rgba(0,255,255,0.3);
+        }
+        .test-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 5px;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .pass { background: #00ff00; color: #000; }
+        .fail { background: #ff0000; color: #fff; }
+        .warn { background: #ffaa00; color: #000; }
+        .info { color: #00ffff; }
+        .button {
+            background: linear-gradient(45deg, #00ffff, #ff00ff);
+            border: none;
+            color: #000;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px;
+            transition: transform 0.3s ease;
+        }
+        .button:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 OpenLifeOS Compatibility Test Suite</h1>
+        <p class="info">Testing browser compatibility for AugHacks MIT 2025 demo</p>
+        
+        <div class="test-section">
+            <h2>🌐 Browser Detection</h2>
+            <div class="test-item">
+                <strong>User Agent:</strong> <span id="userAgent">Detecting...</span>
+            </div>
+            <div class="test-item">
+                <strong>Browser:</strong> <span id="browser">Detecting...</span>
+            </div>
+            <div class="test-item">
+                <strong>Version:</strong> <span id="version">Detecting...</span>
+            </div>
+            <div class="test-item">
+                <strong>Platform:</strong> <span id="platform">Detecting...</span>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎨 CSS Features</h2>
+            <div id="cssTests"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>⚡ JavaScript Features</h2>
+            <div id="jsTests"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎵 Web Audio API</h2>
+            <div id="audioTests"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📱 Touch & Mobile</h2>
+            <div id="touchTests"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>⚡ Performance</h2>
+            <div id="performanceTests"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎯 Demo Links</h2>
+            <button class="button" onclick="openDemo('presentation-optimized.html')">Optimized Presentation</button>
+            <button class="button" onclick="openDemo('presentation-final.html')">Original Presentation</button>
+            <button class="button" onclick="openDemo('openopenlifeos-ultimate.html')">Ultimate Demo</button>
+            <button class="button" onclick="openDemo('index-advanced.html')">Advanced Interface</button>
+        </div>
+
+        <div class="test-section">
+            <h2>📊 Test Summary</h2>
+            <div id="summary"></div>
+        </div>
+    </div>
+
+    <script>
+        // Browser Detection
+        function detectBrowser() {
+            const userAgent = navigator.userAgent;
+            document.getElementById('userAgent').textContent = userAgent;
+            
+            let browser = 'Unknown';
+            let version = 'Unknown';
+            
+            if (userAgent.includes('Chrome') && !userAgent.includes('Edge')) {
+                browser = 'Chrome';
+                version = userAgent.match(/Chrome\/(\d+)/)?.[1] || 'Unknown';
+            } else if (userAgent.includes('Firefox')) {
+                browser = 'Firefox';
+                version = userAgent.match(/Firefox\/(\d+)/)?.[1] || 'Unknown';
+            } else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) {
+                browser = 'Safari';
+                version = userAgent.match(/Safari\/(\d+)/)?.[1] || 'Unknown';
+            } else if (userAgent.includes('Edge')) {
+                browser = 'Edge';
+                version = userAgent.match(/Edge\/(\d+)/)?.[1] || 'Unknown';
+            }
+            
+            document.getElementById('browser').textContent = browser;
+            document.getElementById('version').textContent = version;
+            document.getElementById('platform').textContent = navigator.platform;
+            
+            return { browser, version: parseInt(version) };
+        }
+
+        // CSS Feature Tests
+        function testCSS() {
+            const tests = [
+                {
+                    name: 'CSS Grid',
+                    test: () => CSS.supports('display', 'grid'),
+                    required: true
+                },
+                {
+                    name: 'CSS Flexbox',
+                    test: () => CSS.supports('display', 'flex'),
+                    required: true
+                },
+                {
+                    name: 'CSS Transforms',
+                    test: () => CSS.supports('transform', 'scale(1)'),
+                    required: true
+                },
+                {
+                    name: 'CSS Transitions',
+                    test: () => CSS.supports('transition', 'opacity 0.3s'),
+                    required: true
+                },
+                {
+                    name: 'CSS Custom Properties',
+                    test: () => CSS.supports('--custom-prop', 'value'),
+                    required: false
+                },
+                {
+                    name: 'Backdrop Filter',
+                    test: () => CSS.supports('backdrop-filter', 'blur(10px)'),
+                    required: false
+                }
+            ];
+
+            const container = document.getElementById('cssTests');
+            tests.forEach(test => {
+                const result = test.test();
+                const item = document.createElement('div');
+                item.className = 'test-item';
+                const status = result ? 'pass' : (test.required ? 'fail' : 'warn');
+                item.innerHTML = `
+                    <span class="status ${status}">${result ? 'PASS' : 'FAIL'}</span>
+                    ${test.name} ${test.required ? '(Required)' : '(Optional)'}
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // JavaScript Feature Tests
+        function testJS() {
+            const tests = [
+                {
+                    name: 'ES6 Arrow Functions',
+                    test: () => {
+                        try {
+                            eval('(() => {})');
+                            return true;
+                        } catch { return false; }
+                    },
+                    required: true
+                },
+                {
+                    name: 'ES6 Classes',
+                    test: () => {
+                        try {
+                            eval('class Test {}');
+                            return true;
+                        } catch { return false; }
+                    },
+                    required: true
+                },
+                {
+                    name: 'Promises',
+                    test: () => typeof Promise !== 'undefined',
+                    required: true
+                },
+                {
+                    name: 'Fetch API',
+                    test: () => typeof fetch !== 'undefined',
+                    required: false
+                },
+                {
+                    name: 'Local Storage',
+                    test: () => {
+                        try {
+                            localStorage.setItem('test', 'test');
+                            localStorage.removeItem('test');
+                            return true;
+                        } catch { return false; }
+                    },
+                    required: true
+                },
+                {
+                    name: 'RequestAnimationFrame',
+                    test: () => typeof requestAnimationFrame !== 'undefined',
+                    required: true
+                }
+            ];
+
+            const container = document.getElementById('jsTests');
+            tests.forEach(test => {
+                const result = test.test();
+                const item = document.createElement('div');
+                item.className = 'test-item';
+                const status = result ? 'pass' : (test.required ? 'fail' : 'warn');
+                item.innerHTML = `
+                    <span class="status ${status}">${result ? 'PASS' : 'FAIL'}</span>
+                    ${test.name} ${test.required ? '(Required)' : '(Optional)'}
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Audio API Tests
+        function testAudio() {
+            const tests = [
+                {
+                    name: 'Web Audio API',
+                    test: () => typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined',
+                    required: true
+                },
+                {
+                    name: 'MediaRecorder API',
+                    test: () => typeof MediaRecorder !== 'undefined',
+                    required: true
+                },
+                {
+                    name: 'Speech Recognition',
+                    test: () => typeof SpeechRecognition !== 'undefined' || typeof webkitSpeechRecognition !== 'undefined',
+                    required: false
+                },
+                {
+                    name: 'Speech Synthesis',
+                    test: () => typeof speechSynthesis !== 'undefined',
+                    required: false
+                }
+            ];
+
+            const container = document.getElementById('audioTests');
+            tests.forEach(test => {
+                const result = test.test();
+                const item = document.createElement('div');
+                item.className = 'test-item';
+                const status = result ? 'pass' : (test.required ? 'fail' : 'warn');
+                item.innerHTML = `
+                    <span class="status ${status}">${result ? 'PASS' : 'FAIL'}</span>
+                    ${test.name} ${test.required ? '(Required)' : '(Optional)'}
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Touch & Mobile Tests
+        function testTouch() {
+            const tests = [
+                {
+                    name: 'Touch Events',
+                    test: () => 'ontouchstart' in window,
+                    required: false
+                },
+                {
+                    name: 'Pointer Events',
+                    test: () => 'onpointerdown' in window,
+                    required: false
+                },
+                {
+                    name: 'Device Motion',
+                    test: () => typeof DeviceMotionEvent !== 'undefined',
+                    required: false
+                },
+                {
+                    name: 'Viewport Meta',
+                    test: () => document.querySelector('meta[name="viewport"]') !== null,
+                    required: true
+                }
+            ];
+
+            const container = document.getElementById('touchTests');
+            tests.forEach(test => {
+                const result = test.test();
+                const item = document.createElement('div');
+                item.className = 'test-item';
+                const status = result ? 'pass' : (test.required ? 'fail' : 'warn');
+                item.innerHTML = `
+                    <span class="status ${status}">${result ? 'PASS' : 'FAIL'}</span>
+                    ${test.name} ${test.required ? '(Required)' : '(Optional)'}
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Performance Tests
+        function testPerformance() {
+            const container = document.getElementById('performanceTests');
+            
+            // Memory test
+            const memoryInfo = performance.memory || {};
+            const memoryItem = document.createElement('div');
+            memoryItem.className = 'test-item';
+            memoryItem.innerHTML = `
+                <strong>Memory:</strong> 
+                Used: ${Math.round((memoryInfo.usedJSHeapSize || 0) / 1048576)}MB, 
+                Total: ${Math.round((memoryInfo.totalJSHeapSize || 0) / 1048576)}MB
+            `;
+            container.appendChild(memoryItem);
+
+            // Connection test
+            const connection = navigator.connection || {};
+            const connectionItem = document.createElement('div');
+            connectionItem.className = 'test-item';
+            connectionItem.innerHTML = `
+                <strong>Connection:</strong> 
+                ${connection.effectiveType || 'Unknown'} 
+                (${connection.downlink || 'Unknown'}Mbps)
+            `;
+            container.appendChild(connectionItem);
+
+            // Hardware test
+            const hardwareItem = document.createElement('div');
+            hardwareItem.className = 'test-item';
+            hardwareItem.innerHTML = `
+                <strong>Hardware:</strong> 
+                CPU Cores: ${navigator.hardwareConcurrency || 'Unknown'}, 
+                Max Touch Points: ${navigator.maxTouchPoints || 0}
+            `;
+            container.appendChild(hardwareItem);
+
+            // Performance timing
+            const timing = performance.timing;
+            const loadTime = timing.loadEventEnd - timing.navigationStart;
+            const timingItem = document.createElement('div');
+            timingItem.className = 'test-item';
+            timingItem.innerHTML = `
+                <strong>Load Time:</strong> ${loadTime}ms
+            `;
+            container.appendChild(timingItem);
+        }
+
+        // Generate Summary
+        function generateSummary() {
+            const { browser, version } = detectBrowser();
+            const container = document.getElementById('summary');
+            
+            let compatibility = 'Unknown';
+            let recommendation = '';
+            
+            if (browser === 'Chrome' && version >= 80) {
+                compatibility = '✅ Excellent';
+                recommendation = 'Fully compatible. All features supported.';
+            } else if (browser === 'Firefox' && version >= 75) {
+                compatibility = '✅ Good';
+                recommendation = 'Fully compatible. Minor voice API differences.';
+            } else if (browser === 'Safari' && version >= 14) {
+                compatibility = '⚠️ Fair';
+                recommendation = 'Compatible with some limitations. Test voice features.';
+            } else if (browser === 'Edge' && version >= 80) {
+                compatibility = '✅ Good';
+                recommendation = 'Fully compatible. Based on Chromium.';
+            } else {
+                compatibility = '❌ Limited';
+                recommendation = 'May have compatibility issues. Use Chrome for best experience.';
+            }
+            
+            container.innerHTML = `
+                <div class="test-item">
+                    <strong>Overall Compatibility:</strong> ${compatibility}
+                </div>
+                <div class="test-item">
+                    <strong>Recommendation:</strong> ${recommendation}
+                </div>
+                <div class="test-item">
+                    <strong>Competition Ready:</strong> ${compatibility.includes('✅') ? 'YES' : 'NEEDS ATTENTION'}
+                </div>
+            `;
+        }
+
+        function openDemo(filename) {
+            window.open(filename, '_blank');
+        }
+
+        // Run all tests
+        function runTests() {
+            detectBrowser();
+            testCSS();
+            testJS();
+            testAudio();
+            testTouch();
+            testPerformance();
+            generateSummary();
+        }
+
+        // Run tests when page loads
+        document.addEventListener('DOMContentLoaded', runTests);
+    </script>
+</body>
+</html>

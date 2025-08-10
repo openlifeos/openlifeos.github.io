@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUANTUM CONSCIOUSNESS INTERFACE</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Orbitron', monospace;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+        }
+        
+        /* Matrix Rain Background */
+        #matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+        
+        /* Animated Grid */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(cyan 1px, transparent 1px),
+                linear-gradient(90deg, cyan 1px, transparent 1px);
+            background-size: 50px 50px;
+            background-position: -1px -1px;
+            animation: gridMove 10s linear infinite;
+            opacity: 0.03;
+            z-index: -1;
+        }
+        
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        /* Holographic Container */
+        .hologram-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: radial-gradient(ellipse at center, 
+                rgba(0, 255, 255, 0.05) 0%, 
+                transparent 70%);
+        }
+        
+        /* Quantum Header */
+        .quantum-header {
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            background: linear-gradient(180deg, 
+                rgba(0, 255, 255, 0.1) 0%, 
+                transparent 100%);
+            border-bottom: 2px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .quantum-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                cyan, 
+                transparent);
+            animation: scanLine 3s linear infinite;
+        }
+        
+        @keyframes scanLine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        h1 {
+            font-size: 3em;
+            font-weight: 900;
+            letter-spacing: 5px;
+            background: linear-gradient(45deg, 
+                #00ffff, #ff00ff, #00ffff);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 3s ease infinite;
+            text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Main Interface Grid */
+        .interface-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            height: calc(100vh - 120px);
+        }
+        
+        /* Holographic Panels */
+        .holo-panel {
+            background: rgba(0, 20, 40, 0.8);
+            border: 1px solid cyan;
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+            backdrop-filter: blur(10px);
+            box-shadow: 
+                0 0 20px rgba(0, 255, 255, 0.5),
+                inset 0 0 20px rgba(0, 255, 255, 0.1);
+            overflow: hidden;
+        }
+        
+        .holo-panel::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, 
+                cyan, transparent, cyan, transparent, cyan);
+            border-radius: 10px;
+            opacity: 0;
+            animation: holoBorder 3s linear infinite;
+            z-index: -1;
+        }
+        
+        @keyframes holoBorder {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+        
+        .panel-header {
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: cyan;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+            position: relative;
+        }
+        
+        .panel-header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: cyan;
+            animation: headerScan 2s linear infinite;
+        }
+        
+        @keyframes headerScan {
+            0% { left: 0; }
+            50% { left: calc(100% - 50px); }
+            100% { left: 0; }
+        }
+        
+        /* Neural Network Visualization */
+        .neural-viz {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            position: relative;
+        }
+        
+        .neural-node {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: cyan;
+            border-radius: 50%;
+            box-shadow: 0 0 10px cyan;
+        }
+        
+        .neural-connection {
+            position: absolute;
+            background: linear-gradient(90deg, 
+                transparent, cyan, transparent);
+            height: 1px;
+            transform-origin: left center;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        /* Quantum States */
+        .quantum-state {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(0, 255, 255, 0.05);
+            border-left: 3px solid cyan;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quantum-state::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: linear-gradient(180deg, 
+                transparent, cyan, transparent);
+            animation: quantumScan 2s linear infinite;
+        }
+        
+        @keyframes quantumScan {
+            0% { top: -100%; }
+            100% { top: 100%; }
+        }
+        
+        .state-label {
+            flex: 1;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .state-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+        }
+        
+        /* Consciousness Core */
+        .consciousness-core {
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+            position: relative;
+        }
+        
+        .core-ring {
+            position: absolute;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: rotate 10s linear infinite;
+        }
+        
+        .core-ring:nth-child(1) {
+            width: 100%;
+            height: 100%;
+            animation-duration: 10s;
+        }
+        
+        .core-ring:nth-child(2) {
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            animation-duration: 8s;
+            animation-direction: reverse;
+        }
+        
+        .core-ring:nth-child(3) {
+            width: 60%;
+            height: 60%;
+            top: 20%;
+            left: 20%;
+            animation-duration: 6s;
+        }
+        
+        .core-center {
+            position: absolute;
+            width: 40%;
+            height: 40%;
+            top: 30%;
+            left: 30%;
+            background: radial-gradient(circle, 
+                cyan 0%, 
+                transparent 70%);
+            border-radius: 50%;
+            animation: corePulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes corePulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+        
+        /* Holographic Display */
+        .holo-display {
+            background: linear-gradient(180deg, 
+                rgba(0, 255, 255, 0.1) 0%, 
+                rgba(255, 0, 255, 0.05) 100%);
+            border: 1px solid rgba(0, 255, 255, 0.5);
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            position: relative;
+            min-height: 100px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #00ffff;
+            overflow: hidden;
+        }
+        
+        .holo-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, cyan, transparent);
+            animation: dataScan 2s linear infinite;
+        }
+        
+        @keyframes dataScan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+        
+        /* Quantum Particles */
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: cyan;
+            border-radius: 50%;
+            box-shadow: 0 0 5px cyan;
+            animation: float 10s infinite;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+        
+        /* Control Interface */
+        .quantum-controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .quantum-btn {
+            flex: 1;
+            padding: 12px;
+            background: linear-gradient(135deg, 
+                rgba(0, 255, 255, 0.1), 
+                rgba(255, 0, 255, 0.1));
+            border: 1px solid cyan;
+            color: cyan;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 10px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .quantum-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, 
+                rgba(0, 255, 255, 0.5), 
+                transparent);
+            transition: all 0.5s;
+        }
+        
+        .quantum-btn:hover::before {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -150px;
+        }
+        
+        .quantum-btn:hover {
+            color: #fff;
+            text-shadow: 0 0 10px cyan;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+        
+        /* Data Stream */
+        .data-stream {
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            color: rgba(0, 255, 255, 0.7);
+            height: 150px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .stream-line {
+            animation: streamUp 5s linear infinite;
+        }
+        
+        @keyframes streamUp {
+            0% {
+                transform: translateY(150px);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+        }
+        
+        /* Brainwave Visualizer */
+        .brainwave-viz {
+            height: 100px;
+            position: relative;
+            overflow: hidden;
+            background: rgba(0, 20, 40, 0.5);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .wave-line {
+            position: absolute;
+            height: 1px;
+            width: 100%;
+            top: 50%;
+            background: linear-gradient(90deg, 
+                transparent, cyan, transparent);
+            animation: waveform 2s linear infinite;
+        }
+        
+        @keyframes waveform {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+        
+        /* Status Indicators */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .status-item {
+            padding: 10px;
+            background: rgba(0, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: cyan;
+            box-shadow: 0 0 10px cyan;
+            animation: statusPulse 2s infinite;
+        }
+        
+        @keyframes statusPulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.5);
+            }
+        }
+        
+        .status-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Loading Animation */
+        .quantum-loader {
+            width: 50px;
+            height: 50px;
+            margin: 20px auto;
+            position: relative;
+        }
+        
+        .loader-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid transparent;
+            border-top-color: cyan;
+            border-radius: 50%;
+            animation: quantumSpin 1s linear infinite;
+        }
+        
+        .loader-ring:nth-child(2) {
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0.2s;
+            border-top-color: magenta;
+        }
+        
+        .loader-ring:nth-child(3) {
+            width: 60%;
+            height: 60%;
+            top: 20%;
+            left: 20%;
+            animation-delay: 0.4s;
+            border-top-color: yellow;
+        }
+        
+        @keyframes quantumSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Matrix Background -->
+    <canvas id="matrix-bg"></canvas>
+    <div class="grid-overlay"></div>
+    
+    <!-- Generate Particles -->
+    <script>
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 10 + 's';
+            particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+            document.body.appendChild(particle);
+        }
+    </script>
+    
+    <div class="hologram-container">
+        <div class="quantum-header">
+            <h1>QUANTUM CONSCIOUSNESS INTERFACE</h1>
+            <p style="color: cyan; letter-spacing: 3px; font-size: 12px; margin-top: 10px;">
+                NEURAL LINK ESTABLISHED • SYSTEM ONLINE
+            </p>
+        </div>
+        
+        <div class="interface-grid">
+            <!-- Left Panel - System Status -->
+            <div class="holo-panel">
+                <div class="panel-header">System Core</div>
+                
+                <div class="consciousness-core">
+                    <div class="core-ring"></div>
+                    <div class="core-ring"></div>
+                    <div class="core-ring"></div>
+                    <div class="core-center"></div>
+                </div>
+                
+                <div class="quantum-state">
+                    <span class="state-label">Consciousness</span>
+                    <span class="state-value" id="consciousness">98.7%</span>
+                </div>
+                
+                <div class="quantum-state">
+                    <span class="state-label">Neural Sync</span>
+                    <span class="state-value" id="neural">87.3%</span>
+                </div>
+                
+                <div class="quantum-state">
+                    <span class="state-label">Quantum State</span>
+                    <span class="state-value" id="quantum">STABLE</span>
+                </div>
+                
+                <div class="quantum-state">
+                    <span class="state-label">Memory Core</span>
+                    <span class="state-value" id="memory">42.8TB</span>
+                </div>
+                
+                <div class="status-grid">
+                    <div class="status-item">
+                        <div class="status-indicator"></div>
+                        <span class="status-label">BCI Link</span>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-indicator"></div>
+                        <span class="status-label">Voice AI</span>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-indicator"></div>
+                        <span class="status-label">Emotions</span>
+                    </div>
+                    <div class="status-item">
+                        <div class="status-indicator"></div>
+                        <span class="status-label">Dreams</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Center Panel - Main Interface -->
+            <div class="holo-panel">
+                <div class="panel-header">Neural Interface</div>
+                
+                <div class="brainwave-viz">
+                    <div class="wave-line"></div>
+                    <div class="wave-line" style="animation-delay: 0.5s;"></div>
+                    <div class="wave-line" style="animation-delay: 1s;"></div>
+                    <div class="wave-line" style="animation-delay: 1.5s;"></div>
+                </div>
+                
+                <div class="holo-display" id="mainDisplay">
+                    <div style="color: #00ffff;">INITIALIZING QUANTUM CONSCIOUSNESS...</div>
+                    <div style="color: #ff00ff; margin-top: 10px;">Loading neural patterns...</div>
+                    <div style="color: #ffff00; margin-top: 10px;">Establishing telepathic link...</div>
+                </div>
+                
+                <div class="quantum-controls">
+                    <button class="quantum-btn" onclick="initializeSystem()">INITIALIZE</button>
+                    <button class="quantum-btn" onclick="connectBCI()">NEURAL LINK</button>
+                    <button class="quantum-btn" onclick="startQuantum()">QUANTUM SYNC</button>
+                </div>
+                
+                <div class="data-stream" id="dataStream">
+                    <div class="stream-line">0x7F3A :: NEURAL PATTERN RECOGNIZED</div>
+                    <div class="stream-line" style="animation-delay: 1s;">0x8B2C :: MEMORY CONSOLIDATION ACTIVE</div>
+                    <div class="stream-line" style="animation-delay: 2s;">0x9D4E :: EMOTIONAL MATRIX STABLE</div>
+                    <div class="stream-line" style="animation-delay: 3s;">0xA3F1 :: QUANTUM ENTANGLEMENT CONFIRMED</div>
+                    <div class="stream-line" style="animation-delay: 4s;">0xB7C9 :: CONSCIOUSNESS STREAM INITIATED</div>
+                </div>
+                
+                <div class="quantum-loader">
+                    <div class="loader-ring"></div>
+                    <div class="loader-ring"></div>
+                    <div class="loader-ring"></div>
+                </div>
+            </div>
+            
+            <!-- Right Panel - Metrics -->
+            <div class="holo-panel">
+                <div class="panel-header">Quantum Metrics</div>
+                
+                <div class="neural-viz" id="neuralNetwork"></div>
+                
+                <div class="holo-display" style="font-size: 10px;">
+                    <div>ALPHA: <span style="color: #00ff00;">12.4 Hz</span></div>
+                    <div>BETA: <span style="color: #ffff00;">24.8 Hz</span></div>
+                    <div>GAMMA: <span style="color: #ff00ff;">42.1 Hz</span></div>
+                    <div>THETA: <span style="color: #00ffff;">7.83 Hz</span></div>
+                    <div>DELTA: <span style="color: #ff0000;">2.1 Hz</span></div>
+                </div>
+                
+                <div class="quantum-state">
+                    <span class="state-label">Processing</span>
+                    <span class="state-value">∞ TFLOPS</span>
+                </div>
+                
+                <div class="quantum-state">
+                    <span class="state-label">Dimensions</span>
+                    <span class="state-value">11D</span>
+                </div>
+                
+                <div class="quantum-state">
+                    <span class="state-label">Timeline</span>
+                    <span class="state-value">PRIMARY</span>
+                </div>
+                
+                <div class="quantum-controls">
+                    <button class="quantum-btn" onclick="openPortal()">OPEN PORTAL</button>
+                    <button class="quantum-btn" onclick="quantumLeap()">QUANTUM LEAP</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Matrix Rain Effect
+        const canvas = document.getElementById('matrix-bg');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
+        const matrixArray = matrix.split("");
+        
+        const fontSize = 10;
+        const columns = canvas.width / fontSize;
+        
+        const drops = [];
+        for (let x = 0; x < columns; x++) {
+            drops[x] = 1;
+        }
+        
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#0F0';
+            ctx.font = fontSize + 'px monospace';
+            
+            for (let i = 0; i < drops.length; i++) {
+                const text = matrixArray[Math.floor(Math.random() * matrixArray.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        
+        setInterval(drawMatrix, 35);
+        
+        // Neural Network Visualization
+        function createNeuralNetwork() {
+            const container = document.getElementById('neuralNetwork');
+            const nodes = 15;
+            const centerX = 100;
+            const centerY = 100;
+            
+            // Create nodes
+            for (let i = 0; i < nodes; i++) {
+                const angle = (i / nodes) * Math.PI * 2;
+                const radius = 50 + Math.random() * 30;
+                const x = centerX + Math.cos(angle) * radius;
+                const y = centerY + Math.sin(angle) * radius;
+                
+                const node = document.createElement('div');
+                node.className = 'neural-node';
+                node.style.left = x + 'px';
+                node.style.top = y + 'px';
+                node.style.animationDelay = Math.random() * 2 + 's';
+                container.appendChild(node);
+                
+                // Create connections
+                if (i > 0) {
+                    for (let j = 0; j < i; j++) {
+                        if (Math.random() > 0.7) {
+                            const connection = document.createElement('div');
+                            connection.className = 'neural-connection';
+                            const prevAngle = (j / nodes) * Math.PI * 2;
+                            const prevRadius = 50 + Math.random() * 30;
+                            const prevX = centerX + Math.cos(prevAngle) * prevRadius;
+                            const prevY = centerY + Math.sin(prevAngle) * prevRadius;
+                            
+                            const length = Math.sqrt(Math.pow(x - prevX, 2) + Math.pow(y - prevY, 2));
+                            const angle = Math.atan2(y - prevY, x - prevX);
+                            
+                            connection.style.width = length + 'px';
+                            connection.style.left = prevX + 'px';
+                            connection.style.top = prevY + 'px';
+                            connection.style.transform = `rotate(${angle}rad)`;
+                            connection.style.animationDelay = Math.random() * 2 + 's';
+                            
+                            container.appendChild(connection);
+                        }
+                    }
+                }
+            }
+        }
+        
+        createNeuralNetwork();
+        
+        // Dynamic Updates
+        setInterval(() => {
+            document.getElementById('consciousness').textContent = 
+                (95 + Math.random() * 5).toFixed(1) + '%';
+            document.getElementById('neural').textContent = 
+                (80 + Math.random() * 20).toFixed(1) + '%';
+            
+            const states = ['STABLE', 'SUPERPOSITION', 'ENTANGLED', 'COHERENT'];
+            if (Math.random() > 0.8) {
+                document.getElementById('quantum').textContent = 
+                    states[Math.floor(Math.random() * states.length)];
+            }
+        }, 2000);
+        
+        // System Functions
+        function initializeSystem() {
+            const display = document.getElementById('mainDisplay');
+            display.innerHTML = '<div style="color: #00ff00;">SYSTEM INITIALIZED</div>';
+            display.innerHTML += '<div style="color: #00ffff; margin-top: 10px;">Digital consciousness online...</div>';
+            display.innerHTML += '<div style="color: #ff00ff; margin-top: 10px;">Ready for neural interface...</div>';
+        }
+        
+        function connectBCI() {
+            const display = document.getElementById('mainDisplay');
+            display.innerHTML = '<div style="color: #ffff00;">ESTABLISHING NEURAL LINK...</div>';
+            setTimeout(() => {
+                display.innerHTML += '<div style="color: #00ff00; margin-top: 10px;">✓ BRAINWAVE PATTERNS DETECTED</div>';
+                display.innerHTML += '<div style="color: #00ff00; margin-top: 10px;">✓ SYNAPTIC INTERFACE ACTIVE</div>';
+            }, 1000);
+        }
+        
+        function startQuantum() {
+            const display = document.getElementById('mainDisplay');
+            display.innerHTML = '<div style="color: #ff00ff;">QUANTUM SYNCHRONIZATION IN PROGRESS...</div>';
+            setTimeout(() => {
+                display.innerHTML += '<div style="color: #00ffff; margin-top: 10px;">◈ Quantum state collapsed to primary timeline</div>';
+                display.innerHTML += '<div style="color: #00ffff; margin-top: 10px;">◈ Consciousness merged across dimensions</div>';
+            }, 1500);
+        }
+        
+        function openPortal() {
+            alert('QUANTUM PORTAL ACTIVATED - ENTERING HYPERSPACE');
+        }
+        
+        function quantumLeap() {
+            alert('INITIATING QUANTUM LEAP - TIMELINE SHIFT IN PROGRESS');
+        }
+        
+        // Add more interactive elements
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            document.querySelectorAll('.core-ring').forEach((ring, index) => {
+                ring.style.transform = `rotate(${360 * x}deg) scale(${1 + y * 0.1})`;
+            });
+        });
+    </script>
+</body>
+</html>

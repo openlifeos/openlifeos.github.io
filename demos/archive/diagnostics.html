@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>System Diagnostics</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #000;
+            color: #0f0;
+            padding: 20px;
+        }
+        .test { margin: 10px 0; }
+        .pass { color: #0f0; }
+        .fail { color: #f00; }
+        .info { color: #ff0; }
+    </style>
+</head>
+<body>
+    <h1>Digital Human System Diagnostics</h1>
+    <div id="diagnostics"></div>
+    
+    <script type="module">
+        const log = (message, status = 'info') => {
+            const div = document.createElement('div');
+            div.className = `test ${status}`;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            document.getElementById('diagnostics').appendChild(div);
+        };
+        
+        // Test 1: Check if modules exist
+        log('Starting diagnostics...', 'info');
+        
+        try {
+            const modules = [
+                './src/DigitalHuman.js',
+                './src/VoiceInterface.js',
+                './src/AdvancedVoiceInterface.js',
+                './src/MultiModalInterface.js',
+                './src/AdvancedMemorySystem.js',
+                './src/ClaudeCodeAgent.js'
+            ];
+            
+            for (const module of modules) {
+                try {
+                    const response = await fetch(module);
+                    if (response.ok) {
+                        log(`✓ Module found: ${module}`, 'pass');
+                    } else {
+                        log(`✗ Module not found: ${module}`, 'fail');
+                    }
+                } catch (e) {
+                    log(`✗ Error loading ${module}: ${e.message}`, 'fail');
+                }
+            }
+        } catch (error) {
+            log(`Module check failed: ${error}`, 'fail');
+        }
+        
+        // Test 2: Check browser capabilities
+        log('Checking browser capabilities...', 'info');
+        
+        const capabilities = {
+            'Web Speech API': 'speechSynthesis' in window,
+            'Speech Recognition': 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window,
+            'Web Audio API': 'AudioContext' in window || 'webkitAudioContext' in window,
+            'WebGL': !!document.createElement('canvas').getContext('webgl'),
+            'WebRTC': 'RTCPeerConnection' in window,
+            'Web Bluetooth': 'bluetooth' in navigator,
+            'Web Serial': 'serial' in navigator,
+            'Media Devices': 'mediaDevices' in navigator,
+            'Session Storage': 'sessionStorage' in window,
+            'Local Storage': 'localStorage' in window
+        };
+        
+        for (const [feature, available] of Object.entries(capabilities)) {
+            log(`${available ? '✓' : '✗'} ${feature}: ${available ? 'Available' : 'Not Available'}`, 
+                available ? 'pass' : 'fail');
+        }
+        
+        // Test 3: Try to import and initialize Digital Human
+        log('Testing Digital Human initialization...', 'info');
+        
+        try {
+            const { default: DigitalHuman } = await import('./src/DigitalHuman.js');
+            const digitalHuman = new DigitalHuman('TestNova');
+            
+            log('✓ Digital Human initialized successfully', 'pass');
+            log(`  Name: ${digitalHuman.name}`, 'info');
+            log(`  State: ${digitalHuman.state}`, 'info');
+            log(`  Emotions: ${JSON.stringify(digitalHuman.emotions)}`, 'info');
+            
+            // Test interaction
+            const response = digitalHuman.interact('Hello, test');
+            log(`✓ Interaction test passed. Response: "${response.substring(0, 50)}..."`, 'pass');
+            
+        } catch (error) {
+            log(`✗ Digital Human initialization failed: ${error}`, 'fail');
+            console.error(error);
+        }
+        
+        // Test 4: Check for API keys
+        log('Checking API configurations...', 'info');
+        
+        const apis = ['openai', 'elevenlabs', 'deepgram'];
+        for (const api of apis) {
+            const hasKey = sessionStorage.getItem(`${api}_api_key`);
+            log(`${hasKey ? '✓' : '○'} ${api.toUpperCase()} API key: ${hasKey ? 'Configured' : 'Not configured'}`,
+                hasKey ? 'pass' : 'info');
+        }
+        
+        // Test 5: Memory system
+        log('Testing Advanced Memory System...', 'info');
+        
+        try {
+            const { AdvancedMemorySystem } = await import('./src/AdvancedMemorySystem.js');
+            const memorySystem = new AdvancedMemorySystem();
+            
+            // Store test memory
+            const memId = memorySystem.store('Test memory content', { isTest: true });
+            log(`✓ Memory stored with ID: ${memId}`, 'pass');
+            
+            // Retrieve memory
+            const retrieved = memorySystem.retrieve('Test memory content');
+            log(`✓ Memory retrieved: ${retrieved.length} results`, 'pass');
+            
+            // Get stats
+            const stats = memorySystem.getStats();
+            log(`✓ Memory stats: Total=${stats.total}, Avg Strength=${stats.averageStrength.toFixed(2)}`, 'pass');
+            
+        } catch (error) {
+            log(`✗ Memory system test failed: ${error}`, 'fail');
+        }
+        
+        // Test 6: Multi-modal interface
+        log('Testing Multi-Modal Interface...', 'info');
+        
+        try {
+            const { MultiModalInterface } = await import('./src/MultiModalInterface.js');
+            const { default: DigitalHuman } = await import('./src/DigitalHuman.js');
+            
+            const dh = new DigitalHuman('TestNova');
+            const multiModal = new MultiModalInterface(dh);
+            
+            log('✓ Multi-Modal Interface initialized', 'pass');
+            
+            // Check sensor states
+            const state = multiModal.getState();
+            log(`  BCI: ${state.bci.connected ? 'Connected' : 'Disconnected'}`, 'info');
+            log(`  Heart Rate: ${state.biometric.heartRate}`, 'info');
+            log(`  Stress: ${state.biometric.stress}`, 'info');
+            
+        } catch (error) {
+            log(`✗ Multi-modal test failed: ${error}`, 'fail');
+        }
+        
+        // Test 7: Claude Agent
+        log('Testing Claude Code Agent...', 'info');
+        
+        try {
+            const { ClaudeCodeAgent } = await import('./src/ClaudeCodeAgent.js');
+            const { default: DigitalHuman } = await import('./src/DigitalHuman.js');
+            
+            const dh = new DigitalHuman('TestNova');
+            const agent = new ClaudeCodeAgent(dh);
+            
+            log('✓ Claude Agent initialized', 'pass');
+            
+            agent.start();
+            log('✓ Claude Agent started background processing', 'pass');
+            
+            const status = agent.getStatus();
+            log(`  Agent running: ${status.isRunning}`, 'info');
+            log(`  Tasks processed: ${status.tasksProcessed}`, 'info');
+            
+            agent.stop();
+            log('✓ Claude Agent stopped', 'pass');
+            
+        } catch (error) {
+            log(`✗ Claude Agent test failed: ${error}`, 'fail');
+        }
+        
+        // Summary
+        log('====================================', 'info');
+        log('Diagnostics complete!', 'info');
+        
+        const passCount = document.querySelectorAll('.pass').length;
+        const failCount = document.querySelectorAll('.fail').length;
+        
+        log(`Results: ${passCount} passed, ${failCount} failed`, 
+            failCount === 0 ? 'pass' : 'fail');
+        
+        if (failCount === 0) {
+            log('✓ All systems operational!', 'pass');
+        } else {
+            log('⚠ Some issues detected. Check failed tests above.', 'fail');
+        }
+    </script>
+</body>
+</html>
