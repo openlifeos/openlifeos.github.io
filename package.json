@@ -1,0 +1,23 @@
+{
+  "name": "openlifeos-website",
+  "version": "1.0.0",
+  "description": "OpenLifeOS - The Open-Source Life Operating System Website",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "serve": "npx http-server -p 8080",
+    "deploy": "vercel --prod"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/openlifeos/openlifeos.github.io.git"
+  },
+  "keywords": [
+    "openlifeos",
+    "ai-companion",
+    "personal-ai",
+    "open-source"
+  ],
+  "author": "OpenLifeOS Team",
+  "license": "MIT",
+  "homepage": "https://openlifeos.ai"
+}
