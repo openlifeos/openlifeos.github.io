@@ -82,15 +82,16 @@
             width: 120px;
             height: 120px;
             margin: 0 auto 2rem;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
-            font-weight: bold;
-            box-shadow: 0 10px 40px rgba(0, 255, 204, 0.3);
             animation: pulse 2s infinite;
+        }
+        
+        .logo img {
+            width: 150px;
+            height: auto;
+            filter: brightness(1.1) drop-shadow(0 5px 20px rgba(0, 255, 204, 0.4));
         }
 
         @keyframes pulse {
@@ -349,7 +350,9 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <div class="logo">OS</div>
+            <div class="logo">
+                <img src="assets/logo/openlifeos-logo-dark.svg" alt="OpenLifeOS" />
+            </div>
             <h1>OpenLifeOS</h1>
             <p class="tagline">The Linux of Personal AI - Open, Extensible, Yours</p>
             

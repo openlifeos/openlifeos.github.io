@@ -115,6 +115,20 @@
             height: 150px;
             margin-bottom: 40px;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-container img {
+            width: 120px;
+            height: auto;
+            animation: logoPulse 2s infinite;
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
         }
 
         .logo-pulse {
@@ -129,16 +143,6 @@
         @keyframes pulse {
             0%, 100% { transform: scale(1); opacity: 1; }
             50% { transform: scale(1.1); opacity: 0.5; }
-        }
-
-        .brain-icon {
-            width: 100px;
-            height: 100px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            fill: #00ff88;
         }
 
         h1 {
@@ -599,18 +603,22 @@
         <div class="slide active title-slide">
             <div class="logo-container">
                 <div class="logo-pulse"></div>
-                <svg class="brain-icon" viewBox="0 0 100 100">
-                    <path d="M50 10 C30 10, 10 30, 10 50 C10 70, 30 90, 50 90 C70 90, 90 70, 90 50 C90 30, 70 10, 50 10 Z M50 20 C60 20, 70 25, 75 35 L25 35 C30 25, 40 20, 50 20 Z M25 65 C30 75, 40 80, 50 80 C60 80, 70 75, 75 65 L25 65 Z" />
-                </svg>
+                <img src="../../assets/logo/openlifeos-logo-dark.svg" alt="OpenLifeOS" />
             </div>
             
             <h1>OpenLifeOS</h1>
             <div class="tagline">The Linux of Personal AI</div>
-            <div class="tagline" style="font-size: 1.2rem; margin-top: 20px;">
-                Your AI Companion That Actually Grows With You
+            <div class="tagline" style="font-size: 1.3rem; margin-top: 20px; color: #00ff88; text-shadow: 0 0 10px rgba(0,255,136,0.5);">
+                ⚡ Matrix-Style Knowledge Downloading
+            </div>
+            <div class="tagline" style="font-size: 1rem; margin-top: 15px; color: #00a8ff;">
+                Download Any Expertise in 3 Seconds
+            </div>
+            <div class="tagline" style="font-size: 0.9rem; margin-top: 10px; opacity: 0.8;">
+                Not an assistant. Another you.
             </div>
             
-            <div class="team-info">AugHacks MIT 2025 | Neural Matrix Team</div>
+            <div class="team-info">AugHacks MIT 2025 | 🏆 Next-Gen AI Revolution</div>
         </div>
 
         <!-- Slide 2: Problem -->

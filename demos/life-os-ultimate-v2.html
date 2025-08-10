@@ -108,7 +108,13 @@
             gap: 20px;
         }
         
-        .logo {
+        .logo img {
+            height: 50px;
+            width: auto;
+            filter: brightness(1.1);
+        }
+        
+        .logo-text {
             font-size: 32px;
             font-weight: 900;
             background: linear-gradient(135deg, var(--primary-green), var(--primary-cyan), var(--primary-purple));
@@ -1200,7 +1206,9 @@
         <!-- Top Bar -->
         <div class="top-bar">
             <div class="logo-section">
-                <div class="logo">LIFE OS</div>
+                <div class="logo">
+                    <img src="../../assets/logo/openlifeos-logo-dark.svg" alt="OpenLifeOS" />
+                </div>
                 <div class="tagline">Not an assistant. Another you.</div>
             </div>
             
@@ -1263,6 +1271,9 @@
                     <div class="hero-section">
                         <div class="hero-title">OpenLifeOS Ultimate</div>
                         <div class="hero-subtitle">Your Quantum AI Life Companion</div>
+                        <div style="margin-top: 15px; font-size: 1.1rem; color: var(--primary-gold); text-shadow: 0 0 10px rgba(255,215,0,0.5);">
+                            ⚡ Matrix-Style Knowledge Downloading Available
+                        </div>
                         <div class="hero-stats">
                             <div class="hero-stat">
                                 <div class="hero-stat-value" id="ai-iq">200</div>
