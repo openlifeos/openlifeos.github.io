@@ -497,12 +497,117 @@
             z-index: 10;
         }
 
+        /* Featured Demo Card */
+        .featured-demo-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(240, 147, 251, 0.1));
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 0 auto 3rem;
+            max-width: 1200px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .featured-demo-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(102, 126, 234, 0.1) 50%,
+                transparent 70%
+            );
+            animation: shimmer 4s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .featured-demo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(102, 126, 234, 0.3);
+            border-color: var(--accent);
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--gradient-primary);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .featured-demo-content {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .featured-demo-icon {
+            font-size: 5rem;
+            filter: drop-shadow(0 0 40px rgba(102, 126, 234, 0.5));
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .featured-demo-info {
+            flex: 1;
+        }
+
+        .featured-demo-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .featured-demo-description {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        .btn-large {
+            padding: 1.2rem 3rem;
+            font-size: 1.2rem;
+        }
+
+        /* Secondary Demo Grid */
         .demo-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
             max-width: 1200px;
             margin: 0 auto;
+        }
+
+        .demo-grid-secondary {
+            grid-template-columns: repeat(3, 1fr);
         }
 
         .demo-card {
@@ -679,6 +784,32 @@
             .btn {
                 padding: 0.8rem 2rem;
             }
+            
+            /* Featured Demo Mobile */
+            .featured-demo-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 2rem;
+            }
+            
+            .featured-demo-title {
+                font-size: 1.8rem;
+            }
+            
+            .featured-demo-description {
+                font-size: 1rem;
+            }
+            
+            .featured-badge {
+                position: static;
+                display: inline-block;
+                margin-bottom: 1rem;
+            }
+            
+            /* Secondary Demos Mobile */
+            .demo-grid-secondary {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -813,21 +944,31 @@
                 <p class="section-subtitle">Try our live demos and see the future of human-AI coexistence</p>
             </div>
             
-            <div class="demo-grid">
-                <div class="demo-card">
-                    <div class="demo-preview">🧠</div>
-                    <div class="demo-content">
-                        <h3 class="demo-title">Ultimate Experience</h3>
-                        <p class="demo-description">Full-featured quantum AI companion with biometric monitoring, knowledge downloads, and voice interaction.</p>
-                        <a href="/demos/life-os-ultimate-v2.html" class="btn btn-primary">Launch Demo</a>
+            <!-- Featured Demo -->
+            <div class="featured-demo-card">
+                <div class="featured-badge">FEATURED DEMO</div>
+                <div class="featured-demo-content">
+                    <div class="featured-demo-icon">🧠</div>
+                    <div class="featured-demo-info">
+                        <h3 class="featured-demo-title">Ultimate Experience</h3>
+                        <p class="featured-demo-description">
+                            Full-featured quantum AI companion with biometric monitoring, knowledge downloads, and voice interaction. 
+                            Experience the complete OpenLifeOS platform with all systems active.
+                        </p>
+                        <a href="/demos/life-os-ultimate-v2.html" class="btn btn-primary btn-large">
+                            🚀 Launch Ultimate Demo
+                        </a>
                     </div>
                 </div>
-                
+            </div>
+            
+            <!-- Secondary Demos Grid -->
+            <div class="demo-grid demo-grid-secondary">
                 <div class="demo-card">
                     <div class="demo-preview">📽️</div>
                     <div class="demo-content">
                         <h3 class="demo-title">Competition Presentation</h3>
-                        <p class="demo-description">7-minute pitch presentation for AugHacks MIT 2025 with interactive elements and live demos.</p>
+                        <p class="demo-description">7-minute pitch for AugHacks MIT 2025 with interactive elements.</p>
                         <a href="/demos/AUGHACKS_MIT_2025_PRESENTATION_V2.html" class="btn btn-demo">View Presentation</a>
                     </div>
                 </div>
@@ -836,7 +977,7 @@
                     <div class="demo-preview">🔬</div>
                     <div class="demo-content">
                         <h3 class="demo-title">Complete Platform</h3>
-                        <p class="demo-description">Comprehensive demo showing all OpenLifeOS features including memory systems and personality evolution.</p>
+                        <p class="demo-description">Comprehensive demo showing all OpenLifeOS features and memory systems.</p>
                         <a href="/demos/life-os-complete.html" class="btn btn-secondary">Explore Platform</a>
                     </div>
                 </div>
@@ -845,7 +986,7 @@
                     <div class="demo-preview">⚡</div>
                     <div class="demo-content">
                         <h3 class="demo-title">Quantum Interface</h3>
-                        <p class="demo-description">Futuristic interface with advanced visualizations and quantum consciousness themes.</p>
+                        <p class="demo-description">Futuristic interface with advanced visualizations and quantum themes.</p>
                         <a href="/demos/quantum-interface.html" class="btn btn-secondary">Enter Quantum</a>
                     </div>
                 </div>
