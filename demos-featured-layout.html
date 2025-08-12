@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenLifeOS - Featured Demo Layout</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #00ff00, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            color: #888;
+            letter-spacing: 2px;
+        }
+        
+        /* Featured Demo - Full Width */
+        .featured-demo {
+            background: linear-gradient(135deg, rgba(0, 255, 0, 0.1), rgba(0, 255, 255, 0.1));
+            border: 2px solid #00ff00;
+            border-radius: 20px;
+            padding: 60px 40px;
+            margin-bottom: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .featured-demo:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 255, 0, 0.3);
+            border-color: #00ffff;
+        }
+        
+        .featured-demo::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(0, 255, 255, 0.1) 50%,
+                transparent 70%
+            );
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .featured-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+            color: #000;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .featured-emoji {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 30px rgba(0, 255, 255, 0.5));
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .featured-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #00ff00;
+        }
+        
+        .featured-description {
+            font-size: 1.1rem;
+            color: #ccc;
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+        
+        .featured-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #00ff00, #00ffff);
+            color: #000;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .featured-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.5);
+        }
+        
+        /* Secondary Demos - 3 Column Grid */
+        .demos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .demo-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .demo-card:hover {
+            transform: translateY(-5px);
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.05);
+            box-shadow: 0 10px 30px rgba(0, 255, 0, 0.2);
+        }
+        
+        .demo-emoji {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .demo-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        
+        .demo-description {
+            font-size: 0.95rem;
+            color: #888;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .demo-button {
+            display: inline-block;
+            background: transparent;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        
+        .demo-button:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 5px 20px rgba(0, 255, 0, 0.4);
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .featured-demo {
+                padding: 40px 20px;
+            }
+            
+            .featured-emoji {
+                font-size: 3rem;
+            }
+            
+            .featured-title {
+                font-size: 1.5rem;
+            }
+            
+            .demos-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Hover effects for Matrix theme */
+        .matrix-text {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .matrix-text::after {
+            content: attr(data-text);
+            position: absolute;
+            left: 2px;
+            top: 2px;
+            color: rgba(0, 255, 0, 0.5);
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="matrix-text" data-text="Experience OpenLifeOS">Experience OpenLifeOS</h1>
+            <p>Try our live demos and see the future of human-AI coexistence</p>
+        </header>
+        
+        <!-- Featured Demo - Full Width -->
+        <div class="featured-demo" onclick="window.location.href='demos/life-os-ultimate-v2.html'">
+            <span class="featured-badge">Featured Demo</span>
+            <div class="featured-emoji">🧠</div>
+            <h2 class="featured-title">Ultimate Experience</h2>
+            <p class="featured-description">
+                Full-featured quantum AI companion with biometric monitoring, knowledge downloads, and voice interaction. 
+                Experience the complete OpenLifeOS platform with all systems active.
+            </p>
+            <a href="demos/life-os-ultimate-v2.html" class="featured-button">Launch Ultimate Demo</a>
+        </div>
+        
+        <!-- Secondary Demos - 3 Column Grid -->
+        <div class="demos-grid">
+            <div class="demo-card" onclick="window.location.href='demos/presentation-final.html'">
+                <span class="demo-emoji">📽️</span>
+                <h3 class="demo-title">Competition Presentation</h3>
+                <p class="demo-description">7-minute pitch for AugHacks MIT 2025 with interactive elements and live demos.</p>
+                <a href="demos/presentation-final.html" class="demo-button">View Presentation</a>
+            </div>
+            
+            <div class="demo-card" onclick="window.location.href='demos/life-os-complete.html'">
+                <span class="demo-emoji">🔬</span>
+                <h3 class="demo-title">Complete Platform</h3>
+                <p class="demo-description">Comprehensive demo showing all OpenLifeOS features including memory systems.</p>
+                <a href="demos/life-os-complete.html" class="demo-button">Explore Platform</a>
+            </div>
+            
+            <div class="demo-card" onclick="window.location.href='demos/quantum-interface.html'">
+                <span class="demo-emoji">⚡</span>
+                <h3 class="demo-title">Quantum Interface</h3>
+                <p class="demo-description">Futuristic interface with advanced visualizations and quantum consciousness themes.</p>
+                <a href="demos/quantum-interface.html" class="demo-button">Enter Quantum</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Add matrix rain effect or other interactive elements if needed
+        document.querySelectorAll('.demo-card, .featured-demo').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>

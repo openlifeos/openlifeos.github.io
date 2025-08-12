@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenLifeOS - MIT Human Augmentation Summit 2025</title>
+    <meta name="description" content="Download expertise in 3 seconds. The Linux of Personal AI. Zero marginal cost.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'SF Pro Display', -apple-system, system-ui, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        
+        /* Matrix rain background */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.15;
+        }
+        
+        /* Hero section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .glitch {
+            font-size: clamp(2rem, 8vw, 4rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            position: relative;
+            text-shadow: 
+                0.05em 0 0 rgba(255, 0, 0, .75),
+                -0.025em -0.05em 0 rgba(0, 255, 0, .75),
+                0.025em 0.05em 0 rgba(0, 0, 255, .75);
+            animation: glitch 1s infinite;
+        }
+        
+        @keyframes glitch {
+            0%, 100% { text-shadow: 0.05em 0 0 rgba(255, 0, 0, .75), -0.025em -0.05em 0 rgba(0, 255, 0, .75), 0.025em 0.05em 0 rgba(0, 0, 255, .75); }
+            14% { text-shadow: 0.05em 0 0 rgba(255, 0, 0, .75), -0.025em -0.05em 0 rgba(0, 255, 0, .75), 0.025em 0.05em 0 rgba(0, 0, 255, .75); }
+            15% { text-shadow: -0.05em -0.025em 0 rgba(255, 0, 0, .75), 0.025em 0.025em 0 rgba(0, 255, 0, .75), -0.05em -0.05em 0 rgba(0, 0, 255, .75); }
+            49% { text-shadow: -0.05em -0.025em 0 rgba(255, 0, 0, .75), 0.025em 0.025em 0 rgba(0, 255, 0, .75), -0.05em -0.05em 0 rgba(0, 0, 255, .75); }
+            50% { text-shadow: 0.025em 0.05em 0 rgba(255, 0, 0, .75), 0.05em 0 0 rgba(0, 255, 0, .75), 0 -0.05em 0 rgba(0, 0, 255, .75); }
+            99% { text-shadow: 0.025em 0.05em 0 rgba(255, 0, 0, .75), 0.05em 0 0 rgba(0, 255, 0, .75), 0 -0.05em 0 rgba(0, 0, 255, .75); }
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            color: #0ff;
+            margin: 20px 0;
+            letter-spacing: 2px;
+        }
+        
+        .tagline {
+            font-size: 1rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin: 10px 0;
+        }
+        
+        /* Cost counter */
+        .cost-display {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #0ff;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 40px auto;
+            max-width: 500px;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+        }
+        
+        .cost-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+            font-size: 1.5rem;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .cost-label {
+            font-weight: bold;
+        }
+        
+        .cost-value {
+            font-weight: bold;
+        }
+        
+        .loss { color: #ff3333; }
+        .profit { color: #33ff33; }
+        
+        /* Demo button */
+        .demo-button {
+            background: linear-gradient(135deg, #00ff00, #00ffff);
+            color: #000;
+            border: none;
+            padding: 20px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+            animation: pulse 2s infinite;
+            margin: 20px;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(0, 255, 255, 0.5); }
+            50% { transform: scale(1.05); box-shadow: 0 0 50px rgba(0, 255, 255, 0.8); }
+        }
+        
+        .demo-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 50px rgba(0, 255, 255, 1);
+        }
+        
+        /* Knowledge download animation */
+        .download-container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid #0f0;
+            padding: 40px;
+            border-radius: 10px;
+            z-index: 1000;
+            min-width: 400px;
+            text-align: center;
+        }
+        
+        .download-container.active {
+            display: block;
+        }
+        
+        .download-title {
+            font-size: 1.5rem;
+            color: #0f0;
+            margin-bottom: 20px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #111;
+            border: 1px solid #0f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0f0, #0ff);
+            width: 0%;
+            transition: width 3s linear;
+        }
+        
+        .progress-text {
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+        }
+        
+        /* Comparison section */
+        .comparison {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin: 40px 0;
+        }
+        
+        .comparison-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            padding: 30px;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        
+        .comparison-card:hover {
+            transform: translateY(-5px);
+            border-color: #0ff;
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+        }
+        
+        .comparison-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .comparison-card.problem h3 {
+            color: #ff3333;
+        }
+        
+        .comparison-card.solution h3 {
+            color: #33ff33;
+        }
+        
+        .comparison-card ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .comparison-card li {
+            margin: 10px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .comparison-card li:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 15px;
+            height: 15px;
+            background: linear-gradient(135deg, #f00, #f00);
+            clip-path: polygon(25% 0%, 100% 0%, 100% 100%, 25% 100%, 0% 50%);
+        }
+        
+        .comparison-card.solution li:before {
+            background: linear-gradient(135deg, #0f0, #0ff);
+        }
+        
+        /* Event details */
+        .event-details {
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid #0ff;
+            padding: 40px;
+            margin: 40px auto;
+            max-width: 800px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .event-details h2 {
+            color: #0ff;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        
+        .event-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .event-info-item {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+        }
+        
+        .event-info-item strong {
+            color: #0ff;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid #333;
+            margin-top: 80px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .cost-display {
+                padding: 20px;
+            }
+            
+            .download-container {
+                min-width: 90%;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix-canvas"></canvas>
+    
+    <section class="hero">
+        <h1 class="glitch">DOWNLOAD A PHD IN 3 SECONDS</h1>
+        <p class="subtitle">MIT Human Augmentation Summit Special</p>
+        <p class="tagline">Not an assistant. Another you.</p>
+        
+        <div class="cost-display">
+            <h2 style="color: #0ff; margin-bottom: 20px;">LIVE COST COMPARISON</h2>
+            <div class="cost-row">
+                <span class="cost-label">Cursor/Windsurf:</span>
+                <span class="cost-value loss">-$<span id="loss-counter">0.00</span></span>
+            </div>
+            <div class="cost-row">
+                <span class="cost-label">OpenLifeOS:</span>
+                <span class="cost-value profit">+$<span id="profit-counter">0.00</span></span>
+            </div>
+            <div style="text-align: center; margin-top: 20px; color: #888;">
+                <small>Cost per user per second</small>
+            </div>
+        </div>
+        
+        <button class="demo-button" onclick="startDownload()">
+            DOWNLOAD MIT PHYSICS KNOWLEDGE
+        </button>
+    </section>
+    
+    <section class="comparison">
+        <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 40px;">
+            <span style="color: #ff3333;">THE PROBLEM</span> vs 
+            <span style="color: #33ff33;">THE SOLUTION</span>
+        </h2>
+        
+        <div class="comparison-grid">
+            <div class="comparison-card problem">
+                <h3>EVERY AI COMPANY</h3>
+                <ul>
+                    <li>Burns $80/user/month on API calls</li>
+                    <li>Your data lives on their servers</li>
+                    <li>Can shut down or change pricing anytime</li>
+                    <li>You're renting, not owning</li>
+                    <li>Privacy? What privacy?</li>
+                </ul>
+            </div>
+            
+            <div class="comparison-card solution">
+                <h3>OPENLIFEOS</h3>
+                <ul>
+                    <li>$0 marginal cost - runs locally</li>
+                    <li>100% your device, your data</li>
+                    <li>Download once, use forever</li>
+                    <li>You own it completely</li>
+                    <li>True privacy by design</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    
+    <section class="event-details">
+        <h2>MEET US AT MIT</h2>
+        <div class="event-info">
+            <div class="event-info-item">
+                <strong>📅 Date</strong>
+                August 23, 2025
+            </div>
+            <div class="event-info-item">
+                <strong>📍 Location</strong>
+                MIT Media Lab
+            </div>
+            <div class="event-info-item">
+                <strong>🎪 Booth</strong>
+                Live Demos All Day
+            </div>
+            <div class="event-info-item">
+                <strong>🎯 Special</strong>
+                Matrix-Style Downloads
+            </div>
+        </div>
+        <button class="demo-button" onclick="window.open('https://lu.ma/qejp7644', '_blank')">
+            REGISTER FOR SUMMIT
+        </button>
+    </section>
+    
+    <!-- Download overlay -->
+    <div id="download-overlay" class="download-container">
+        <div class="download-title">DOWNLOADING MIT PHYSICS...</div>
+        <div class="progress-bar">
+            <div id="progress-fill" class="progress-fill"></div>
+        </div>
+        <div class="progress-text">
+            <span id="progress-percent">0</span>% Complete
+        </div>
+        <div id="knowledge-items" style="font-family: monospace; color: #0f0; font-size: 0.9rem; margin-top: 20px;"></div>
+    </div>
+    
+    <footer>
+        <p style="color: #0ff; font-size: 1.2rem; margin-bottom: 10px;">OPENLIFEOS</p>
+        <p style="color: #888;">The Linux of Personal AI</p>
+        <p style="margin-top: 20px;">
+            <a href="mailto:hello@openlifeos.ai" style="color: #0ff; text-decoration: none;">hello@openlifeos.ai</a> | 
+            <a href="https://openlifeos.ai" style="color: #0ff; text-decoration: none;">openlifeos.ai</a>
+        </p>
+    </footer>
+    
+    <script>
+        // Matrix rain effect
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const matrix = "OPENLIFEOS01アイウエオカキクケコサシスセソタチツテト";
+        const matrixArray = matrix.split("");
+        
+        const fontSize = 10;
+        const columns = canvas.width / fontSize;
+        
+        const drops = [];
+        for(let x = 0; x < columns; x++) {
+            drops[x] = Math.random() * -100;
+        }
+        
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#0F0';
+            ctx.font = fontSize + 'px monospace';
+            
+            for(let i = 0; i < drops.length; i++) {
+                const text = matrixArray[Math.floor(Math.random() * matrixArray.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        
+        setInterval(drawMatrix, 35);
+        
+        // Cost counter animation
+        let lossAmount = 0;
+        let profitAmount = 0;
+        
+        setInterval(() => {
+            lossAmount += 0.023;  // ~$80/month
+            profitAmount += 0.003; // ~$10/month
+            
+            document.getElementById('loss-counter').textContent = lossAmount.toFixed(2);
+            document.getElementById('profit-counter').textContent = profitAmount.toFixed(2);
+        }, 100);
+        
+        // Knowledge download simulation
+        const knowledgeTopics = [
+            "Quantum Mechanics Fundamentals",
+            "Thermodynamics & Statistical Mechanics",
+            "Electromagnetic Theory",
+            "Classical Mechanics",
+            "Special & General Relativity",
+            "Particle Physics",
+            "Condensed Matter Physics",
+            "Nuclear Physics",
+            "Astrophysics & Cosmology",
+            "MIT 8.01 - 8.322 Course Materials",
+            "Research Papers Database",
+            "Laboratory Techniques",
+            "Mathematical Methods",
+            "Computational Physics",
+            "Expert Problem Solving Patterns"
+        ];
+        
+        function startDownload() {
+            const overlay = document.getElementById('download-overlay');
+            const progressFill = document.getElementById('progress-fill');
+            const progressPercent = document.getElementById('progress-percent');
+            const knowledgeItems = document.getElementById('knowledge-items');
+            
+            overlay.classList.add('active');
+            
+            let progress = 0;
+            let topicIndex = 0;
+            knowledgeItems.innerHTML = '';
+            
+            const downloadInterval = setInterval(() => {
+                progress += 100/30; // 3 seconds total
+                
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(downloadInterval);
+                    
+                    setTimeout(() => {
+                        alert("🧠 DOWNLOAD COMPLETE!\n\nYou now have expert-level MIT Physics knowledge.\n\nThis demonstration shows our Matrix-style knowledge download capability.\n\nVisit us at MIT Human Augmentation Summit - August 23!");
+                        overlay.classList.remove('active');
+                        progressFill.style.width = '0%';
+                    }, 500);
+                }
+                
+                progressFill.style.width = progress + '%';
+                progressPercent.textContent = Math.floor(progress);
+                
+                // Add knowledge items progressively
+                if (Math.floor(progress / 6.67) > topicIndex && topicIndex < knowledgeTopics.length) {
+                    knowledgeItems.innerHTML += `✓ ${knowledgeTopics[topicIndex]}<br>`;
+                    topicIndex++;
+                }
+            }, 100);
+        }
+        
+        // Window resize handler
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
