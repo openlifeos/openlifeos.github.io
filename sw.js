@@ -9,12 +9,19 @@ const PRECACHE_URLS = [
   '/',
   '/index.html',
   '/manifest.json',
+  '/mit/index.html',
   '/assets/logo/openlifeos-logo-dark.svg',
   '/assets/logo/openlifeos-icon.svg',
+  '/components/secure-api-manager.js',
+  '/components/api-key-manager-fixed.js',
   '/demos/life-os-ultimate-v2.html',
   '/demos/presentation-final.html',
+  '/demos/AUGHACKS_MIT_2025_PRESENTATION_V2.html',
   '/demos/quantum-interface.html',
-  '/demos/life-os-complete.html'
+  '/demos/life-os-complete.html',
+  '/demos/biometric-dashboard.html',
+  '/demos/futuristic-gui.html',
+  '/demos/jarvis-assistant.html'
 ];
 
 // Install event - cache core files

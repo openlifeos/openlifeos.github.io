@@ -1146,5 +1146,42 @@
             document.head.appendChild(linkEl);
         });
     </script>
+    
+    <!-- Analytics & Error Tracking -->
+    <script src="/js/analytics.js"></script>
+    <script>
+        // Track homepage interactions
+        document.addEventListener('DOMContentLoaded', () => {
+            // Track feature card interactions
+            document.querySelectorAll('.feature-card').forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    trackEvent('feature_hover', {
+                        feature: card.querySelector('.feature-title').textContent
+                    });
+                });
+            });
+            
+            // Track demo interactions
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    trackEvent('button_click', {
+                        text: btn.textContent.trim(),
+                        href: btn.href || null
+                    });
+                });
+            });
+        });
+        
+        // Privacy notice
+        if (!localStorage.getItem('openlifeos_privacy_notice_shown')) {
+            setTimeout(() => {
+                if (confirm('OpenLifeOS uses privacy-first analytics to improve user experience. No personal data is collected. Click OK to continue or Cancel to opt out.')) {
+                    localStorage.setItem('openlifeos_privacy_notice_shown', 'true');
+                } else {
+                    analytics.optOut();
+                }
+            }, 3000);
+        }
+    </script>
 </body>
 </html>

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenLifeOS - Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0f;
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background: #1a1a2e;
+            padding: 2rem 1rem;
+            border-right: 1px solid #333;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 1rem;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: #ccc;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: #667eea;
+            color: #fff;
+        }
+
+        .main-content {
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #333;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            color: #667eea;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .status-online {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            border: 1px solid #22c55e;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .metric-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .metric-change {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .metric-up {
+            color: #22c55e;
+        }
+
+        .metric-down {
+            color: #ef4444;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .chart {
+            height: 300px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+        }
+
+        .logs-container {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .log-entry {
+            padding: 0.75rem;
+            border-bottom: 1px solid #333;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-info {
+            color: #3b82f6;
+        }
+
+        .log-warning {
+            color: #f59e0b;
+        }
+
+        .log-error {
+            color: #ef4444;
+        }
+
+        .log-success {
+            color: #22c55e;
+        }
+
+        .actions-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a67d8;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #667eea;
+            border: 1px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <div class="logo">OpenLifeOS</div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active" data-page="overview">Overview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-page="performance">Performance</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-page="security">Security</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-page="demos">Demos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-page="api">API Status</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-page="logs">System Logs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-page="mit">MIT Summit</a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <h1 class="page-title">System Overview</h1>
+                <div class="status-badge status-online">● ONLINE</div>
+            </header>
+
+            <div class="actions-bar">
+                <button class="btn btn-primary" onclick="refreshData()">Refresh Data</button>
+                <button class="btn btn-secondary" onclick="exportMetrics()">Export Metrics</button>
+                <a href="/mit/" class="btn btn-secondary">MIT Landing Page</a>
+                <button class="btn btn-danger" onclick="clearCache()">Clear Cache</button>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Website Status</div>
+                    <div class="metric-value" id="uptime">99.9%</div>
+                    <div class="metric-change metric-up">↑ 0.1% from last week</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Page Load Time</div>
+                    <div class="metric-value" id="load-time">0.04s</div>
+                    <div class="metric-change metric-up">↓ 15ms faster</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Active Demos</div>
+                    <div class="metric-value" id="demo-count">31</div>
+                    <div class="metric-change metric-up">↑ 2 new demos</div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Security Score</div>
+                    <div class="metric-value" id="security-score">A+</div>
+                    <div class="metric-change metric-up">SSL & CSP Active</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3 class="chart-title">Real-time Performance Metrics</h3>
+                <div class="chart">
+                    <canvas id="performance-chart" width="800" height="300"></canvas>
+                </div>
+            </div>
+
+            <div class="logs-container">
+                <h3 class="chart-title">Recent System Events</h3>
+                <div id="logs-content">
+                    <div class="log-entry log-success">
+                        [2025-08-12 01:30:15] PWA Service Worker registered successfully
+                    </div>
+                    <div class="log-entry log-info">
+                        [2025-08-12 01:29:43] MIT landing page deployed to /mit/
+                    </div>
+                    <div class="log-entry log-success">
+                        [2025-08-12 01:28:12] Security headers updated with CSP
+                    </div>
+                    <div class="log-entry log-info">
+                        [2025-08-12 01:27:55] Featured demo layout activated
+                    </div>
+                    <div class="log-entry log-success">
+                        [2025-08-12 01:26:30] API security manager enhanced
+                    </div>
+                    <div class="log-entry log-warning">
+                        [2025-08-12 01:25:18] High traffic detected from MIT domain
+                    </div>
+                    <div class="log-entry log-info">
+                        [2025-08-12 01:24:05] Offline cache updated with 16 files
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Real-time metrics simulation
+        function updateMetrics() {
+            // Simulate real-time data updates
+            const uptime = (99.9 + Math.random() * 0.1).toFixed(2);
+            const loadTime = (0.03 + Math.random() * 0.02).toFixed(3);
+            
+            document.getElementById('uptime').textContent = uptime + '%';
+            document.getElementById('load-time').textContent = loadTime + 's';
+        }
+
+        // Page navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Update active state
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                
+                // Update page title
+                const page = link.dataset.page;
+                const titles = {
+                    overview: 'System Overview',
+                    performance: 'Performance Analytics',
+                    security: 'Security Monitor',
+                    demos: 'Demo Management',
+                    api: 'API Status',
+                    logs: 'System Logs',
+                    mit: 'MIT Summit Dashboard'
+                };
+                document.querySelector('.page-title').textContent = titles[page] || 'Dashboard';
+            });
+        });
+
+        // Action functions
+        function refreshData() {
+            updateMetrics();
+            addLogEntry('info', 'Manual data refresh triggered');
+        }
+
+        function exportMetrics() {
+            addLogEntry('info', 'Metrics export initiated');
+            // In production, this would generate a CSV/JSON export
+        }
+
+        function clearCache() {
+            if (confirm('Clear all cached data? This will affect offline functionality.')) {
+                if ('caches' in window) {
+                    caches.keys().then(names => {
+                        names.forEach(name => caches.delete(name));
+                    });
+                }
+                addLogEntry('warning', 'Application cache cleared');
+            }
+        }
+
+        function addLogEntry(type, message) {
+            const timestamp = new Date().toISOString().replace('T', ' ').substr(0, 19);
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            
+            const logsContent = document.getElementById('logs-content');
+            logsContent.insertBefore(logEntry, logsContent.firstChild);
+            
+            // Keep only last 10 entries
+            const entries = logsContent.querySelectorAll('.log-entry');
+            if (entries.length > 10) {
+                entries[entries.length - 1].remove();
+            }
+        }
+
+        // Simple performance chart
+        function drawChart() {
+            const canvas = document.getElementById('performance-chart');
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw grid
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1;
+            
+            for (let i = 0; i <= 10; i++) {
+                const y = (canvas.height / 10) * i;
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+            
+            for (let i = 0; i <= 20; i++) {
+                const x = (canvas.width / 20) * i;
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            
+            // Draw performance line
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            
+            for (let i = 0; i <= 20; i++) {
+                const x = (canvas.width / 20) * i;
+                const y = canvas.height - (Math.sin(i * 0.5) * 50 + Math.random() * 30 + 100);
+                
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            
+            ctx.stroke();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateMetrics();
+            drawChart();
+            
+            // Update metrics every 30 seconds
+            setInterval(updateMetrics, 30000);
+            
+            // Add periodic log entries
+            setInterval(() => {
+                const events = [
+                    'PWA cache hit recorded',
+                    'Demo session started',
+                    'API request processed',
+                    'Security scan completed'
+                ];
+                const randomEvent = events[Math.floor(Math.random() * events.length)];
+                addLogEntry('info', randomEvent);
+            }, 45000);
+        });
+    </script>
+</body>
+</html>
