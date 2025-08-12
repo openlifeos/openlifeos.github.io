@@ -1,0 +1,52 @@
+# OpenLifeOS Robots.txt
+# https://openlifeos.ai
+
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://openlifeos.ai/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
+# Disallow sensitive paths
+Disallow: /internal/
+Disallow: /test/
+Disallow: /.git/
+Disallow: /node_modules/
+
+# Allow important paths explicitly
+Allow: /demos/
+Allow: /docs/
+Allow: /assets/
+
+# Popular search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+# Block bad bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
