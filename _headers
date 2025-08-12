@@ -1,0 +1,61 @@
+# Cloudflare Headers Configuration
+# This file optimizes caching for GitHub Pages + Cloudflare
+
+# HTML files - short cache
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# CSS files - medium cache
+/*.css
+  Cache-Control: public, max-age=604800, immutable
+
+# JavaScript files - medium cache  
+/*.js
+  Cache-Control: public, max-age=604800, immutable
+
+# Images - long cache
+/*.jpg
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.jpeg
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.gif
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.svg
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+
+# Fonts - long cache
+/*.woff
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.ttf
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.eot
+  Cache-Control: public, max-age=31536000, immutable
+
+# Demo files - no cache for development
+/demos/*
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# API responses - no cache
+/api/*
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# Default - short cache
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
