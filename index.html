@@ -21,6 +21,13 @@
     <meta property="twitter:description" content="Matrix-style knowledge downloading meets symbiotic AI. Not an assistant. Another you.">
     <meta property="twitter:image" content="https://openlifeos.ai/assets/logo/openlifeos-logo.svg">
     
+    <!-- PWA Support -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="OpenLifeOS">
+    
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/assets/logo/openlifeos-icon.svg">
     <link rel="apple-touch-icon" href="/assets/logo/openlifeos-icon.svg">
@@ -1108,6 +1115,19 @@
             }
         });
         
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registered:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('ServiceWorker registration failed:', error);
+                    });
+            });
+        }
+
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             createParticles();

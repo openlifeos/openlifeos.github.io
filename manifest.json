@@ -1,0 +1,111 @@
+{
+  "name": "OpenLifeOS - The Linux of Personal AI",
+  "short_name": "OpenLifeOS",
+  "description": "Revolutionary open-source AI platform with Matrix-style knowledge downloading. Not an assistant. Another you.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#667eea",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-US",
+  "dir": "ltr",
+  "categories": ["productivity", "education", "utilities"],
+  "icons": [
+    {
+      "src": "/assets/logo/openlifeos-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/assets/screenshots/desktop-home.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "label": "OpenLifeOS Homepage"
+    },
+    {
+      "src": "/assets/screenshots/demo-ultimate.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "label": "Ultimate AI Experience"
+    },
+    {
+      "src": "/assets/screenshots/mobile-home.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "label": "Mobile View"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Launch Ultimate Demo",
+      "short_name": "Demo",
+      "description": "Experience the full AI companion",
+      "url": "/demos/life-os-ultimate-v2.html",
+      "icons": [{ "src": "/assets/icons/demo-icon.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Documentation",
+      "short_name": "Docs",
+      "description": "Read the documentation",
+      "url": "/docs/",
+      "icons": [{ "src": "/assets/icons/docs-icon.png", "sizes": "96x96" }]
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "prefer_related_applications": false,
+  "related_applications": []
+}
