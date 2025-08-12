@@ -106,7 +106,7 @@ MIT License - see [LICENSE](LICENSE)
 
 - **Organization**: [@openlifeos](https://github.com/openlifeos)
 - **Documentation**: [/docs](https://openlifeos.ai/docs)
-- **Support**: wangcongrobot@gmail.com
+- **Support**: support@openlifeos.ai
 
 ---
 
