@@ -50,6 +50,53 @@
     }
     </script>
     
+    <!-- Automatic Redirect to Official Domain -->
+    <script>
+    // Intelligent redirect to official domain
+    (function() {
+        const PRIMARY_DOMAIN = 'openlifeos.ai';
+        const GITHUB_DOMAIN = 'openlifeos.github.io';
+        
+        if (window.location.hostname === GITHUB_DOMAIN) {
+            // Build the new URL preserving path, query, and hash
+            const currentPath = window.location.pathname + window.location.search + window.location.hash;
+            const newURL = `https://${PRIMARY_DOMAIN}${currentPath}`;
+            
+            // Show redirect notice
+            document.addEventListener('DOMContentLoaded', function() {
+                const notice = document.createElement('div');
+                notice.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    padding: 12px;
+                    text-align: center;
+                    z-index: 9999;
+                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                    font-size: 14px;
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+                `;
+                notice.innerHTML = `
+                    🚀 Redirecting to official website 
+                    <a href="${newURL}" style="color: white; text-decoration: underline; font-weight: bold;">
+                        ${PRIMARY_DOMAIN}
+                    </a>
+                    <span style="margin-left: 10px; opacity: 0.9;">(3 seconds)</span>
+                `;
+                document.body.appendChild(notice);
+                
+                // Redirect after 3 seconds
+                setTimeout(() => {
+                    window.location.replace(newURL);
+                }, 3000);
+            });
+        }
+    })();
+    </script>
+    
     <style>
         * {
             margin: 0;
