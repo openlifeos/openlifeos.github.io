@@ -6,12 +6,13 @@ const RUNTIME_CACHE = 'openlifeos-runtime';
 
 // Core files to cache for offline use
 const PRECACHE_URLS = [
-  '/',
   '/index.html',
   '/manifest.json',
   '/mit/index.html',
   '/assets/logo/openlifeos-logo-dark.svg',
   '/assets/logo/openlifeos-icon.svg',
+  '/assets/icons/icon-192x192.png',
+  '/assets/icons/icon-512x512.png',
   '/components/secure-api-manager.js',
   '/components/api-key-manager-fixed.js',
   '/demos/life-os-ultimate-v2.html',
